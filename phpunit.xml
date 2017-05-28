@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<phpunit bootstrap="./tests/bootstrap.php" strict="true" colors="true">
+    <php>
+        <env name="WEBPAY_MOCKED" value="1"/>
+    </php>
+    <testsuite name="all">
+        <directory suffix="Test.php">./tests/</directory>
+    </testsuite>
+    <testsuite name="integration">
+        <directory suffix="Test.php">./tests/integration/</directory>
+    </testsuite>
+    <testsuite name="unit">
+        <directory suffix="Test.php">./tests/unit/</directory>
+    </testsuite>
+</phpunit>
