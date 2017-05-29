@@ -420,6 +420,8 @@ class Client
 	 */
 	public function getResponse(Request $request, $maxTries = 3)
 	{
+		$request->validate();
+
 		$result = Webpay::executeTransaction($request->getWebpayReference());
 
 		$response = Response::createFromWebpayReference($request->getWebpayReference());

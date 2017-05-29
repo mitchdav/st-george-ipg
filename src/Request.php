@@ -2,9 +2,11 @@
 
 namespace StGeorgeIPG;
 
+use Inacho\CreditCard;
 use StGeorgeIPG\Exceptions\AttributeNotFoundException;
 use StGeorgeIPG\Exceptions\InvalidAttributeStatusException;
 use StGeorgeIPG\Exceptions\InvalidAttributeValueException;
+use StGeorgeIPG\Exceptions\InvalidCardDataException;
 
 /**
  * Class Request
@@ -328,6 +330,8 @@ class Request
 	 */
 	public function setTotalAmount($totalAmount)
 	{
+		$this->validateInputIsDouble(Request::ATTRIBUTE_TOTAL_AMOUNT, $totalAmount);
+
 		$this->totalAmount = $totalAmount;
 
 		$this->setAttribute(Request::ATTRIBUTE_TOTAL_AMOUNT, Request::formatCurrency($totalAmount));
@@ -350,6 +354,8 @@ class Request
 	 */
 	public function setTaxAmount($taxAmount)
 	{
+		$this->validateInputIsDouble(Request::ATTRIBUTE_TAX_AMOUNT, $taxAmount);
+
 		$this->taxAmount = $taxAmount;
 
 		$this->setAttribute(Request::ATTRIBUTE_TAX_AMOUNT, Request::formatCurrency($taxAmount));
@@ -372,6 +378,8 @@ class Request
 	 */
 	public function setCardData($cardData)
 	{
+		$this->validateInputIsCardNumber($cardData);
+
 		$cardData = Request::formatCardNumber($cardData);
 
 		$this->cardData = $cardData;
@@ -397,6 +405,10 @@ class Request
 	 */
 	public function setCardExpiryDate($month, $year)
 	{
+		$this->validateInputIsInteger(Request::ATTRIBUTE_CARD_EXPIRY_DATE, $month);
+		$this->validateInputIsInteger(Request::ATTRIBUTE_CARD_EXPIRY_DATE, $year);
+		$this->validateInputIsCardExpiryDate($month, $year);
+
 		$cardExpiryDate = Request::formatDate($month, $year);
 
 		$this->cardExpiryDate = $cardExpiryDate;
@@ -705,12 +717,23 @@ class Request
 	}
 
 	/**
-	 * @param int $terminalType
+	 * @param integer $terminalType
 	 *
 	 * @return Request
 	 */
 	public function setTerminalType($terminalType)
 	{
+		$validValues = [
+			Request::TERMINAL_TYPE_INTERNET,
+			Request::TERMINAL_TYPE_TELEPHONE_ORDER,
+			Request::TERMINAL_TYPE_MAIL_ORDER,
+			Request::TERMINAL_TYPE_CUSTOMER_PRESENT,
+			Request::TERMINAL_TYPE_RECURRING_PAYMENT,
+			Request::TERMINAL_TYPE_INSTALMENT,
+		];
+
+		$this->validateInput(Request::ATTRIBUTE_TERMINAL_TYPE, $terminalType, $validValues);
+
 		$this->terminalType = $terminalType;
 
 		$this->setAttribute(Request::ATTRIBUTE_TERMINAL_TYPE, $terminalType);
@@ -741,6 +764,8 @@ class Request
 	}
 
 	/**
+	 * @return boolean
+	 *
 	 * @throws InvalidAttributeValueException
 	 */
 	public function validate()
@@ -753,7 +778,8 @@ class Request
 		$transactionType = $this->getTransactionType();
 
 		switch ($transactionType) {
-			case Request::TRANSACTION_TYPE_PURCHASE: {
+			case Request::TRANSACTION_TYPE_PURCHASE:
+			case Request::TRANSACTION_TYPE_PRE_AUTH: {
 				$this->validateAttributes([
 					Request::ATTRIBUTE_TOTAL_AMOUNT,
 					Request::ATTRIBUTE_CARD_DATA,
@@ -778,24 +804,6 @@ class Request
 					Request::ATTRIBUTE_CARD_DATA,
 					Request::ATTRIBUTE_CARD_EXPIRY_DATE,
 					Request::ATTRIBUTE_TRANSACTION_REFERENCE,
-					Request::ATTRIBUTE_ORIGINAL_TRANSACTION_REFERENCE,
-					Request::ATTRIBUTE_PRE_AUTH_NUMBER,
-					Request::ATTRIBUTE_AUTH_NUMBER,
-					Request::ATTRIBUTE_AUTHORISATION_CODE,
-					Request::ATTRIBUTE_AUTHORISATION_NUMBER,
-				]);
-
-				break;
-			}
-
-			case Request::TRANSACTION_TYPE_PRE_AUTH: {
-				$this->validateAttributes([
-					Request::ATTRIBUTE_TOTAL_AMOUNT,
-					Request::ATTRIBUTE_CARD_DATA,
-					Request::ATTRIBUTE_CARD_EXPIRY_DATE,
-				], [
-					Request::ATTRIBUTE_TRANSACTION_REFERENCE,
-					Request::ATTRIBUTE_ORIGINAL_TRANSACTION_REFERENCE,
 					Request::ATTRIBUTE_PRE_AUTH_NUMBER,
 					Request::ATTRIBUTE_AUTH_NUMBER,
 					Request::ATTRIBUTE_AUTHORISATION_CODE,
@@ -854,6 +862,8 @@ class Request
 				throw new InvalidAttributeValueException(Request::ATTRIBUTE_TRANSACTION_TYPE, $transactionType);
 			}
 		}
+
+		return TRUE;
 	}
 
 	/**
@@ -877,10 +887,8 @@ class Request
 				}
 
 				if ($count != 1) {
-					throw new InvalidAttributeStatusException(join(', ', $item), 'mandatory');
+					throw new InvalidAttributeStatusException(join('" or "', $item), 'mandatory');
 				}
-
-
 			} else {
 				$resolvedAttribute = $this->resolveAttributeFromMapping($item);
 
@@ -1083,8 +1091,36 @@ class Request
 
 	private static function validateInput($attribute, $input, $validValues)
 	{
-		if (!in_array($input, $validValues)) {
+		if (!in_array($input, $validValues, TRUE)) {
 			throw new InvalidAttributeValueException($attribute, $input);
+		}
+	}
+
+	private static function validateInputIsInteger($attribute, $input)
+	{
+		if (!is_int($input)) {
+			throw new InvalidAttributeValueException($attribute, $input);
+		}
+	}
+
+	private static function validateInputIsDouble($attribute, $input)
+	{
+		if (!is_double($input)) {
+			throw new InvalidAttributeValueException($attribute, $input);
+		}
+	}
+
+	private static function validateInputIsCardNumber($input)
+	{
+		if (!CreditCard::validCreditCard($input)['valid']) {
+			throw new InvalidCardDataException('The card data is invalid.');
+		}
+	}
+
+	private static function validateInputIsCardExpiryDate($month, $year)
+	{
+		if (!CreditCard::validDate($year, $month)) {
+			throw new \InvalidArgumentException('The card expiry date is invalid.');
 		}
 	}
 }
