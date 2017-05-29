@@ -4,8 +4,11 @@ namespace StGeorgeIPG;
 
 class ResponseTest extends TestCase
 {
-	public function testA()
+	/*
+	 * TODO: Add tests
+	 */
+	public function testNonAssertiveTest()
 	{
-
+		$this->doesNotPerformAssertions();
 	}
 }

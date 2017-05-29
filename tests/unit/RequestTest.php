@@ -10,8 +10,8 @@ use StGeorgeIPG\Exceptions\InvalidCardDataException;
 class RequestTest extends TestCase
 {
 	/**
-	 * @covers Request::getWebpayReference
-	 * @covers Request::setWebpayReference
+	 * @covers \StGeorgeIPG\Request::getWebpayReference
+	 * @covers \StGeorgeIPG\Request::setWebpayReference
 	 */
 	public function testGetSetWebpayReference_ValidInput_Equals()
 	{
@@ -25,8 +25,8 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::getInterface
-	 * @covers Request::setInterface
+	 * @covers \StGeorgeIPG\Request::getInterface
+	 * @covers \StGeorgeIPG\Request::setInterface
 	 */
 	public function testGetSetInterface_ValidInput_Equals()
 	{
@@ -40,7 +40,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::setInterface
+	 * @covers \StGeorgeIPG\Request::setInterface
 	 */
 	public function testSetInterface_InvalidInput_ThrowException()
 	{
@@ -54,7 +54,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::isInterfaceCreditCard
+	 * @covers \StGeorgeIPG\Request::isInterfaceCreditCard
 	 */
 	public function testIsInterfaceCreditCard_ValidInput_True()
 	{
@@ -66,7 +66,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::isInterfaceCreditCard
+	 * @covers \StGeorgeIPG\Request::isInterfaceCreditCard
 	 */
 	public function testIsInterfaceCreditCard_InvalidInput_False()
 	{
@@ -78,7 +78,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::isInterfaceTest
+	 * @covers \StGeorgeIPG\Request::isInterfaceTest
 	 */
 	public function testIsInterfaceTest_ValidInput_True()
 	{
@@ -90,7 +90,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::isInterfaceTest
+	 * @covers \StGeorgeIPG\Request::isInterfaceTest
 	 */
 	public function testIsInterfaceTest_InvalidInput_False()
 	{
@@ -102,8 +102,8 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::getTransactionType
-	 * @covers Request::setTransactionType
+	 * @covers \StGeorgeIPG\Request::getTransactionType
+	 * @covers \StGeorgeIPG\Request::setTransactionType
 	 */
 	public function testGetSetTransactionType_ValidInput_Equals()
 	{
@@ -117,7 +117,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::setTransactionType
+	 * @covers \StGeorgeIPG\Request::setTransactionType
 	 */
 	public function testSetTransactionType_InvalidInput_ExpectException()
 	{
@@ -131,7 +131,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::isTransactionTypePurchase
+	 * @covers \StGeorgeIPG\Request::isTransactionTypePurchase
 	 */
 	public function testIsTransactionTypePurchase_ValidInput_True()
 	{
@@ -143,7 +143,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::isTransactionTypePurchase
+	 * @covers \StGeorgeIPG\Request::isTransactionTypePurchase
 	 */
 	public function testIsTransactionTypePurchase_InvalidInput_False()
 	{
@@ -155,7 +155,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::isTransactionTypeRefund
+	 * @covers \StGeorgeIPG\Request::isTransactionTypeRefund
 	 */
 	public function testIsTransactionTypeRefund_ValidInput_True()
 	{
@@ -167,7 +167,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::isTransactionTypeRefund
+	 * @covers \StGeorgeIPG\Request::isTransactionTypeRefund
 	 */
 	public function testIsTransactionTypeRefund_InvalidInput_False()
 	{
@@ -179,7 +179,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::isTransactionTypePreAuth
+	 * @covers \StGeorgeIPG\Request::isTransactionTypePreAuth
 	 */
 	public function testIsTransactionTypePreAuth_ValidInput_True()
 	{
@@ -191,7 +191,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::isTransactionTypePreAuth
+	 * @covers \StGeorgeIPG\Request::isTransactionTypePreAuth
 	 */
 	public function testIsTransactionTypePreAuth_InvalidInput_False()
 	{
@@ -203,7 +203,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::isTransactionTypeCompletion
+	 * @covers \StGeorgeIPG\Request::isTransactionTypeCompletion
 	 */
 	public function testIsTransactionTypeCompletion_ValidInput_True()
 	{
@@ -215,7 +215,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::isTransactionTypeCompletion
+	 * @covers \StGeorgeIPG\Request::isTransactionTypeCompletion
 	 */
 	public function testIsTransactionTypeCompletion_InvalidInput_False()
 	{
@@ -227,7 +227,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::isTransactionTypeStatus
+	 * @covers \StGeorgeIPG\Request::isTransactionTypeStatus
 	 */
 	public function testIsTransactionTypeStatus_ValidInput_True()
 	{
@@ -239,7 +239,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::isTransactionTypeStatus
+	 * @covers \StGeorgeIPG\Request::isTransactionTypeStatus
 	 */
 	public function testIsTransactionTypeStatus_InvalidInput_False()
 	{
@@ -251,8 +251,8 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::getTotalAmount
-	 * @covers Request::setTotalAmount
+	 * @covers \StGeorgeIPG\Request::getTotalAmount
+	 * @covers \StGeorgeIPG\Request::setTotalAmount
 	 */
 	public function testGetSetTotalAmount_ValidInput_Equals()
 	{
@@ -266,7 +266,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::setTotalAmount
+	 * @covers \StGeorgeIPG\Request::setTotalAmount
 	 */
 	public function testSetTotalAmount_InvalidInput_ExpectException()
 	{
@@ -280,8 +280,8 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::getTaxAmount
-	 * @covers Request::setTaxAmount
+	 * @covers \StGeorgeIPG\Request::getTaxAmount
+	 * @covers \StGeorgeIPG\Request::setTaxAmount
 	 */
 	public function testGetSetTaxAmount_ValidInput_Equals()
 	{
@@ -295,7 +295,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::setTaxAmount
+	 * @covers \StGeorgeIPG\Request::setTaxAmount
 	 */
 	public function testSetTaxAmount_InvalidInput_ExpectException()
 	{
@@ -309,8 +309,8 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::getCardData
-	 * @covers Request::setCardData
+	 * @covers \StGeorgeIPG\Request::getCardData
+	 * @covers \StGeorgeIPG\Request::setCardData
 	 */
 	public function testGetSetCardData_ValidInput_Equals()
 	{
@@ -324,8 +324,8 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::getCardData
-	 * @covers Request::setCardData
+	 * @covers \StGeorgeIPG\Request::getCardData
+	 * @covers \StGeorgeIPG\Request::setCardData
 	 */
 	public function testGetSetCardData_ValidInput_WithDashes_Equals()
 	{
@@ -340,8 +340,8 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::getCardData
-	 * @covers Request::setCardData
+	 * @covers \StGeorgeIPG\Request::getCardData
+	 * @covers \StGeorgeIPG\Request::setCardData
 	 */
 	public function testGetSetCardData_ValidInput_WithSpaces_Equals()
 	{
@@ -356,7 +356,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::setCardData
+	 * @covers \StGeorgeIPG\Request::setCardData
 	 */
 	public function testSetCardData_InvalidInput_NonNumeric_ExpectException()
 	{
@@ -370,7 +370,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::setCardData
+	 * @covers \StGeorgeIPG\Request::setCardData
 	 */
 	public function testSetCardData_InvalidInput_InvalidNumber_ExpectException()
 	{
@@ -384,7 +384,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::setCardData
+	 * @covers \StGeorgeIPG\Request::setCardData
 	 */
 	public function testSetCardData_InvalidInput_InvalidLength_ExpectException()
 	{
@@ -398,7 +398,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::setCardData
+	 * @covers \StGeorgeIPG\Request::setCardData
 	 */
 	public function testSetCardData_InvalidInput_InvalidPrefix_ExpectException()
 	{
@@ -412,8 +412,8 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::getCardExpiryDate
-	 * @covers Request::setCardExpiryDate
+	 * @covers \StGeorgeIPG\Request::getCardExpiryDate
+	 * @covers \StGeorgeIPG\Request::setCardExpiryDate
 	 */
 	public function testGetSetCardExpiryDate_ValidInput_Equals()
 	{
@@ -431,7 +431,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::setCardExpiryDate
+	 * @covers \StGeorgeIPG\Request::setCardExpiryDate
 	 */
 	public function testSetCardExpiryDate_InvalidInput_WithText_ExpectException()
 	{
@@ -446,7 +446,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::setCardExpiryDate
+	 * @covers \StGeorgeIPG\Request::setCardExpiryDate
 	 */
 	public function testSetCardExpiryDate_InvalidInput_WithPastDate_ExpectException()
 	{
@@ -464,8 +464,8 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::getTransactionReference
-	 * @covers Request::setTransactionReference
+	 * @covers \StGeorgeIPG\Request::getTransactionReference
+	 * @covers \StGeorgeIPG\Request::setTransactionReference
 	 */
 	public function testGetSetTransactionReference_ValidInput_Equals()
 	{
@@ -479,8 +479,8 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::getOriginalTransactionReference
-	 * @covers Request::setOriginalTransactionReference
+	 * @covers \StGeorgeIPG\Request::getOriginalTransactionReference
+	 * @covers \StGeorgeIPG\Request::setOriginalTransactionReference
 	 */
 	public function testGetSetOriginalTransactionReference_ValidInput_Equals()
 	{
@@ -494,8 +494,8 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::getPreAuthNumber
-	 * @covers Request::setPreAuthNumber
+	 * @covers \StGeorgeIPG\Request::getPreAuthNumber
+	 * @covers \StGeorgeIPG\Request::setPreAuthNumber
 	 */
 	public function testGetSetPreAuthNumber_ValidInput_Equals()
 	{
@@ -509,8 +509,8 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::getAuthNumber
-	 * @covers Request::setAuthNumber
+	 * @covers \StGeorgeIPG\Request::getAuthNumber
+	 * @covers \StGeorgeIPG\Request::setAuthNumber
 	 */
 	public function testGetSetAuthNumber_ValidInput_Equals()
 	{
@@ -524,8 +524,8 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::getAuthorisationNumber
-	 * @covers Request::setAuthorisationNumber
+	 * @covers \StGeorgeIPG\Request::getAuthorisationNumber
+	 * @covers \StGeorgeIPG\Request::setAuthorisationNumber
 	 */
 	public function testGetSetAuthorisationNumber_ValidInput_Equals()
 	{
@@ -539,8 +539,8 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::getAuthCode
-	 * @covers Request::setAuthCode
+	 * @covers \StGeorgeIPG\Request::getAuthCode
+	 * @covers \StGeorgeIPG\Request::setAuthCode
 	 */
 	public function testGetSetAuthCode_ValidInput_Equals()
 	{
@@ -554,8 +554,8 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::getAuthorisationCode
-	 * @covers Request::setAuthorisationCode
+	 * @covers \StGeorgeIPG\Request::getAuthorisationCode
+	 * @covers \StGeorgeIPG\Request::setAuthorisationCode
 	 */
 	public function testGetSetAuthorisationCode_ValidInput_Equals()
 	{
@@ -569,8 +569,8 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::getClientReference
-	 * @covers Request::setClientReference
+	 * @covers \StGeorgeIPG\Request::getClientReference
+	 * @covers \StGeorgeIPG\Request::setClientReference
 	 */
 	public function testGetSetClientReference_ValidInput_Equals()
 	{
@@ -584,8 +584,8 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::getComment
-	 * @covers Request::setComment
+	 * @covers \StGeorgeIPG\Request::getComment
+	 * @covers \StGeorgeIPG\Request::setComment
 	 */
 	public function testGetSetComment_ValidInput_Equals()
 	{
@@ -599,8 +599,8 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::getMerchantCardHolderName
-	 * @covers Request::setMerchantCardHolderName
+	 * @covers \StGeorgeIPG\Request::getMerchantCardHolderName
+	 * @covers \StGeorgeIPG\Request::setMerchantCardHolderName
 	 */
 	public function testGetSetMerchantCardHolderName_ValidInput_Equals()
 	{
@@ -614,8 +614,8 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::getMerchantDescription
-	 * @covers Request::setMerchantDescription
+	 * @covers \StGeorgeIPG\Request::getMerchantDescription
+	 * @covers \StGeorgeIPG\Request::setMerchantDescription
 	 */
 	public function testGetSetMerchantDescription_ValidInput_Equals()
 	{
@@ -629,8 +629,8 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::getTerminalType
-	 * @covers Request::setTerminalType
+	 * @covers \StGeorgeIPG\Request::getTerminalType
+	 * @covers \StGeorgeIPG\Request::setTerminalType
 	 */
 	public function testGetSetTerminalType_ValidInput_Equals()
 	{
@@ -644,7 +644,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::setTerminalType
+	 * @covers \StGeorgeIPG\Request::setTerminalType
 	 */
 	public function testSetTerminalType_InvalidInput_ExpectException()
 	{
@@ -658,7 +658,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::isTerminalTypeInternet
+	 * @covers \StGeorgeIPG\Request::isTerminalTypeInternet
 	 */
 	public function testIsTerminalTypeInternet_ValidInput_True()
 	{
@@ -670,7 +670,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::isTerminalTypeInternet
+	 * @covers \StGeorgeIPG\Request::isTerminalTypeInternet
 	 */
 	public function testIsTerminalTypeInternet_InvalidInput_False()
 	{
@@ -682,7 +682,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::isTerminalTypeTelephoneOrder
+	 * @covers \StGeorgeIPG\Request::isTerminalTypeTelephoneOrder
 	 */
 	public function testIsTerminalTypeTelephoneOrder_ValidInput_True()
 	{
@@ -694,7 +694,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::isTerminalTypeTelephoneOrder
+	 * @covers \StGeorgeIPG\Request::isTerminalTypeTelephoneOrder
 	 */
 	public function testIsTerminalTypeTelephoneOrder_InvalidInput_False()
 	{
@@ -706,7 +706,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::isTerminalTypeMailOrder
+	 * @covers \StGeorgeIPG\Request::isTerminalTypeMailOrder
 	 */
 	public function testIsTerminalTypeMailOrder_ValidInput_True()
 	{
@@ -718,7 +718,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::isTerminalTypeMailOrder
+	 * @covers \StGeorgeIPG\Request::isTerminalTypeMailOrder
 	 */
 	public function testIsTerminalTypeMailOrder_InvalidInput_False()
 	{
@@ -730,7 +730,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::isTerminalTypeCustomerPresent
+	 * @covers \StGeorgeIPG\Request::isTerminalTypeCustomerPresent
 	 */
 	public function testIsTerminalTypeCustomerPresent_ValidInput_True()
 	{
@@ -742,7 +742,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::isTerminalTypeCustomerPresent
+	 * @covers \StGeorgeIPG\Request::isTerminalTypeCustomerPresent
 	 */
 	public function testIsTerminalTypeCustomerPresent_InvalidInput_False()
 	{
@@ -754,7 +754,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::isTerminalTypeRecurringPayment
+	 * @covers \StGeorgeIPG\Request::isTerminalTypeRecurringPayment
 	 */
 	public function testIsTerminalTypeRecurringPayment_ValidInput_True()
 	{
@@ -766,7 +766,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::isTerminalTypeRecurringPayment
+	 * @covers \StGeorgeIPG\Request::isTerminalTypeRecurringPayment
 	 */
 	public function testIsTerminalTypeRecurringPayment_InvalidInput_False()
 	{
@@ -778,7 +778,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::isTerminalTypeInstalment
+	 * @covers \StGeorgeIPG\Request::isTerminalTypeInstalment
 	 */
 	public function testIsTerminalTypeInstalment_ValidInput_True()
 	{
@@ -790,7 +790,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::isTerminalTypeInstalment
+	 * @covers \StGeorgeIPG\Request::isTerminalTypeInstalment
 	 */
 	public function testIsTerminalTypeInstalment_InvalidInput_False()
 	{
@@ -802,8 +802,8 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::getCVC2
-	 * @covers Request::setCVC2
+	 * @covers \StGeorgeIPG\Request::getCVC2
+	 * @covers \StGeorgeIPG\Request::setCVC2
 	 */
 	public function testGetSetCVC2_ValidInput_Equals()
 	{
@@ -817,7 +817,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::validate
+	 * @covers \StGeorgeIPG\Request::validate
 	 */
 	public function testValidate_ValidInput_WithPurchase_True()
 	{
@@ -845,7 +845,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::validate
+	 * @covers \StGeorgeIPG\Request::validate
 	 */
 	public function testValidate_InvalidInput_WithPurchase_ExpectException()
 	{
@@ -881,7 +881,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::validate
+	 * @covers \StGeorgeIPG\Request::validate
 	 */
 	public function testValidate_ValidInput_WithRefund_True()
 	{
@@ -902,7 +902,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::validate
+	 * @covers \StGeorgeIPG\Request::validate
 	 */
 	public function testValidate_InvalidInput_WithRefund_ExpectException()
 	{
@@ -932,7 +932,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::validate
+	 * @covers \StGeorgeIPG\Request::validate
 	 */
 	public function testValidate_ValidInput_WithPreAuth_True()
 	{
@@ -960,7 +960,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::validate
+	 * @covers \StGeorgeIPG\Request::validate
 	 */
 	public function testValidate_InvalidInput_WithPreAuth_ExpectException()
 	{
@@ -997,7 +997,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::validate
+	 * @covers \StGeorgeIPG\Request::validate
 	 */
 	public function testValidate_ValidInput_WithCompletion_True()
 	{
@@ -1019,7 +1019,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::validate
+	 * @covers \StGeorgeIPG\Request::validate
 	 */
 	public function testValidate_InvalidInput_WithCompletion_ExpectException()
 	{
@@ -1048,7 +1048,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::validate
+	 * @covers \StGeorgeIPG\Request::validate
 	 */
 	public function testValidate_ValidInput_WithStatus_True()
 	{
@@ -1063,7 +1063,7 @@ class RequestTest extends TestCase
 	}
 
 	/**
-	 * @covers Request::validate
+	 * @covers \StGeorgeIPG\Request::validate
 	 */
 	public function testValidate_InvalidInput_WithStatus_ExpectException()
 	{

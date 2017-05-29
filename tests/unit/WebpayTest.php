@@ -6,7 +6,7 @@ use StGeorgeIPG\Webpay;
 class WebpayTest extends TestCase
 {
 	/**
-	 * @covers Webpay::executeTransaction
+	 * @covers \StGeorgeIPG\Webpay::executeTransaction
 	 */
 	public function testCreateBundle()
 	{
@@ -14,7 +14,7 @@ class WebpayTest extends TestCase
 	}
 
 	/**
-	 * @covers Webpay::executeTransaction
+	 * @covers \StGeorgeIPG\Webpay::executeTransaction
 	 */
 	public function testExecuteTransaction()
 	{
