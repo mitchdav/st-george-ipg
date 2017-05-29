@@ -23,6 +23,7 @@
   },
   "require-dev": {
     "phpunit/phpunit": "^5.7",
-    "nesbot/carbon": "^1.22"
+    "nesbot/carbon": "^1.22",
+    "satooshi/php-coveralls": "^1.0"
   }
 }
