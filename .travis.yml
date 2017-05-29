@@ -6,9 +6,9 @@ php:
   - 7.1
   - hhvm
 
-before_script:
-  - composer install --dev
-  - composer require satooshi/php-coveralls --prefer-dist
+install: composer install --dev
+
+before_script: composer require satooshi/php-coveralls --prefer-dist
 
 script: phpunit
 
