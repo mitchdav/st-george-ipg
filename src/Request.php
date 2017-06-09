@@ -17,6 +17,9 @@ use StGeorgeIPG\Exceptions\InvalidCardDataException;
  */
 class Request
 {
+	/*
+	 * The attributes available for Webpay requests.
+	 */
 	const ATTRIBUTE_INTERFACE = 'INTERFACE';
 	const ATTRIBUTE_TRANSACTION_TYPE = 'TRANSACTIONTYPE';
 	const ATTRIBUTE_TOTAL_AMOUNT = 'TOTALAMOUNT';
@@ -37,21 +40,33 @@ class Request
 	const ATTRIBUTE_TERMINAL_TYPE = 'TERMINALTYPE';
 	const ATTRIBUTE_CVC2 = 'CVC2';
 
+	/*
+	 * The interfaces available for Webpay requests.
+	 */
 	const INTERFACE_CREDIT_CARD = 'CREDITCARD';
 	const INTERFACE_TEST = 'TEST';
 
+	/*
+	 * The transaction types available for Webpay requests.
+	 */
 	const TRANSACTION_TYPE_PURCHASE = 'PURCHASE';
 	const TRANSACTION_TYPE_REFUND = 'REFUND';
 	const TRANSACTION_TYPE_PRE_AUTH = 'PREAUTH';
 	const TRANSACTION_TYPE_COMPLETION = 'COMPLETION';
 	const TRANSACTION_TYPE_STATUS = 'STATUS';
 
+	/*
+	 * The terminal types available for Webpay requests.
+	 */
 	const TERMINAL_TYPE_INTERNET = 0;
 	const TERMINAL_TYPE_TELEPHONE_ORDER = 1;
 	const TERMINAL_TYPE_MAIL_ORDER = 2;
 	const TERMINAL_TYPE_CUSTOMER_PRESENT = 3;
 	const TERMINAL_TYPE_RECURRING_PAYMENT = 4;
 	const TERMINAL_TYPE_INSTALMENT = 5;
+
+	/** @var Webpay $webpay */
+	private $webpay;
 
 	/**
 	 * @var mixed $webpayReference
@@ -177,6 +192,26 @@ class Request
 		Request::ATTRIBUTE_TERMINAL_TYPE                  => 'terminalType',
 		Request::ATTRIBUTE_CVC2                           => 'cvc2',
 	];
+
+	/**
+	 * @return Webpay
+	 */
+	public function getWebpay()
+	{
+		return $this->webpay;
+	}
+
+	/**
+	 * @param Webpay $webpay
+	 *
+	 * @return Request
+	 */
+	public function setWebpay($webpay)
+	{
+		$this->webpay = $webpay;
+
+		return $this;
+	}
 
 	/**
 	 * @return mixed
@@ -928,7 +963,7 @@ class Request
 	 */
 	private function setClientId($clientId)
 	{
-		Webpay::setClientId($this->getWebpayReference(), $clientId);
+		$this->getWebpay()->setClientId($this->getWebpayReference(), $clientId);
 
 		return $this;
 	}
@@ -940,7 +975,7 @@ class Request
 	 */
 	private function setCertificatePath($certificatePath)
 	{
-		Webpay::setCertificatePath($this->getWebpayReference(), $certificatePath);
+		$this->getWebpay()->setCertificatePath($this->getWebpayReference(), $certificatePath);
 
 		return $this;
 	}
@@ -952,7 +987,7 @@ class Request
 	 */
 	private function setCertificatePassword($certificatePassword)
 	{
-		Webpay::setCertificatePassword($this->getWebpayReference(), $certificatePassword);
+		$this->getWebpay()->setCertificatePassword($this->getWebpayReference(), $certificatePassword);
 
 		return $this;
 	}
@@ -964,7 +999,7 @@ class Request
 	 */
 	private function setServers($servers)
 	{
-		Webpay::setServers($this->getWebpayReference(), $servers);
+		$this->getWebpay()->setServers($this->getWebpayReference(), $servers);
 
 		return $this;
 	}
@@ -976,7 +1011,7 @@ class Request
 	 */
 	private function setPort($port)
 	{
-		Webpay::setPort($this->getWebpayReference(), $port);
+		$this->getWebpay()->setPort($this->getWebpayReference(), $port);
 
 		return $this;
 	}
@@ -988,7 +1023,7 @@ class Request
 	 */
 	private function setDebug($debug)
 	{
-		Webpay::setAttribute($this->getWebpayReference(), 'DEBUG', ($debug) ? ('ON') : ('OFF'));
+		$this->getWebpay()->setAttribute($this->getWebpayReference(), 'DEBUG', ($debug) ? ('ON') : ('OFF'));
 
 		return $this;
 	}
@@ -1000,7 +1035,7 @@ class Request
 	 */
 	private function setLogPath($logFilePath)
 	{
-		Webpay::setAttribute($this->getWebpayReference(), 'LOGFILE', $logFilePath);
+		$this->getWebpay()->setAttribute($this->getWebpayReference(), 'LOGFILE', $logFilePath);
 
 		return $this;
 	}
@@ -1014,7 +1049,7 @@ class Request
 	private function setAttribute($name, $value)
 	{
 		if ($value !== NULL) {
-			Webpay::setAttribute($this->getWebpayReference(), $name, $value);
+			$this->getWebpay()->setAttribute($this->getWebpayReference(), $name, $value);
 		}
 
 		return $this;
@@ -1030,7 +1065,8 @@ class Request
 		$request = new Request();
 
 		$request
-			->setWebpayReference(Request::createWebpayReference())
+			->setWebpay($client->getWebpay())
+			->setWebpayReference($request->createWebpayReference())
 			->setClientId($client->getClientId())
 			->setCertificatePath($client->getCertificatePath())
 			->setCertificatePassword($client->getCertificatePassword())
@@ -1053,9 +1089,9 @@ class Request
 	/**
 	 * @return mixed
 	 */
-	private static function createWebpayReference()
+	private function createWebpayReference()
 	{
-		return Webpay::createBundle();
+		return $this->getWebpay()->createBundle();
 	}
 
 	/**

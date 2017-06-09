@@ -35,9 +35,7 @@ class TransactionInProgressException extends \Exception
 		$this->response = $response;
 		$this->maxTries = $maxTries;
 
-		$message = 'Transaction [' . $response->getTransactionReference() . '] was still in progress after ' . $maxTries . ' tries.';
-
-		return parent::__construct($message);
+		return parent::__construct('Transaction [' . $response->getTransactionReference() . '] was still in progress after ' . $maxTries . ' tries.');
 	}
 
 	/**

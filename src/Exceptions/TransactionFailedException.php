@@ -23,7 +23,7 @@ class TransactionFailedException extends \Exception
 	private $maxTries;
 
 	/**
-	 * TransactionInProgressException constructor.
+	 * TransactionFailedException constructor.
 	 *
 	 * @param Request  $request
 	 * @param Response $response
@@ -35,9 +35,7 @@ class TransactionFailedException extends \Exception
 		$this->response = $response;
 		$this->maxTries = $maxTries;
 
-		$message = 'Transaction failed was still in progress after ' . $maxTries . ' tries.';
-
-		return parent::__construct($message);
+		return parent::__construct('Transaction failed after ' . $maxTries . ' tries.');
 	}
 
 	/**

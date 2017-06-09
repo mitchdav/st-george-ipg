@@ -10,127 +10,105 @@ use StGeorgeIPG\Exceptions\WebpayNotLoadedException;
  * This class serves as a wrapper for the Webpay library, which helps
  * keep all of the non-IDE-findable functions in a single file.
  *
- * TODO: Split up the mocking into its own class.
- *
  * @package StGeorgeIPG
  */
 class Webpay
 {
-	private static $checked = FALSE;
-
-	private static function checkWebpay()
+	/**
+	 * Webpay constructor.
+	 *
+	 * Checks if the Webpay extension is loaded.
+	 *
+	 * @throws WebpayNotLoadedException
+	 */
+	public function __construct()
 	{
-		if (!Webpay::$checked && !extension_loaded('webpay') && getenv('WEBPAY_MOCKED') != TRUE) {
+		if (!extension_loaded('webpay')) {
 			throw new WebpayNotLoadedException();
 		}
-
-		Webpay::$checked = TRUE;
 	}
 
 	/**
 	 * @return mixed
 	 */
-	public static function createBundle()
+	public function createBundle()
 	{
-		Webpay::checkWebpay();
-
-		if (getenv('WEBPAY_MOCKED') != TRUE) {
-			return \newBundle();
-		} else {
-			return rand(0, 10000000);
-		}
+		return \newBundle();
 	}
 
 	/**
 	 * @param mixed   $reference
-	 * @param boolean $mockedOutput
 	 *
 	 * @return boolean
 	 */
-	public static function executeTransaction($reference, $mockedOutput = TRUE)
+	public function executeTransaction($reference)
 	{
-		Webpay::checkWebpay();
-
-		if (getenv('WEBPAY_MOCKED') != TRUE) {
-			return \executeTransaction($reference);
-		} else {
-			return $mockedOutput;
-		}
+		return \executeTransaction($reference);
 	}
 
 	/**
 	 * @param mixed $reference
 	 * @param int   $clientId
 	 *
-	 * @return void
+	 * @return $this
 	 */
-	public static function setClientId($reference, $clientId)
+	public function setClientId($reference, $clientId)
 	{
-		Webpay::checkWebpay();
+		\put_ClientID($reference, strval($clientId));
 
-		if (getenv('WEBPAY_MOCKED') != TRUE) {
-			\put_ClientID($reference, strval($clientId));
-		}
+		return $this;
 	}
 
 	/**
 	 * @param mixed  $reference
 	 * @param string $certificatePath
 	 *
-	 * @return void
+	 * @return $this
 	 */
-	public static function setCertificatePath($reference, $certificatePath)
+	public function setCertificatePath($reference, $certificatePath)
 	{
-		Webpay::checkWebpay();
+		\put_CertificatePath($reference, realpath($certificatePath));
 
-		if (getenv('WEBPAY_MOCKED') != TRUE) {
-			\put_CertificatePath($reference, realpath($certificatePath));
-		}
+		return $this;
 	}
 
 	/**
 	 * @param mixed  $reference
 	 * @param string $certificatePassword
 	 *
-	 * @return void
+	 * @return $this
 	 */
-	public static function setCertificatePassword($reference, $certificatePassword)
+	public function setCertificatePassword($reference, $certificatePassword)
 	{
-		Webpay::checkWebpay();
+		\put_CertificatePassword($reference, $certificatePassword);
 
-		if (getenv('WEBPAY_MOCKED') != TRUE) {
-			\put_CertificatePassword($reference, $certificatePassword);
-		}
+		return $this;
 	}
 
 	/**
 	 * @param mixed    $reference
 	 * @param string[] $servers
 	 *
-	 * @return void
+	 * @return $this
 	 */
-	public static function setServers($reference, $servers)
+	public function setServers($reference, $servers)
 	{
-		Webpay::checkWebpay();
+		\setServers($reference, join(',', $servers));
 
-		if (getenv('WEBPAY_MOCKED') != TRUE) {
-			\setServers($reference, join(',', $servers));
-		}
+		return $this;
 	}
 
 	/**
 	 * @param mixed   $reference
 	 * @param integer $port
 	 *
-	 * @return void
+	 * @return $this
 	 */
-	public static function setPort($reference, $port)
+	public function setPort($reference, $port)
 	{
-		Webpay::checkWebpay();
+		\setPort($reference, strval($port));
 
-		if (getenv('WEBPAY_MOCKED') != TRUE) {
-			\setPort($reference, strval($port));
-		}
+		return $this;
 	}
 
 	/**
@@ -138,15 +116,13 @@ class Webpay
 	 * @param string $name
 	 * @param string $value
 	 *
-	 * @return void
+	 * @return $this
 	 */
-	public static function setAttribute($reference, $name, $value)
+	public function setAttribute($reference, $name, $value)
 	{
-		Webpay::checkWebpay();
+		\put($reference, $name, $value);
 
-		if (getenv('WEBPAY_MOCKED') != TRUE) {
-			\put($reference, $name, $value);
-		}
+		return $this;
 	}
 
 	/**
@@ -155,14 +131,8 @@ class Webpay
 	 *
 	 * @return string
 	 */
-	public static function getAttribute($reference, $name)
+	public function getAttribute($reference, $name)
 	{
-		Webpay::checkWebpay();
-
-		if (getenv('WEBPAY_MOCKED') != TRUE) {
-			\get($reference, $name);
-		} else {
-			return NULL;
-		}
+		\get($reference, $name);
 	}
 }

@@ -5,11 +5,28 @@ namespace StGeorgeIPG;
 use StGeorgeIPG\Exceptions\TransactionFailedException;
 use StGeorgeIPG\Exceptions\TransactionInProgressException;
 
+/**
+ * Class Client
+ *
+ * This class acts as a manager for the lower-level requests and responses.
+ *
+ * @package StGeorgeIPG
+ */
 class Client
 {
+	/**
+	 * The default server URL.
+	 */
 	const SERVER = 'www.gwipg.stgeorge.com.au';
 
+	/**
+	 * The port for live transactions.
+	 */
 	const PORT_LIVE = 3016;
+
+	/**
+	 * The port for test transactions.
+	 */
 	const PORT_TEST = 3017;
 
 	/**
@@ -38,6 +55,11 @@ class Client
 	private $logPath;
 
 	/**
+	 * @var Webpay $webpay
+	 */
+	private $webpay;
+
+	/**
 	 * @var string[] $servers
 	 */
 	private $servers;
@@ -64,13 +86,14 @@ class Client
 	 * @param string   $certificatePassword
 	 * @param string   $certificatePath
 	 * @param string   $logPath
+	 * @param Webpay   $webpay
 	 * @param boolean  $debug
 	 * @param integer  $port
 	 * @param string[] $servers
 	 * @param integer  $terminalType
 	 * @param string   $interface
 	 */
-	public function __construct($clientId, $certificatePassword, $certificatePath = 'cert.cert', $debug = FALSE, $logPath = 'webpay.log', $port = Client::PORT_LIVE, array $servers = [
+	public function __construct($clientId, $certificatePassword, $certificatePath = 'cert.cert', $debug = FALSE, $logPath = 'webpay.log', Webpay $webpay, $port = Client::PORT_LIVE, array $servers = [
 		Client::SERVER,
 	], $terminalType = Request::TERMINAL_TYPE_INTERNET, $interface = Request::INTERFACE_CREDIT_CARD)
 	{
@@ -79,6 +102,7 @@ class Client
 			->setCertificatePath($certificatePath)
 			->setCertificatePassword($certificatePassword)
 			->setLogPath($logPath)
+			->setWebpay($webpay)
 			->setDebug($debug)
 			->setPort($port)
 			->setServers($servers);
@@ -180,6 +204,26 @@ class Client
 	public function setLogPath($logPath)
 	{
 		$this->logPath = $logPath;
+
+		return $this;
+	}
+
+	/**
+	 * @return Webpay
+	 */
+	public function getWebpay()
+	{
+		return $this->webpay;
+	}
+
+	/**
+	 * @param Webpay $webpay
+	 *
+	 * @return Client
+	 */
+	public function setWebpay($webpay)
+	{
+		$this->webpay = $webpay;
 
 		return $this;
 	}
@@ -422,9 +466,9 @@ class Client
 	{
 		$request->validate();
 
-		$result = Webpay::executeTransaction($request->getWebpayReference());
+		$result = $this->getWebpay()->executeTransaction($request->getWebpayReference());
 
-		$response = Response::createFromWebpayReference($request->getWebpayReference());
+		$response = Response::createFromWebpayReference($this->getWebpay(), $request->getWebpayReference());
 
 		if ($result) {
 			if ($response->isCodeInProgress()) {

@@ -2,7 +2,6 @@
 
 namespace StGeorgeIPG\Exceptions\ResponseCodes;
 
-use StGeorgeIPG\Request;
 use StGeorgeIPG\Response;
 
 class Exception extends \Exception
@@ -27,15 +26,13 @@ class Exception extends \Exception
 	 *
 	 * @param Response $response
 	 */
-	public function __construct($response)
+	public function __construct(Response $response)
 	{
 		$this->response = $response;
 		$this->responseCode = $response->getCode();
 		$this->responseText = $response->getText();
 
-		$message = 'Response was ' . $this->responseCode . ' - ' . $this->responseText . '.';
-
-		return parent::__construct($message);
+		return parent::__construct('Response was ' . $this->responseCode . ' - ' . $this->responseText . '.');
 	}
 
 	/**

@@ -32,6 +32,9 @@ use StGeorgeIPG\Exceptions\ResponseCodes\ValidationFailureException;
  */
 class Response
 {
+	/*
+	 * The attributes available for Webpay responses.
+	 */
 	const ATTRIBUTE_RESPONSE_CODE = 'RESPONSECODE';
 	const ATTRIBUTE_RESPONSE_TEXT = 'RESPONSETEXT';
 	const ATTRIBUTE_ERROR = 'ERROR';
@@ -41,7 +44,9 @@ class Response
 	const ATTRIBUTE_STAN = 'STAN';
 	const ATTRIBUTE_SETTLEMENT_DATE = 'SETTLEMENTDATE';
 
-	// Common codes
+	/*
+	 * Common response codes.
+	 */
 	const CODE_00 = '00';
 	const CODE_03 = '03';
 	const CODE_05 = '05';
@@ -62,6 +67,9 @@ class Response
 	const CODE_VA = 'VA';
 	const CODE_Y3 = 'Y3';
 	const CODE_LOCAL_ERROR = '-1';
+
+	/** @var Webpay $webpay */
+	private $webpay;
 
 	/**
 	 * @var mixed $webpayReference
@@ -130,6 +138,26 @@ class Response
 		Response::CODE_08,
 		Response::CODE_77,
 	];
+
+	/**
+	 * @return Webpay
+	 */
+	public function getWebpay()
+	{
+		return $this->webpay;
+	}
+
+	/**
+	 * @param Webpay $webpay
+	 *
+	 * @return Response
+	 */
+	public function setWebpay($webpay)
+	{
+		$this->webpay = $webpay;
+
+		return $this;
+	}
 
 	/**
 	 * @return mixed
@@ -342,7 +370,7 @@ class Response
 	 */
 	private function getAttribute($name)
 	{
-		return Webpay::getAttribute($this->getWebpayReference(), $name);
+		return $this->getWebpay()->getAttribute($this->getWebpayReference(), $name);
 	}
 
 	/**
@@ -350,11 +378,12 @@ class Response
 	 *
 	 * @return \StGeorgeIPG\Response
 	 */
-	public static function createFromWebpayReference($webpayReference)
+	public static function createFromWebpayReference(Webpay $webpay, $webpayReference)
 	{
 		$response = new Response();
 
 		$response
+			->setWebpay($webpay)
 			->setWebpayReference($webpayReference);
 
 		foreach (Response::$attributeMapping as $attribute => $property) {
