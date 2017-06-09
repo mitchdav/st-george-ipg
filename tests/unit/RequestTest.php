@@ -10,9 +10,9 @@ use StGeorgeIPG\Exceptions\InvalidCardDataException;
 class RequestTest extends TestCase
 {
 	/**
-	 * @return \StGeorgeIPG\Request
+	 * @return \StGeorgeIPG\Webpay
 	 */
-	private function createRequestWithWebpayMock()
+	private function createWebpayMock()
 	{
 		$builder = $this->getMockBuilder(Webpay::class);
 
@@ -21,11 +21,34 @@ class RequestTest extends TestCase
 			->disableOriginalConstructor()
 			->getMock();
 
+		return $webpay;
+	}
+
+	/**
+	 * @return \StGeorgeIPG\Request
+	 */
+	private function createRequestWithWebpayMock()
+	{
 		$request = new Request();
 
-		$request->setWebpay($webpay);
+		$request->setWebpay($this->createWebpayMock());
 
 		return $request;
+	}
+
+	/**
+	 * @covers \StGeorgeIPG\Request::getWebpay
+	 * @covers \StGeorgeIPG\Request::setWebpay
+	 */
+	public function testGetSetWebpay_ValidInput_Equals()
+	{
+		$request = new Request();
+
+		$value = $this->createWebpayMock();
+
+		$request->setWebpay($value);
+
+		$this->assertEquals($value, $request->getWebpay());
 	}
 
 	/**
@@ -46,6 +69,7 @@ class RequestTest extends TestCase
 	/**
 	 * @covers \StGeorgeIPG\Request::getInterface
 	 * @covers \StGeorgeIPG\Request::setInterface
+	 * @covers \StGeorgeIPG\Request::validateInput
 	 */
 	public function testGetSetInterface_ValidInput_Equals()
 	{
@@ -60,6 +84,7 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::setInterface
+	 * @covers \StGeorgeIPG\Request::validateInput
 	 */
 	public function testSetInterface_InvalidInput_ThrowException()
 	{
@@ -74,6 +99,7 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::isInterfaceCreditCard
+	 * @covers \StGeorgeIPG\Request::validateInput
 	 */
 	public function testIsInterfaceCreditCard_ValidInput_True()
 	{
@@ -86,6 +112,7 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::isInterfaceCreditCard
+	 * @covers \StGeorgeIPG\Request::validateInput
 	 */
 	public function testIsInterfaceCreditCard_InvalidInput_False()
 	{
@@ -98,6 +125,7 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::isInterfaceTest
+	 * @covers \StGeorgeIPG\Request::validateInput
 	 */
 	public function testIsInterfaceTest_ValidInput_True()
 	{
@@ -110,6 +138,7 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::isInterfaceTest
+	 * @covers \StGeorgeIPG\Request::validateInput
 	 */
 	public function testIsInterfaceTest_InvalidInput_False()
 	{
@@ -123,6 +152,7 @@ class RequestTest extends TestCase
 	/**
 	 * @covers \StGeorgeIPG\Request::getTransactionType
 	 * @covers \StGeorgeIPG\Request::setTransactionType
+	 * @covers \StGeorgeIPG\Request::validateInput
 	 */
 	public function testGetSetTransactionType_ValidInput_Equals()
 	{
@@ -137,6 +167,7 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::setTransactionType
+	 * @covers \StGeorgeIPG\Request::validateInput
 	 */
 	public function testSetTransactionType_InvalidInput_ExpectException()
 	{
@@ -151,6 +182,7 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::isTransactionTypePurchase
+	 * @covers \StGeorgeIPG\Request::validateInput
 	 */
 	public function testIsTransactionTypePurchase_ValidInput_True()
 	{
@@ -163,6 +195,7 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::isTransactionTypePurchase
+	 * @covers \StGeorgeIPG\Request::validateInput
 	 */
 	public function testIsTransactionTypePurchase_InvalidInput_False()
 	{
@@ -175,6 +208,7 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::isTransactionTypeRefund
+	 * @covers \StGeorgeIPG\Request::validateInput
 	 */
 	public function testIsTransactionTypeRefund_ValidInput_True()
 	{
@@ -187,6 +221,7 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::isTransactionTypeRefund
+	 * @covers \StGeorgeIPG\Request::validateInput
 	 */
 	public function testIsTransactionTypeRefund_InvalidInput_False()
 	{
@@ -199,6 +234,7 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::isTransactionTypePreAuth
+	 * @covers \StGeorgeIPG\Request::validateInput
 	 */
 	public function testIsTransactionTypePreAuth_ValidInput_True()
 	{
@@ -211,6 +247,7 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::isTransactionTypePreAuth
+	 * @covers \StGeorgeIPG\Request::validateInput
 	 */
 	public function testIsTransactionTypePreAuth_InvalidInput_False()
 	{
@@ -223,6 +260,7 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::isTransactionTypeCompletion
+	 * @covers \StGeorgeIPG\Request::validateInput
 	 */
 	public function testIsTransactionTypeCompletion_ValidInput_True()
 	{
@@ -235,6 +273,7 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::isTransactionTypeCompletion
+	 * @covers \StGeorgeIPG\Request::validateInput
 	 */
 	public function testIsTransactionTypeCompletion_InvalidInput_False()
 	{
@@ -247,6 +286,7 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::isTransactionTypeStatus
+	 * @covers \StGeorgeIPG\Request::validateInput
 	 */
 	public function testIsTransactionTypeStatus_ValidInput_True()
 	{
@@ -259,6 +299,7 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::isTransactionTypeStatus
+	 * @covers \StGeorgeIPG\Request::validateInput
 	 */
 	public function testIsTransactionTypeStatus_InvalidInput_False()
 	{
@@ -272,6 +313,8 @@ class RequestTest extends TestCase
 	/**
 	 * @covers \StGeorgeIPG\Request::getTotalAmount
 	 * @covers \StGeorgeIPG\Request::setTotalAmount
+	 * @covers \StGeorgeIPG\Request::formatCurrency
+	 * @covers \StGeorgeIPG\Request::validateInputIsDouble
 	 */
 	public function testGetSetTotalAmount_ValidInput_Equals()
 	{
@@ -286,6 +329,8 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::setTotalAmount
+	 * @covers \StGeorgeIPG\Request::formatCurrency
+	 * @covers \StGeorgeIPG\Request::validateInputIsDouble
 	 */
 	public function testSetTotalAmount_InvalidInput_ExpectException()
 	{
@@ -301,6 +346,8 @@ class RequestTest extends TestCase
 	/**
 	 * @covers \StGeorgeIPG\Request::getTaxAmount
 	 * @covers \StGeorgeIPG\Request::setTaxAmount
+	 * @covers \StGeorgeIPG\Request::formatCurrency
+	 * @covers \StGeorgeIPG\Request::validateInputIsDouble
 	 */
 	public function testGetSetTaxAmount_ValidInput_Equals()
 	{
@@ -315,6 +362,8 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::setTaxAmount
+	 * @covers \StGeorgeIPG\Request::formatCurrency
+	 * @covers \StGeorgeIPG\Request::validateInputIsDouble
 	 */
 	public function testSetTaxAmount_InvalidInput_ExpectException()
 	{
@@ -330,6 +379,8 @@ class RequestTest extends TestCase
 	/**
 	 * @covers \StGeorgeIPG\Request::getCardData
 	 * @covers \StGeorgeIPG\Request::setCardData
+	 * @covers \StGeorgeIPG\Request::formatCardNumber
+	 * @covers \StGeorgeIPG\Request::validateInputIsCardNumber
 	 */
 	public function testGetSetCardData_ValidInput_Equals()
 	{
@@ -345,6 +396,8 @@ class RequestTest extends TestCase
 	/**
 	 * @covers \StGeorgeIPG\Request::getCardData
 	 * @covers \StGeorgeIPG\Request::setCardData
+	 * @covers \StGeorgeIPG\Request::formatCardNumber
+	 * @covers \StGeorgeIPG\Request::validateInputIsCardNumber
 	 */
 	public function testGetSetCardData_ValidInput_WithDashes_Equals()
 	{
@@ -361,6 +414,8 @@ class RequestTest extends TestCase
 	/**
 	 * @covers \StGeorgeIPG\Request::getCardData
 	 * @covers \StGeorgeIPG\Request::setCardData
+	 * @covers \StGeorgeIPG\Request::formatCardNumber
+	 * @covers \StGeorgeIPG\Request::validateInputIsCardNumber
 	 */
 	public function testGetSetCardData_ValidInput_WithSpaces_Equals()
 	{
@@ -376,6 +431,8 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::setCardData
+	 * @covers \StGeorgeIPG\Request::formatCardNumber
+	 * @covers \StGeorgeIPG\Request::validateInputIsCardNumber
 	 */
 	public function testSetCardData_InvalidInput_NonNumeric_ExpectException()
 	{
@@ -390,6 +447,8 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::setCardData
+	 * @covers \StGeorgeIPG\Request::formatCardNumber
+	 * @covers \StGeorgeIPG\Request::validateInputIsCardNumber
 	 */
 	public function testSetCardData_InvalidInput_InvalidNumber_ExpectException()
 	{
@@ -404,6 +463,8 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::setCardData
+	 * @covers \StGeorgeIPG\Request::formatCardNumber
+	 * @covers \StGeorgeIPG\Request::validateInputIsCardNumber
 	 */
 	public function testSetCardData_InvalidInput_InvalidLength_ExpectException()
 	{
@@ -418,6 +479,8 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::setCardData
+	 * @covers \StGeorgeIPG\Request::formatCardNumber
+	 * @covers \StGeorgeIPG\Request::validateInputIsCardNumber
 	 */
 	public function testSetCardData_InvalidInput_InvalidPrefix_ExpectException()
 	{
@@ -433,6 +496,9 @@ class RequestTest extends TestCase
 	/**
 	 * @covers \StGeorgeIPG\Request::getCardExpiryDate
 	 * @covers \StGeorgeIPG\Request::setCardExpiryDate
+	 * @covers \StGeorgeIPG\Request::formatDate
+	 * @covers \StGeorgeIPG\Request::validateInputIsInteger
+	 * @covers \StGeorgeIPG\Request::validateInputIsCardExpiryDate
 	 */
 	public function testGetSetCardExpiryDate_ValidInput_Equals()
 	{
@@ -451,6 +517,9 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::setCardExpiryDate
+	 * @covers \StGeorgeIPG\Request::formatDate
+	 * @covers \StGeorgeIPG\Request::validateInputIsInteger
+	 * @covers \StGeorgeIPG\Request::validateInputIsCardExpiryDate
 	 */
 	public function testSetCardExpiryDate_InvalidInput_WithText_ExpectException()
 	{
@@ -466,6 +535,9 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::setCardExpiryDate
+	 * @covers \StGeorgeIPG\Request::formatDate
+	 * @covers \StGeorgeIPG\Request::validateInputIsInteger
+	 * @covers \StGeorgeIPG\Request::validateInputIsCardExpiryDate
 	 */
 	public function testSetCardExpiryDate_InvalidInput_WithPastDate_ExpectException()
 	{
@@ -650,6 +722,7 @@ class RequestTest extends TestCase
 	/**
 	 * @covers \StGeorgeIPG\Request::getTerminalType
 	 * @covers \StGeorgeIPG\Request::setTerminalType
+	 * @covers \StGeorgeIPG\Request::validateInput
 	 */
 	public function testGetSetTerminalType_ValidInput_Equals()
 	{
@@ -664,6 +737,7 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::setTerminalType
+	 * @covers \StGeorgeIPG\Request::validateInput
 	 */
 	public function testSetTerminalType_InvalidInput_ExpectException()
 	{
@@ -678,6 +752,7 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::isTerminalTypeInternet
+	 * @covers \StGeorgeIPG\Request::validateInput
 	 */
 	public function testIsTerminalTypeInternet_ValidInput_True()
 	{
@@ -690,6 +765,7 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::isTerminalTypeInternet
+	 * @covers \StGeorgeIPG\Request::validateInput
 	 */
 	public function testIsTerminalTypeInternet_InvalidInput_False()
 	{
@@ -702,6 +778,7 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::isTerminalTypeTelephoneOrder
+	 * @covers \StGeorgeIPG\Request::validateInput
 	 */
 	public function testIsTerminalTypeTelephoneOrder_ValidInput_True()
 	{
@@ -714,6 +791,7 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::isTerminalTypeTelephoneOrder
+	 * @covers \StGeorgeIPG\Request::validateInput
 	 */
 	public function testIsTerminalTypeTelephoneOrder_InvalidInput_False()
 	{
@@ -726,6 +804,7 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::isTerminalTypeMailOrder
+	 * @covers \StGeorgeIPG\Request::validateInput
 	 */
 	public function testIsTerminalTypeMailOrder_ValidInput_True()
 	{
@@ -738,6 +817,7 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::isTerminalTypeMailOrder
+	 * @covers \StGeorgeIPG\Request::validateInput
 	 */
 	public function testIsTerminalTypeMailOrder_InvalidInput_False()
 	{
@@ -750,6 +830,7 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::isTerminalTypeCustomerPresent
+	 * @covers \StGeorgeIPG\Request::validateInput
 	 */
 	public function testIsTerminalTypeCustomerPresent_ValidInput_True()
 	{
@@ -762,6 +843,7 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::isTerminalTypeCustomerPresent
+	 * @covers \StGeorgeIPG\Request::validateInput
 	 */
 	public function testIsTerminalTypeCustomerPresent_InvalidInput_False()
 	{
@@ -774,6 +856,7 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::isTerminalTypeRecurringPayment
+	 * @covers \StGeorgeIPG\Request::validateInput
 	 */
 	public function testIsTerminalTypeRecurringPayment_ValidInput_True()
 	{
@@ -786,6 +869,7 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::isTerminalTypeRecurringPayment
+	 * @covers \StGeorgeIPG\Request::validateInput
 	 */
 	public function testIsTerminalTypeRecurringPayment_InvalidInput_False()
 	{
@@ -798,6 +882,7 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::isTerminalTypeInstalment
+	 * @covers \StGeorgeIPG\Request::validateInput
 	 */
 	public function testIsTerminalTypeInstalment_ValidInput_True()
 	{
@@ -810,6 +895,7 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::isTerminalTypeInstalment
+	 * @covers \StGeorgeIPG\Request::validateInput
 	 */
 	public function testIsTerminalTypeInstalment_InvalidInput_False()
 	{
@@ -837,6 +923,16 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::validate
+	 * @covers \StGeorgeIPG\Request::validateAttributes
+	 * @covers \StGeorgeIPG\Request::resolveAttributeFromMapping
+	 * @covers \StGeorgeIPG\Request::formatCurrency
+	 * @covers \StGeorgeIPG\Request::formatCardNumber
+	 * @covers \StGeorgeIPG\Request::formatDate
+	 * @covers \StGeorgeIPG\Request::validateInput
+	 * @covers \StGeorgeIPG\Request::validateInputIsInteger
+	 * @covers \StGeorgeIPG\Request::validateInputIsDouble
+	 * @covers \StGeorgeIPG\Request::validateInputIsCardNumber
+	 * @covers \StGeorgeIPG\Request::validateInputIsCardExpiryDate
 	 */
 	public function testValidate_ValidInput_WithPurchase_True()
 	{
@@ -865,6 +961,14 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::validate
+	 * @covers \StGeorgeIPG\Request::validateAttributes
+	 * @covers \StGeorgeIPG\Request::resolveAttributeFromMapping
+	 * @covers \StGeorgeIPG\Request::formatCurrency
+	 * @covers \StGeorgeIPG\Request::formatDate
+	 * @covers \StGeorgeIPG\Request::validateInput
+	 * @covers \StGeorgeIPG\Request::validateInputIsInteger
+	 * @covers \StGeorgeIPG\Request::validateInputIsDouble
+	 * @covers \StGeorgeIPG\Request::validateInputIsCardExpiryDate
 	 */
 	public function testValidate_InvalidInput_WithPurchase_ExpectException()
 	{
@@ -901,6 +1005,11 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::validate
+	 * @covers \StGeorgeIPG\Request::validateAttributes
+	 * @covers \StGeorgeIPG\Request::resolveAttributeFromMapping
+	 * @covers \StGeorgeIPG\Request::formatCurrency
+	 * @covers \StGeorgeIPG\Request::validateInput
+	 * @covers \StGeorgeIPG\Request::validateInputIsDouble
 	 */
 	public function testValidate_ValidInput_WithRefund_True()
 	{
@@ -922,6 +1031,13 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::validate
+	 * @covers \StGeorgeIPG\Request::validateAttributes
+	 * @covers \StGeorgeIPG\Request::resolveAttributeFromMapping
+	 * @covers \StGeorgeIPG\Request::formatCurrency
+	 * @covers \StGeorgeIPG\Request::formatCardNumber
+	 * @covers \StGeorgeIPG\Request::validateInput
+	 * @covers \StGeorgeIPG\Request::validateInputIsDouble
+	 * @covers \StGeorgeIPG\Request::validateInputIsCardNumber
 	 */
 	public function testValidate_InvalidInput_WithRefund_ExpectException()
 	{
@@ -952,6 +1068,16 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::validate
+	 * @covers \StGeorgeIPG\Request::validateAttributes
+	 * @covers \StGeorgeIPG\Request::resolveAttributeFromMapping
+	 * @covers \StGeorgeIPG\Request::formatCurrency
+	 * @covers \StGeorgeIPG\Request::formatCardNumber
+	 * @covers \StGeorgeIPG\Request::formatDate
+	 * @covers \StGeorgeIPG\Request::validateInput
+	 * @covers \StGeorgeIPG\Request::validateInputIsInteger
+	 * @covers \StGeorgeIPG\Request::validateInputIsDouble
+	 * @covers \StGeorgeIPG\Request::validateInputIsCardNumber
+	 * @covers \StGeorgeIPG\Request::validateInputIsCardExpiryDate
 	 */
 	public function testValidate_ValidInput_WithPreAuth_True()
 	{
@@ -980,6 +1106,16 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::validate
+	 * @covers \StGeorgeIPG\Request::validateAttributes
+	 * @covers \StGeorgeIPG\Request::resolveAttributeFromMapping
+	 * @covers \StGeorgeIPG\Request::formatCurrency
+	 * @covers \StGeorgeIPG\Request::formatCardNumber
+	 * @covers \StGeorgeIPG\Request::formatDate
+	 * @covers \StGeorgeIPG\Request::validateInput
+	 * @covers \StGeorgeIPG\Request::validateInputIsInteger
+	 * @covers \StGeorgeIPG\Request::validateInputIsDouble
+	 * @covers \StGeorgeIPG\Request::validateInputIsCardNumber
+	 * @covers \StGeorgeIPG\Request::validateInputIsCardExpiryDate
 	 */
 	public function testValidate_InvalidInput_WithPreAuth_ExpectException()
 	{
@@ -1017,6 +1153,11 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::validate
+	 * @covers \StGeorgeIPG\Request::validateAttributes
+	 * @covers \StGeorgeIPG\Request::resolveAttributeFromMapping
+	 * @covers \StGeorgeIPG\Request::formatCurrency
+	 * @covers \StGeorgeIPG\Request::validateInput
+	 * @covers \StGeorgeIPG\Request::validateInputIsDouble
 	 */
 	public function testValidate_ValidInput_WithCompletion_True()
 	{
@@ -1039,6 +1180,13 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::validate
+	 * @covers \StGeorgeIPG\Request::validateAttributes
+	 * @covers \StGeorgeIPG\Request::resolveAttributeFromMapping
+	 * @covers \StGeorgeIPG\Request::formatCurrency
+	 * @covers \StGeorgeIPG\Request::formatCardNumber
+	 * @covers \StGeorgeIPG\Request::validateInput
+	 * @covers \StGeorgeIPG\Request::validateInputIsDouble
+	 * @covers \StGeorgeIPG\Request::validateInputIsCardNumber
 	 */
 	public function testValidate_InvalidInput_WithCompletion_ExpectException()
 	{
@@ -1068,6 +1216,9 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::validate
+	 * @covers \StGeorgeIPG\Request::validateAttributes
+	 * @covers \StGeorgeIPG\Request::resolveAttributeFromMapping
+	 * @covers \StGeorgeIPG\Request::validateInput
 	 */
 	public function testValidate_ValidInput_WithStatus_True()
 	{
@@ -1083,6 +1234,13 @@ class RequestTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Request::validate
+	 * @covers \StGeorgeIPG\Request::validateAttributes
+	 * @covers \StGeorgeIPG\Request::resolveAttributeFromMapping
+	 * @covers \StGeorgeIPG\Request::formatCurrency
+	 * @covers \StGeorgeIPG\Request::formatCardNumber
+	 * @covers \StGeorgeIPG\Request::validateInput
+	 * @covers \StGeorgeIPG\Request::validateInputIsDouble
+	 * @covers \StGeorgeIPG\Request::validateInputIsCardNumber
 	 */
 	public function testValidate_InvalidInput_WithStatus_ExpectException()
 	{
@@ -1108,5 +1266,28 @@ class RequestTest extends TestCase
 			->setTaxAmount(5.00);
 
 		$request->validate();
+	}
+
+	/**
+	 * @covers \StGeorgeIPG\Request::createFromClient
+	 * @covers \StGeorgeIPG\Request::createWebpayReference
+	 * @covers \StGeorgeIPG\Request::setClientId
+	 * @covers \StGeorgeIPG\Request::setCertificatePath
+	 * @covers \StGeorgeIPG\Request::setCertificatePassword
+	 * @covers \StGeorgeIPG\Request::setDebug
+	 * @covers \StGeorgeIPG\Request::setServers
+	 * @covers \StGeorgeIPG\Request::setPort
+	 * @covers \StGeorgeIPG\Request::setLogPath
+	 * @covers \StGeorgeIPG\Request::setAttribute
+	 */
+	public function testCreateFromClient_ValidInput_True()
+	{
+		$webpay = $this->createWebpayMock();
+
+		$client = new Client(1000000000, 'password', 'cert.cert', FALSE, 'webpay.log', $webpay);
+
+		$request = Request::createFromClient($client);
+
+		$this->assertInstanceOf(Request::class, $request);
 	}
 }

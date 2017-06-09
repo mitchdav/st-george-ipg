@@ -206,7 +206,7 @@ class Request
 	 *
 	 * @return Request
 	 */
-	public function setWebpay($webpay)
+	public function setWebpay(Webpay $webpay)
 	{
 		$this->webpay = $webpay;
 
@@ -902,6 +902,14 @@ class Request
 	}
 
 	/**
+	 * @return mixed
+	 */
+	private function createWebpayReference()
+	{
+		return $this->getWebpay()->createBundle();
+	}
+
+	/**
 	 * @param array $mandatory
 	 * @param array $notAvailable
 	 *
@@ -1084,14 +1092,6 @@ class Request
 		}
 
 		return $request;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	private function createWebpayReference()
-	{
-		return $this->getWebpay()->createBundle();
 	}
 
 	/**

@@ -105,7 +105,9 @@ class Client
 			->setWebpay($webpay)
 			->setDebug($debug)
 			->setPort($port)
-			->setServers($servers);
+			->setServers($servers)
+			->setTerminalType($terminalType)
+			->setInterface($interface);
 	}
 
 	/**
