@@ -10,7 +10,10 @@ use StGeorgeIPG\Exceptions\WebpayNotLoadedException;
  * This class serves as a wrapper for the Webpay library, which helps
  * keep all of the non-IDE-findable functions in a single file.
  *
+ * As it just serves as a wrapper, this file is ignored from coverage reporting.
+ *
  * @package StGeorgeIPG
+ * @codeCoverageIgnore
  */
 class Webpay
 {
