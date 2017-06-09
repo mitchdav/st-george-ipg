@@ -25,6 +25,36 @@ class RequestTest extends TestCase
 	}
 
 	/**
+	 * @return \StGeorgeIPG\Client
+	 */
+	private function createClientWithWebpayMock()
+	{
+		$builder = $this->getMockBuilder(Client::class);
+
+		/** @var Client $clients */
+		$client = $builder
+			->disableOriginalConstructor()
+			->getMock();
+
+		$client
+			->expects($this->any())
+			->method('getWebpay')
+			->will($this->returnValue($this->createWebpayMock()));
+
+		$client
+			->expects($this->any())
+			->method('getTerminalType')
+			->will($this->returnValue(Request::TERMINAL_TYPE_INTERNET));
+
+		$client
+			->expects($this->any())
+			->method('getInterface')
+			->will($this->returnValue(Request::INTERFACE_CREDIT_CARD));
+
+		return $client;
+	}
+
+	/**
 	 * @return \StGeorgeIPG\Request
 	 */
 	private function createRequestWithWebpayMock()
@@ -1280,11 +1310,9 @@ class RequestTest extends TestCase
 	 * @covers \StGeorgeIPG\Request::setLogPath
 	 * @covers \StGeorgeIPG\Request::setAttribute
 	 */
-	public function testCreateFromClient_ValidInput_True()
+	public function testCreateFromClient_ValidInput_InstanceOf()
 	{
-		$webpay = $this->createWebpayMock();
-
-		$client = new Client(1000000000, 'password', 'cert.cert', FALSE, 'webpay.log', $webpay);
+		$client = $this->createClientWithWebpayMock();
 
 		$request = Request::createFromClient($client);
 
