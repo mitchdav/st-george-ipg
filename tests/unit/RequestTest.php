@@ -31,7 +31,7 @@ class RequestTest extends TestCase
 	{
 		$builder = $this->getMockBuilder(Client::class);
 
-		/** @var Client $clients */
+		/** @var Client $client */
 		$client = $builder
 			->disableOriginalConstructor()
 			->getMock();
@@ -50,6 +50,11 @@ class RequestTest extends TestCase
 			->expects($this->any())
 			->method('getInterface')
 			->will($this->returnValue(Request::INTERFACE_CREDIT_CARD));
+
+		$client
+			->expects($this->any())
+			->method('getLogPath')
+			->will($this->returnValue('webpay.log'));
 
 		return $client;
 	}
@@ -579,7 +584,6 @@ class RequestTest extends TestCase
 
 		$month = $oneYearBehind->month;
 		$year = $oneYearBehind->year;
-		$output = $oneYearBehind->format('my');
 
 		$request->setCardExpiryDate($month, $year);
 	}

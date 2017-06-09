@@ -892,10 +892,6 @@ class Request
 
 				break;
 			}
-
-			default: {
-				throw new InvalidAttributeValueException(Request::ATTRIBUTE_TRANSACTION_TYPE, $transactionType);
-			}
 		}
 
 		return TRUE;
@@ -957,11 +953,7 @@ class Request
 	 */
 	private function resolveAttributeFromMapping($name)
 	{
-		if (array_key_exists($name, Request::$attributeMapping)) {
-			return $this->{Request::$attributeMapping[$name]};
-		}
-
-		throw new AttributeNotFoundException($name);
+		return $this->{Request::$attributeMapping[$name]};
 	}
 
 	/**
