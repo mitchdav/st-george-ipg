@@ -31,7 +31,7 @@ class TransactionFailedException extends \Exception
 	 */
 	public function __construct($request, $response, $maxTries)
 	{
-		$this->request = $request;
+		$this->request  = $request;
 		$this->response = $response;
 		$this->maxTries = $maxTries;
 

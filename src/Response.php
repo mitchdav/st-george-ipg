@@ -35,40 +35,40 @@ class Response
 	/*
 	 * The attributes available for Webpay responses.
 	 */
-	const ATTRIBUTE_RESPONSE_CODE = 'RESPONSECODE';
-	const ATTRIBUTE_RESPONSE_TEXT = 'RESPONSETEXT';
-	const ATTRIBUTE_ERROR = 'ERROR';
-	const ATTRIBUTE_ERROR_DETAIL = 'ERRORDETAIL';
+	const ATTRIBUTE_RESPONSE_CODE         = 'RESPONSECODE';
+	const ATTRIBUTE_RESPONSE_TEXT         = 'RESPONSETEXT';
+	const ATTRIBUTE_ERROR                 = 'ERROR';
+	const ATTRIBUTE_ERROR_DETAIL          = 'ERRORDETAIL';
 	const ATTRIBUTE_TRANSACTION_REFERENCE = 'TXNREFERENCE';
-	const ATTRIBUTE_AUTH_CODE = 'AUTHCODE';
-	const ATTRIBUTE_STAN = 'STAN';
-	const ATTRIBUTE_SETTLEMENT_DATE = 'SETTLEMENTDATE';
+	const ATTRIBUTE_AUTH_CODE             = 'AUTHCODE';
+	const ATTRIBUTE_STAN                  = 'STAN';
+	const ATTRIBUTE_SETTLEMENT_DATE       = 'SETTLEMENTDATE';
 
 	/*
 	 * Common response codes.
 	 */
-	const CODE_00 = '00';
-	const CODE_03 = '03';
-	const CODE_05 = '05';
-	const CODE_08 = '08';
-	const CODE_31 = '31';
-	const CODE_33 = '33';
-	const CODE_51 = '51';
-	const CODE_77 = '77';
-	const CODE_91 = '91';
-	const CODE_0C = '0C';
-	const CODE_0M = '0M';
-	const CODE_A6 = 'A6';
-	const CODE_A8 = 'A8';
-	const CODE_AC = 'AC';
-	const CODE_AE = 'AE';
-	const CODE_IN = 'IN';
-	const CODE_IP = 'IP';
-	const CODE_VA = 'VA';
-	const CODE_Y3 = 'Y3';
+	const CODE_00          = '00';
+	const CODE_03          = '03';
+	const CODE_05          = '05';
+	const CODE_08          = '08';
+	const CODE_31          = '31';
+	const CODE_33          = '33';
+	const CODE_51          = '51';
+	const CODE_77          = '77';
+	const CODE_91          = '91';
+	const CODE_0C          = '0C';
+	const CODE_0M          = '0M';
+	const CODE_A6          = 'A6';
+	const CODE_A8          = 'A8';
+	const CODE_AC          = 'AC';
+	const CODE_AE          = 'AE';
+	const CODE_IN          = 'IN';
+	const CODE_IP          = 'IP';
+	const CODE_VA          = 'VA';
+	const CODE_Y3          = 'Y3';
 	const CODE_LOCAL_ERROR = '-1';
 
-	/** @var Webpay $webpay */
+	/** @var \StGeorgeIPG\Webpay $webpay */
 	private $webpay;
 
 	/**
@@ -140,7 +140,7 @@ class Response
 	];
 
 	/**
-	 * @return Webpay
+	 * @return \StGeorgeIPG\Webpay
 	 */
 	public function getWebpay()
 	{
@@ -148,9 +148,9 @@ class Response
 	}
 
 	/**
-	 * @param Webpay $webpay
+	 * @param \StGeorgeIPG\Webpay $webpay
 	 *
-	 * @return Response
+	 * @return \StGeorgeIPG\Response
 	 */
 	public function setWebpay($webpay)
 	{
@@ -170,7 +170,7 @@ class Response
 	/**
 	 * @param mixed $webpayReference
 	 *
-	 * @return Request
+	 * @return \StGeorgeIPG\Response
 	 */
 	public function setWebpayReference($webpayReference)
 	{
@@ -214,7 +214,7 @@ class Response
 	/**
 	 * @param string $code
 	 *
-	 * @return Response
+	 * @return \StGeorgeIPG\Response
 	 */
 	public function setCode($code)
 	{
@@ -234,7 +234,7 @@ class Response
 	/**
 	 * @param string $text
 	 *
-	 * @return Response
+	 * @return \StGeorgeIPG\Response
 	 */
 	public function setText($text)
 	{
@@ -254,7 +254,7 @@ class Response
 	/**
 	 * @param string $error
 	 *
-	 * @return Response
+	 * @return \StGeorgeIPG\Response
 	 */
 	public function setError($error)
 	{
@@ -274,7 +274,7 @@ class Response
 	/**
 	 * @param string $errorDetail
 	 *
-	 * @return Response
+	 * @return \StGeorgeIPG\Response
 	 */
 	public function setErrorDetail($errorDetail)
 	{
@@ -294,7 +294,7 @@ class Response
 	/**
 	 * @param string $transactionReference
 	 *
-	 * @return Response
+	 * @return \StGeorgeIPG\Response
 	 */
 	public function setTransactionReference($transactionReference)
 	{
@@ -314,7 +314,7 @@ class Response
 	/**
 	 * @param string $authorisationNumber
 	 *
-	 * @return Response
+	 * @return \StGeorgeIPG\Response
 	 */
 	public function setAuthorisationNumber($authorisationNumber)
 	{
@@ -334,7 +334,7 @@ class Response
 	/**
 	 * @param string $stan
 	 *
-	 * @return Response
+	 * @return \StGeorgeIPG\Response
 	 */
 	public function setStan($stan)
 	{
@@ -354,7 +354,7 @@ class Response
 	/**
 	 * @param string $settlementDate
 	 *
-	 * @return Response
+	 * @return \StGeorgeIPG\Response
 	 */
 	public function setSettlementDate($settlementDate)
 	{
@@ -374,7 +374,8 @@ class Response
 	}
 
 	/**
-	 * @param mixed $webpayReference
+	 * @param \StGeorgeIPG\Webpay $webpay
+	 * @param mixed               $webpayReference
 	 *
 	 * @return \StGeorgeIPG\Response
 	 */
@@ -396,7 +397,7 @@ class Response
 	/**
 	 * @param \StGeorgeIPG\Response $response
 	 *
-	 * @return Exception
+	 * @return \StGeorgeIPG\Exceptions\ResponseCodes\Exception
 	 */
 	public static function mapResponseCodeToException(Response $response)
 	{

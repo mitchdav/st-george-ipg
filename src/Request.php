@@ -3,7 +3,6 @@
 namespace StGeorgeIPG;
 
 use Inacho\CreditCard;
-use StGeorgeIPG\Exceptions\AttributeNotFoundException;
 use StGeorgeIPG\Exceptions\InvalidAttributeStatusException;
 use StGeorgeIPG\Exceptions\InvalidAttributeValueException;
 use StGeorgeIPG\Exceptions\InvalidCardDataException;
@@ -20,52 +19,52 @@ class Request
 	/*
 	 * The attributes available for Webpay requests.
 	 */
-	const ATTRIBUTE_INTERFACE = 'INTERFACE';
-	const ATTRIBUTE_TRANSACTION_TYPE = 'TRANSACTIONTYPE';
-	const ATTRIBUTE_TOTAL_AMOUNT = 'TOTALAMOUNT';
-	const ATTRIBUTE_TAX_AMOUNT = 'TAXAMOUNT';
-	const ATTRIBUTE_CARD_DATA = 'CARDDATA';
-	const ATTRIBUTE_CARD_EXPIRY_DATE = 'CARDEXPIRYDATE';
-	const ATTRIBUTE_TRANSACTION_REFERENCE = 'TXNREFERENCE';
+	const ATTRIBUTE_INTERFACE                      = 'INTERFACE';
+	const ATTRIBUTE_TRANSACTION_TYPE               = 'TRANSACTIONTYPE';
+	const ATTRIBUTE_TOTAL_AMOUNT                   = 'TOTALAMOUNT';
+	const ATTRIBUTE_TAX_AMOUNT                     = 'TAXAMOUNT';
+	const ATTRIBUTE_CARD_DATA                      = 'CARDDATA';
+	const ATTRIBUTE_CARD_EXPIRY_DATE               = 'CARDEXPIRYDATE';
+	const ATTRIBUTE_TRANSACTION_REFERENCE          = 'TXNREFERENCE';
 	const ATTRIBUTE_ORIGINAL_TRANSACTION_REFERENCE = 'ORIGINALTXNREF';
-	const ATTRIBUTE_PRE_AUTH_NUMBER = 'PREAUTHNUMBER';
-	const ATTRIBUTE_AUTH_NUMBER = 'AUTHNUMBER';
-	const ATTRIBUTE_AUTHORISATION_NUMBER = 'AUTHORISATIONNUMBER';
-	const ATTRIBUTE_AUTH_CODE = 'AUTHCODE';
-	const ATTRIBUTE_AUTHORISATION_CODE = 'AUTHORISATIONCODE';
-	const ATTRIBUTE_CLIENT_REFERENCE = 'CLIENTREF';
-	const ATTRIBUTE_COMMENT = 'COMMENT';
-	const ATTRIBUTE_MERCHANT_CARD_HOLDER_NAME = 'MERCHANT_CARDHOLDERNAME';
-	const ATTRIBUTE_MERCHANT_DESCRIPTION = 'MERCHANT_DESCRIPTION';
-	const ATTRIBUTE_TERMINAL_TYPE = 'TERMINALTYPE';
-	const ATTRIBUTE_CVC2 = 'CVC2';
+	const ATTRIBUTE_PRE_AUTH_NUMBER                = 'PREAUTHNUMBER';
+	const ATTRIBUTE_AUTH_NUMBER                    = 'AUTHNUMBER';
+	const ATTRIBUTE_AUTHORISATION_NUMBER           = 'AUTHORISATIONNUMBER';
+	const ATTRIBUTE_AUTH_CODE                      = 'AUTHCODE';
+	const ATTRIBUTE_AUTHORISATION_CODE             = 'AUTHORISATIONCODE';
+	const ATTRIBUTE_CLIENT_REFERENCE               = 'CLIENTREF';
+	const ATTRIBUTE_COMMENT                        = 'COMMENT';
+	const ATTRIBUTE_MERCHANT_CARD_HOLDER_NAME      = 'MERCHANT_CARDHOLDERNAME';
+	const ATTRIBUTE_MERCHANT_DESCRIPTION           = 'MERCHANT_DESCRIPTION';
+	const ATTRIBUTE_TERMINAL_TYPE                  = 'TERMINALTYPE';
+	const ATTRIBUTE_CVC2                           = 'CVC2';
 
 	/*
 	 * The interfaces available for Webpay requests.
 	 */
 	const INTERFACE_CREDIT_CARD = 'CREDITCARD';
-	const INTERFACE_TEST = 'TEST';
+	const INTERFACE_TEST        = 'TEST';
 
 	/*
 	 * The transaction types available for Webpay requests.
 	 */
-	const TRANSACTION_TYPE_PURCHASE = 'PURCHASE';
-	const TRANSACTION_TYPE_REFUND = 'REFUND';
-	const TRANSACTION_TYPE_PRE_AUTH = 'PREAUTH';
+	const TRANSACTION_TYPE_PURCHASE   = 'PURCHASE';
+	const TRANSACTION_TYPE_REFUND     = 'REFUND';
+	const TRANSACTION_TYPE_PRE_AUTH   = 'PREAUTH';
 	const TRANSACTION_TYPE_COMPLETION = 'COMPLETION';
-	const TRANSACTION_TYPE_STATUS = 'STATUS';
+	const TRANSACTION_TYPE_STATUS     = 'STATUS';
 
 	/*
 	 * The terminal types available for Webpay requests.
 	 */
-	const TERMINAL_TYPE_INTERNET = 0;
-	const TERMINAL_TYPE_TELEPHONE_ORDER = 1;
-	const TERMINAL_TYPE_MAIL_ORDER = 2;
-	const TERMINAL_TYPE_CUSTOMER_PRESENT = 3;
+	const TERMINAL_TYPE_INTERNET          = 0;
+	const TERMINAL_TYPE_TELEPHONE_ORDER   = 1;
+	const TERMINAL_TYPE_MAIL_ORDER        = 2;
+	const TERMINAL_TYPE_CUSTOMER_PRESENT  = 3;
 	const TERMINAL_TYPE_RECURRING_PAYMENT = 4;
-	const TERMINAL_TYPE_INSTALMENT = 5;
+	const TERMINAL_TYPE_INSTALMENT        = 5;
 
-	/** @var Webpay $webpay */
+	/** @var \StGeorgeIPG\Webpay $webpay */
 	private $webpay;
 
 	/**
@@ -194,7 +193,7 @@ class Request
 	];
 
 	/**
-	 * @return Webpay
+	 * @return \StGeorgeIPG\Webpay
 	 */
 	public function getWebpay()
 	{
@@ -202,9 +201,9 @@ class Request
 	}
 
 	/**
-	 * @param Webpay $webpay
+	 * @param \StGeorgeIPG\Webpay $webpay
 	 *
-	 * @return Request
+	 * @return \StGeorgeIPG\Request
 	 */
 	public function setWebpay(Webpay $webpay)
 	{
@@ -224,7 +223,7 @@ class Request
 	/**
 	 * @param mixed $webpayReference
 	 *
-	 * @return Request
+	 * @return \StGeorgeIPG\Request
 	 */
 	public function setWebpayReference($webpayReference)
 	{
@@ -260,7 +259,7 @@ class Request
 	/**
 	 * @param string $interface
 	 *
-	 * @return Request
+	 * @return \StGeorgeIPG\Request
 	 */
 	public function setInterface($interface)
 	{
@@ -329,7 +328,7 @@ class Request
 	/**
 	 * @param string $transactionType
 	 *
-	 * @return Request
+	 * @return \StGeorgeIPG\Request
 	 */
 	public function setTransactionType($transactionType)
 	{
@@ -361,7 +360,7 @@ class Request
 	/**
 	 * @param double $totalAmount
 	 *
-	 * @return Request
+	 * @return \StGeorgeIPG\Request
 	 */
 	public function setTotalAmount($totalAmount)
 	{
@@ -385,7 +384,7 @@ class Request
 	/**
 	 * @param double $taxAmount
 	 *
-	 * @return Request
+	 * @return \StGeorgeIPG\Request
 	 */
 	public function setTaxAmount($taxAmount)
 	{
@@ -409,7 +408,7 @@ class Request
 	/**
 	 * @param string $cardData
 	 *
-	 * @return Request
+	 * @return \StGeorgeIPG\Request
 	 */
 	public function setCardData($cardData)
 	{
@@ -436,7 +435,7 @@ class Request
 	 * @param integer $month
 	 * @param integer $year
 	 *
-	 * @return Request
+	 * @return \StGeorgeIPG\Request
 	 */
 	public function setCardExpiryDate($month, $year)
 	{
@@ -464,7 +463,7 @@ class Request
 	/**
 	 * @param string $transactionReference
 	 *
-	 * @return Request
+	 * @return \StGeorgeIPG\Request
 	 */
 	public function setTransactionReference($transactionReference)
 	{
@@ -486,7 +485,7 @@ class Request
 	/**
 	 * @param string $originalTransactionReference
 	 *
-	 * @return Request
+	 * @return \StGeorgeIPG\Request
 	 */
 	public function setOriginalTransactionReference($originalTransactionReference)
 	{
@@ -508,7 +507,7 @@ class Request
 	/**
 	 * @param string $preAuthNumber
 	 *
-	 * @return Request
+	 * @return \StGeorgeIPG\Request
 	 */
 	public function setPreAuthNumber($preAuthNumber)
 	{
@@ -530,7 +529,7 @@ class Request
 	/**
 	 * @param string $authNumber
 	 *
-	 * @return Request
+	 * @return \StGeorgeIPG\Request
 	 */
 	public function setAuthNumber($authNumber)
 	{
@@ -552,7 +551,7 @@ class Request
 	/**
 	 * @param string $authorisationNumber
 	 *
-	 * @return Request
+	 * @return \StGeorgeIPG\Request
 	 */
 	public function setAuthorisationNumber($authorisationNumber)
 	{
@@ -574,7 +573,7 @@ class Request
 	/**
 	 * @param string $authCode
 	 *
-	 * @return Request
+	 * @return \StGeorgeIPG\Request
 	 */
 	public function setAuthCode($authCode)
 	{
@@ -596,7 +595,7 @@ class Request
 	/**
 	 * @param string $authorisationCode
 	 *
-	 * @return Request
+	 * @return \StGeorgeIPG\Request
 	 */
 	public function setAuthorisationCode($authorisationCode)
 	{
@@ -618,7 +617,7 @@ class Request
 	/**
 	 * @param string $clientReference
 	 *
-	 * @return Request
+	 * @return \StGeorgeIPG\Request
 	 */
 	public function setClientReference($clientReference)
 	{
@@ -640,7 +639,7 @@ class Request
 	/**
 	 * @param string $comment
 	 *
-	 * @return Request
+	 * @return \StGeorgeIPG\Request
 	 */
 	public function setComment($comment)
 	{
@@ -662,7 +661,7 @@ class Request
 	/**
 	 * @param string $merchantCardHolderName
 	 *
-	 * @return Request
+	 * @return \StGeorgeIPG\Request
 	 */
 	public function setMerchantCardHolderName($merchantCardHolderName)
 	{
@@ -684,7 +683,7 @@ class Request
 	/**
 	 * @param string $merchantDescription
 	 *
-	 * @return Request
+	 * @return \StGeorgeIPG\Request
 	 */
 	public function setMerchantDescription($merchantDescription)
 	{
@@ -696,7 +695,7 @@ class Request
 	}
 
 	/**
-	 * @return int
+	 * @return integer
 	 */
 	public function getTerminalType()
 	{
@@ -754,7 +753,7 @@ class Request
 	/**
 	 * @param integer $terminalType
 	 *
-	 * @return Request
+	 * @return \StGeorgeIPG\Request
 	 */
 	public function setTerminalType($terminalType)
 	{
@@ -787,7 +786,7 @@ class Request
 	/**
 	 * @param string $cvc2
 	 *
-	 * @return Request
+	 * @return \StGeorgeIPG\Request
 	 */
 	public function setCVC2($cvc2)
 	{
@@ -801,7 +800,7 @@ class Request
 	/**
 	 * @return boolean
 	 *
-	 * @throws InvalidAttributeValueException
+	 * @throws \StGeorgeIPG\Exceptions\InvalidAttributeValueException
 	 */
 	public function validate()
 	{
@@ -909,7 +908,7 @@ class Request
 	 * @param array $mandatory
 	 * @param array $notAvailable
 	 *
-	 * @throws InvalidAttributeStatusException
+	 * @throws \StGeorgeIPG\Exceptions\InvalidAttributeStatusException
 	 */
 	private function validateAttributes($mandatory = [], $notAvailable = [])
 	{
@@ -959,7 +958,7 @@ class Request
 	/**
 	 * @param integer $clientId
 	 *
-	 * @return $this
+	 * @return \StGeorgeIPG\Client
 	 */
 	private function setClientId($clientId)
 	{
@@ -971,7 +970,7 @@ class Request
 	/**
 	 * @param string $certificatePath
 	 *
-	 * @return $this
+	 * @return \StGeorgeIPG\Client
 	 */
 	private function setCertificatePath($certificatePath)
 	{
@@ -983,7 +982,7 @@ class Request
 	/**
 	 * @param string $certificatePassword
 	 *
-	 * @return $this
+	 * @return \StGeorgeIPG\Client
 	 */
 	private function setCertificatePassword($certificatePassword)
 	{
@@ -995,7 +994,7 @@ class Request
 	/**
 	 * @param string[] $servers
 	 *
-	 * @return $this
+	 * @return \StGeorgeIPG\Client
 	 */
 	private function setServers($servers)
 	{
@@ -1007,7 +1006,7 @@ class Request
 	/**
 	 * @param integer $port
 	 *
-	 * @return $this
+	 * @return \StGeorgeIPG\Client
 	 */
 	private function setPort($port)
 	{
@@ -1019,7 +1018,7 @@ class Request
 	/**
 	 * @param boolean $debug
 	 *
-	 * @return $this
+	 * @return \StGeorgeIPG\Client
 	 */
 	private function setDebug($debug)
 	{
@@ -1031,7 +1030,7 @@ class Request
 	/**
 	 * @param string $logFilePath
 	 *
-	 * @return $this
+	 * @return \StGeorgeIPG\Client
 	 */
 	private function setLogPath($logFilePath)
 	{
@@ -1044,7 +1043,7 @@ class Request
 	 * @param string $name
 	 * @param mixed  $value
 	 *
-	 * @return $this
+	 * @return \StGeorgeIPG\Client
 	 */
 	private function setAttribute($name, $value)
 	{

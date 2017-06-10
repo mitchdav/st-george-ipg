@@ -22,7 +22,7 @@ class Webpay
 	 *
 	 * Checks if the Webpay extension is loaded.
 	 *
-	 * @throws WebpayNotLoadedException
+	 * @throws \StGeorgeIPG\Exceptions\WebpayNotLoadedException
 	 */
 	public function __construct()
 	{
@@ -40,7 +40,7 @@ class Webpay
 	}
 
 	/**
-	 * @param mixed   $reference
+	 * @param mixed $reference
 	 *
 	 * @return boolean
 	 */
@@ -50,10 +50,10 @@ class Webpay
 	}
 
 	/**
-	 * @param mixed $reference
-	 * @param int   $clientId
+	 * @param mixed   $reference
+	 * @param integer $clientId
 	 *
-	 * @return $this
+	 * @return \StGeorgeIPG\Webpay
 	 */
 	public function setClientId($reference, $clientId)
 	{
@@ -66,7 +66,7 @@ class Webpay
 	 * @param mixed  $reference
 	 * @param string $certificatePath
 	 *
-	 * @return $this
+	 * @return \StGeorgeIPG\Webpay
 	 */
 	public function setCertificatePath($reference, $certificatePath)
 	{
@@ -79,7 +79,7 @@ class Webpay
 	 * @param mixed  $reference
 	 * @param string $certificatePassword
 	 *
-	 * @return $this
+	 * @return \StGeorgeIPG\Webpay
 	 */
 	public function setCertificatePassword($reference, $certificatePassword)
 	{
@@ -92,7 +92,7 @@ class Webpay
 	 * @param mixed    $reference
 	 * @param string[] $servers
 	 *
-	 * @return $this
+	 * @return \StGeorgeIPG\Webpay
 	 */
 	public function setServers($reference, $servers)
 	{
@@ -105,25 +105,11 @@ class Webpay
 	 * @param mixed   $reference
 	 * @param integer $port
 	 *
-	 * @return $this
+	 * @return \StGeorgeIPG\Webpay
 	 */
 	public function setPort($reference, $port)
 	{
 		\setPort($reference, strval($port));
-
-		return $this;
-	}
-
-	/**
-	 * @param mixed  $reference
-	 * @param string $name
-	 * @param string $value
-	 *
-	 * @return $this
-	 */
-	public function setAttribute($reference, $name, $value)
-	{
-		\put($reference, $name, $value);
 
 		return $this;
 	}
@@ -137,5 +123,19 @@ class Webpay
 	public function getAttribute($reference, $name)
 	{
 		\get($reference, $name);
+	}
+
+	/**
+	 * @param mixed  $reference
+	 * @param string $name
+	 * @param string $value
+	 *
+	 * @return \StGeorgeIPG\Webpay
+	 */
+	public function setAttribute($reference, $name, $value)
+	{
+		\put($reference, $name, $value);
+
+		return $this;
 	}
 }

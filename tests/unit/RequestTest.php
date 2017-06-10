@@ -438,7 +438,7 @@ class RequestTest extends TestCase
 	{
 		$request = $this->createRequestWithWebpayMock();
 
-		$value = '4242-4242-4242-4242';
+		$value  = '4242-4242-4242-4242';
 		$output = '4242424242424242';
 
 		$request->setCardData($value);
@@ -456,7 +456,7 @@ class RequestTest extends TestCase
 	{
 		$request = $this->createRequestWithWebpayMock();
 
-		$value = '4242 4242 4242 4242';
+		$value  = '4242 4242 4242 4242';
 		$output = '4242424242424242';
 
 		$request->setCardData($value);
@@ -541,8 +541,8 @@ class RequestTest extends TestCase
 
 		$oneYearAhead = (new Carbon())->addYear();
 
-		$month = $oneYearAhead->month;
-		$year = $oneYearAhead->year;
+		$month  = $oneYearAhead->month;
+		$year   = $oneYearAhead->year;
 		$output = $oneYearAhead->format('my');
 
 		$request->setCardExpiryDate($month, $year);
@@ -563,7 +563,7 @@ class RequestTest extends TestCase
 		$request = $this->createRequestWithWebpayMock();
 
 		$month = 'December';
-		$year = 'Two Thousand';
+		$year  = 'Two Thousand';
 
 		$request->setCardExpiryDate($month, $year);
 	}
@@ -583,7 +583,7 @@ class RequestTest extends TestCase
 		$oneYearBehind = (new Carbon())->subYear();
 
 		$month = $oneYearBehind->month;
-		$year = $oneYearBehind->year;
+		$year  = $oneYearBehind->year;
 
 		$request->setCardExpiryDate($month, $year);
 	}
@@ -975,7 +975,7 @@ class RequestTest extends TestCase
 		$oneYearAhead = (new Carbon())->addYear();
 
 		$month = $oneYearAhead->month;
-		$year = $oneYearAhead->year;
+		$year  = $oneYearAhead->year;
 
 		$request
 			->setInterface(Request::INTERFACE_CREDIT_CARD)
@@ -1013,7 +1013,7 @@ class RequestTest extends TestCase
 		$oneYearAhead = (new Carbon())->addYear();
 
 		$month = $oneYearAhead->month;
-		$year = $oneYearAhead->year;
+		$year  = $oneYearAhead->year;
 
 		/*
 		 * TransactionReference - Not permitted for purchases
@@ -1120,7 +1120,7 @@ class RequestTest extends TestCase
 		$oneYearAhead = (new Carbon())->addYear();
 
 		$month = $oneYearAhead->month;
-		$year = $oneYearAhead->year;
+		$year  = $oneYearAhead->year;
 
 		$request
 			->setInterface(Request::INTERFACE_CREDIT_CARD)
@@ -1160,7 +1160,7 @@ class RequestTest extends TestCase
 		$oneYearAhead = (new Carbon())->addYear();
 
 		$month = $oneYearAhead->month;
-		$year = $oneYearAhead->year;
+		$year  = $oneYearAhead->year;
 
 		/*
 		 * TransactionReference - Not permitted for pre auths

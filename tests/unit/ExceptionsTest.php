@@ -25,7 +25,7 @@ class ExceptionsTest extends TestCase
 	public function testInvalidAttributeStatusExceptionConstructor_ValidInput_Equals()
 	{
 		$attribute = 'attribute';
-		$status = 'status';
+		$status    = 'status';
 
 		$exception = new \StGeorgeIPG\Exceptions\InvalidAttributeStatusException($attribute, $status);
 
@@ -38,7 +38,7 @@ class ExceptionsTest extends TestCase
 	public function testInvalidAttributeValueExceptionConstructor_ValidInput_Equals()
 	{
 		$attribute = 'attribute';
-		$value = 'value';
+		$value     = 'value';
 
 		$exception = new \StGeorgeIPG\Exceptions\InvalidAttributeValueException($attribute, $value);
 
@@ -50,7 +50,7 @@ class ExceptionsTest extends TestCase
 	 */
 	public function testTransactionFailedExceptionConstructor_ValidInput_Equals()
 	{
-		$request = new Request();
+		$request  = new Request();
 		$response = new Response();
 		$maxTries = rand(1, 100);
 
@@ -65,7 +65,7 @@ class ExceptionsTest extends TestCase
 	 */
 	public function testTransactionFailedExceptionGetRequest_ValidInput_Equals()
 	{
-		$request = new Request();
+		$request  = new Request();
 		$response = new Response();
 		$maxTries = rand(1, 100);
 
@@ -80,7 +80,7 @@ class ExceptionsTest extends TestCase
 	 */
 	public function testTransactionFailedExceptionGetResponse_ValidInput_Equals()
 	{
-		$request = new Request();
+		$request  = new Request();
 		$response = new Response();
 		$maxTries = rand(1, 100);
 
@@ -95,7 +95,7 @@ class ExceptionsTest extends TestCase
 	 */
 	public function testTransactionFailedExceptionGetMaxTries_ValidInput_Equals()
 	{
-		$request = new Request();
+		$request  = new Request();
 		$response = new Response();
 		$maxTries = rand(1, 100);
 
@@ -109,7 +109,7 @@ class ExceptionsTest extends TestCase
 	 */
 	public function testTransactionInProgressExceptionConstructor_ValidInput_Equals()
 	{
-		$request = new Request();
+		$request  = new Request();
 		$response = new Response();
 		$maxTries = rand(1, 100);
 
@@ -124,7 +124,7 @@ class ExceptionsTest extends TestCase
 	 */
 	public function testTransactionInProgressExceptionGetRequest_ValidInput_Equals()
 	{
-		$request = new Request();
+		$request  = new Request();
 		$response = new Response();
 		$maxTries = rand(1, 100);
 
@@ -139,7 +139,7 @@ class ExceptionsTest extends TestCase
 	 */
 	public function testTransactionInProgressExceptionGetResponse_ValidInput_Equals()
 	{
-		$request = new Request();
+		$request  = new Request();
 		$response = new Response();
 		$maxTries = rand(1, 100);
 
@@ -154,7 +154,7 @@ class ExceptionsTest extends TestCase
 	 */
 	public function testTransactionInProgressExceptionGetMaxTries_ValidInput_Equals()
 	{
-		$request = new Request();
+		$request  = new Request();
 		$response = new Response();
 		$maxTries = rand(1, 100);
 

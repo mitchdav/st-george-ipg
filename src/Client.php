@@ -30,7 +30,7 @@ class Client
 	const PORT_TEST = 3017;
 
 	/**
-	 * @var Webpay $webpay
+	 * @var \StGeorgeIPG\Webpay $webpay
 	 */
 	private $webpay;
 
@@ -82,16 +82,16 @@ class Client
 	/**
 	 * Client constructor.
 	 *
-	 * @param integer  $clientId
-	 * @param string   $certificatePassword
-	 * @param Webpay   $webpay
-	 * @param string   $certificatePath
-	 * @param string   $logPath
-	 * @param boolean  $debug
-	 * @param integer  $port
-	 * @param string[] $servers
-	 * @param integer  $terminalType
-	 * @param string   $interface
+	 * @param integer             $clientId
+	 * @param string              $certificatePassword
+	 * @param \StGeorgeIPG\Webpay $webpay
+	 * @param string              $certificatePath
+	 * @param string              $logPath
+	 * @param boolean             $debug
+	 * @param integer             $port
+	 * @param string[]            $servers
+	 * @param integer             $terminalType
+	 * @param string              $interface
 	 */
 	public function __construct($clientId, $certificatePassword, Webpay $webpay, $certificatePath = 'cert.cert', $debug = FALSE, $logPath = 'webpay.log', $port = Client::PORT_LIVE, array $servers = [
 		Client::SERVER,
@@ -111,7 +111,7 @@ class Client
 	}
 
 	/**
-	 * @return Webpay
+	 * @return \StGeorgeIPG\Webpay
 	 */
 	public function getWebpay()
 	{
@@ -119,9 +119,9 @@ class Client
 	}
 
 	/**
-	 * @param Webpay $webpay
+	 * @param \StGeorgeIPG\Webpay $webpay
 	 *
-	 * @return Client
+	 * @return \StGeorgeIPG\Client
 	 */
 	public function setWebpay($webpay)
 	{
@@ -141,7 +141,7 @@ class Client
 	/**
 	 * @param integer $clientId
 	 *
-	 * @return Client
+	 * @return \StGeorgeIPG\Client
 	 */
 	public function setClientId($clientId)
 	{
@@ -161,7 +161,7 @@ class Client
 	/**
 	 * @param string $certificatePath
 	 *
-	 * @return Client
+	 * @return \StGeorgeIPG\Client
 	 */
 	public function setCertificatePath($certificatePath)
 	{
@@ -181,7 +181,7 @@ class Client
 	/**
 	 * @param string $certificatePassword
 	 *
-	 * @return Client
+	 * @return \StGeorgeIPG\Client
 	 */
 	public function setCertificatePassword($certificatePassword)
 	{
@@ -201,7 +201,7 @@ class Client
 	/**
 	 * @param boolean $debug
 	 *
-	 * @return Client
+	 * @return \StGeorgeIPG\Client
 	 */
 	public function setDebug($debug)
 	{
@@ -221,7 +221,7 @@ class Client
 	/**
 	 * @param string $logPath
 	 *
-	 * @return Client
+	 * @return \StGeorgeIPG\Client
 	 */
 	public function setLogPath($logPath)
 	{
@@ -241,7 +241,7 @@ class Client
 	/**
 	 * @param string[] $servers
 	 *
-	 * @return Client
+	 * @return \StGeorgeIPG\Client
 	 */
 	public function setServers($servers)
 	{
@@ -265,7 +265,7 @@ class Client
 	/**
 	 * @param integer $port
 	 *
-	 * @return Client
+	 * @return \StGeorgeIPG\Client
 	 */
 	public function setPort($port)
 	{
@@ -285,7 +285,7 @@ class Client
 	/**
 	 * @param integer $terminalType
 	 *
-	 * @return Client
+	 * @return \StGeorgeIPG\Client
 	 */
 	public function setTerminalType($terminalType)
 	{
@@ -305,7 +305,7 @@ class Client
 	/**
 	 * @param string $interface
 	 *
-	 * @return Client
+	 * @return \StGeorgeIPG\Client
 	 */
 	public function setInterface($interface)
 	{
@@ -458,7 +458,7 @@ class Client
 	 * Get a response for the given request, following the flow diagram provided by St.George.
 	 *
 	 * @param \StGeorgeIPG\Request $request
-	 * @param int                  $maxTries
+	 * @param integer              $maxTries
 	 *
 	 * @return \StGeorgeIPG\Response
 	 * @throws \StGeorgeIPG\Exceptions\TransactionFailedException
@@ -507,7 +507,7 @@ class Client
 	 * Get the response, and then map the response code for any errors to appropriate exceptions.
 	 *
 	 * @param \StGeorgeIPG\Request $request
-	 * @param int                  $maxTries
+	 * @param integer              $maxTries
 	 *
 	 * @return \StGeorgeIPG\Response
 	 * @throws \StGeorgeIPG\Exceptions\ResponseCodes\Exception

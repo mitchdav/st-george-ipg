@@ -49,18 +49,18 @@ class ClientTest extends TestCase
 	 */
 	public function testConstructor_ValidInput_Equals()
 	{
-		$clientId = 1000000000;
+		$clientId            = 1000000000;
 		$certificatePassword = 'password';
-		$webpay = $this->createWebpayMock();
-		$certificatePath = 'cert.cert';
-		$debug = TRUE;
-		$logPath = 'webpay.log';
-		$port = rand(0, 1000);
-		$servers = [
+		$webpay              = $this->createWebpayMock();
+		$certificatePath     = 'cert.cert';
+		$debug               = TRUE;
+		$logPath             = 'webpay.log';
+		$port                = rand(0, 1000);
+		$servers             = [
 			'server',
 		];
-		$terminalType = rand(0, 1000);
-		$interface = rand(0, 1000);
+		$terminalType        = rand(0, 1000);
+		$interface           = rand(0, 1000);
 
 		$client = new Client($clientId, $certificatePassword, $webpay, $certificatePath, $debug, $logPath, $port, $servers, $terminalType, $interface);
 
@@ -244,18 +244,18 @@ class ClientTest extends TestCase
 		$client = $this->createClientWithWebpayMock();
 
 		$oneYearAhead = (new Carbon())->addYear();
-		$output = $oneYearAhead->format('my');
+		$output       = $oneYearAhead->format('my');
 
-		$amount = 123.45;
-		$cardNumber = '4242424242424242';
-		$month = $oneYearAhead->month;
-		$year = $oneYearAhead->year;
-		$cvc2 = rand(100, 999);
+		$amount          = 123.45;
+		$cardNumber      = '4242424242424242';
+		$month           = $oneYearAhead->month;
+		$year            = $oneYearAhead->year;
+		$cvc2            = rand(100, 999);
 		$clientReference = rand(0, 1000);
-		$comment = rand(0, 1000);
-		$description = rand(0, 1000);
-		$cardHolderName = rand(0, 1000);
-		$taxAmount = 67.89;
+		$comment         = rand(0, 1000);
+		$description     = rand(0, 1000);
+		$cardHolderName  = rand(0, 1000);
+		$taxAmount       = 67.89;
 
 		$request = $client->purchase($amount, $cardNumber, $month, $year, $cvc2, $clientReference, $comment, $description, $cardHolderName, $taxAmount);
 
@@ -278,13 +278,13 @@ class ClientTest extends TestCase
 	{
 		$client = $this->createClientWithWebpayMock();
 
-		$amount = 123.45;
+		$amount                       = 123.45;
 		$originalTransactionReference = '123456789';
-		$clientReference = rand(0, 1000);
-		$comment = rand(0, 1000);
-		$description = rand(0, 1000);
-		$cardHolderName = rand(0, 1000);
-		$taxAmount = 67.89;
+		$clientReference              = rand(0, 1000);
+		$comment                      = rand(0, 1000);
+		$description                  = rand(0, 1000);
+		$cardHolderName               = rand(0, 1000);
+		$taxAmount                    = 67.89;
 
 		$request = $client->refund($amount, $originalTransactionReference, $clientReference, $comment, $description, $cardHolderName, $taxAmount);
 
@@ -306,18 +306,18 @@ class ClientTest extends TestCase
 		$client = $this->createClientWithWebpayMock();
 
 		$oneYearAhead = (new Carbon())->addYear();
-		$output = $oneYearAhead->format('my');
+		$output       = $oneYearAhead->format('my');
 
-		$amount = 123.45;
-		$cardNumber = '4242424242424242';
-		$month = $oneYearAhead->month;
-		$year = $oneYearAhead->year;
-		$cvc2 = rand(100, 999);
+		$amount          = 123.45;
+		$cardNumber      = '4242424242424242';
+		$month           = $oneYearAhead->month;
+		$year            = $oneYearAhead->year;
+		$cvc2            = rand(100, 999);
 		$clientReference = rand(0, 1000);
-		$comment = rand(0, 1000);
-		$description = rand(0, 1000);
-		$cardHolderName = rand(0, 1000);
-		$taxAmount = 67.89;
+		$comment         = rand(0, 1000);
+		$description     = rand(0, 1000);
+		$cardHolderName  = rand(0, 1000);
+		$taxAmount       = 67.89;
 
 		$request = $client->preAuth($amount, $cardNumber, $month, $year, $cvc2, $clientReference, $comment, $description, $cardHolderName, $taxAmount);
 
@@ -340,14 +340,14 @@ class ClientTest extends TestCase
 	{
 		$client = $this->createClientWithWebpayMock();
 
-		$amount = 123.45;
+		$amount                       = 123.45;
 		$originalTransactionReference = '123456789';
-		$authorisationNumber = rand(0, 1000);
-		$clientReference = rand(0, 1000);
-		$comment = rand(0, 1000);
-		$description = rand(0, 1000);
-		$cardHolderName = rand(0, 1000);
-		$taxAmount = 67.89;
+		$authorisationNumber          = rand(0, 1000);
+		$clientReference              = rand(0, 1000);
+		$comment                      = rand(0, 1000);
+		$description                  = rand(0, 1000);
+		$cardHolderName               = rand(0, 1000);
+		$taxAmount                    = 67.89;
 
 		$request = $client->completion($amount, $originalTransactionReference, $authorisationNumber, $clientReference, $comment, $description, $cardHolderName, $taxAmount);
 
@@ -382,7 +382,7 @@ class ClientTest extends TestCase
 	 */
 	public function testValidateResponse_ValidInput_WithApproved_Equals()
 	{
-		$client = $this->createClientWithWebpayMock();
+		$client   = $this->createClientWithWebpayMock();
 		$response = $this->createResponseWithWebpayMock();
 
 		$response->setCode(Response::CODE_00);
@@ -397,7 +397,7 @@ class ClientTest extends TestCase
 	{
 		$this->expectException(InsufficientFundsException::class);
 
-		$client = $this->createClientWithWebpayMock();
+		$client   = $this->createClientWithWebpayMock();
 		$response = $this->createResponseWithWebpayMock();
 
 		$response->setCode(Response::CODE_51);

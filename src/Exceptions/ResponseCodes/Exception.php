@@ -28,7 +28,7 @@ class Exception extends \Exception
 	 */
 	public function __construct(Response $response)
 	{
-		$this->response = $response;
+		$this->response     = $response;
 		$this->responseCode = $response->getCode();
 		$this->responseText = $response->getText();
 
