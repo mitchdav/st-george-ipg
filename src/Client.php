@@ -30,6 +30,11 @@ class Client
 	const PORT_TEST = 3017;
 
 	/**
+	 * @var Webpay $webpay
+	 */
+	private $webpay;
+
+	/**
 	 * @var integer $clientId
 	 */
 	private $clientId;
@@ -53,11 +58,6 @@ class Client
 	 * @var string $logPath
 	 */
 	private $logPath;
-
-	/**
-	 * @var Webpay $webpay
-	 */
-	private $webpay;
 
 	/**
 	 * @var string[] $servers
@@ -84,16 +84,16 @@ class Client
 	 *
 	 * @param integer  $clientId
 	 * @param string   $certificatePassword
+	 * @param Webpay   $webpay
 	 * @param string   $certificatePath
 	 * @param string   $logPath
-	 * @param Webpay   $webpay
 	 * @param boolean  $debug
 	 * @param integer  $port
 	 * @param string[] $servers
 	 * @param integer  $terminalType
 	 * @param string   $interface
 	 */
-	public function __construct($clientId, $certificatePassword, $certificatePath = 'cert.cert', $debug = FALSE, $logPath = 'webpay.log', Webpay $webpay, $port = Client::PORT_LIVE, array $servers = [
+	public function __construct($clientId, $certificatePassword, Webpay $webpay, $certificatePath = 'cert.cert', $debug = FALSE, $logPath = 'webpay.log', $port = Client::PORT_LIVE, array $servers = [
 		Client::SERVER,
 	], $terminalType = Request::TERMINAL_TYPE_INTERNET, $interface = Request::INTERFACE_CREDIT_CARD)
 	{
@@ -102,12 +102,32 @@ class Client
 			->setCertificatePath($certificatePath)
 			->setCertificatePassword($certificatePassword)
 			->setLogPath($logPath)
-			->setWebpay($webpay)
 			->setDebug($debug)
+			->setWebpay($webpay)
 			->setPort($port)
 			->setServers($servers)
 			->setTerminalType($terminalType)
 			->setInterface($interface);
+	}
+
+	/**
+	 * @return Webpay
+	 */
+	public function getWebpay()
+	{
+		return $this->webpay;
+	}
+
+	/**
+	 * @param Webpay $webpay
+	 *
+	 * @return Client
+	 */
+	public function setWebpay($webpay)
+	{
+		$this->webpay = $webpay;
+
+		return $this;
 	}
 
 	/**
@@ -206,26 +226,6 @@ class Client
 	public function setLogPath($logPath)
 	{
 		$this->logPath = $logPath;
-
-		return $this;
-	}
-
-	/**
-	 * @return Webpay
-	 */
-	public function getWebpay()
-	{
-		return $this->webpay;
-	}
-
-	/**
-	 * @param Webpay $webpay
-	 *
-	 * @return Client
-	 */
-	public function setWebpay($webpay)
-	{
-		$this->webpay = $webpay;
 
 		return $this;
 	}
@@ -518,6 +518,21 @@ class Client
 	{
 		$response = $this->getResponse($request, $maxTries);
 
+		return $this->validateResponse($response);
+	}
+
+	/**
+	 * Get the response, and then map the response code for any errors to appropriate exceptions.
+	 *
+	 * @param \StGeorgeIPG\Response $response
+	 *
+	 * @return \StGeorgeIPG\Response
+	 * @throws \StGeorgeIPG\Exceptions\ResponseCodes\Exception
+	 * @throws \StGeorgeIPG\Exceptions\TransactionFailedException
+	 * @throws \StGeorgeIPG\Exceptions\TransactionInProgressException
+	 */
+	public function validateResponse(Response $response)
+	{
 		if ($response->isCodeApproved()) {
 			return $response;
 		} else {
