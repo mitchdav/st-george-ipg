@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "9493d9f0bc6e0396703aeb50dc348235",
-    "content-hash": "5e114872baf516c49598d0f93c813be4",
+    "hash": "101b598ec4c2bd794c58a34077145005",
+    "content-hash": "a5da8453fc93202dc116acb3a3ceda12",
     "packages": [
         {
             "name": "inacho/php-credit-card-validator",
@@ -2101,7 +2101,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.3.3"
+        "php": ">=5.6"
     },
     "platform-dev": []
 }

@@ -27,7 +27,7 @@ class ClientIntegrationTest extends TestCase
 	 */
 	private function createClientWithWebpayMock()
 	{
-		$client = new Client(1000000000, 'password', $this->createWebpayMock());
+		$client = new Client(10000000, 'password', $this->createWebpayMock());
 
 		return $client;
 	}

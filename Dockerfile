@@ -5,7 +5,7 @@ MAINTAINER Mitchell Davis (mitch@wingmanwebdesign.com.au)
 ENV IPGVERSION 3.3
 
 # The IPG client ID
-ENV IPGCLIENTID 1000000000
+ENV IPGCLIENTID 10000000
 
 # The IPG certificate password
 ENV IPGCERTIFICATEPASSWORD password
