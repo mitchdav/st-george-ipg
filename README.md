@@ -33,17 +33,17 @@ With a [working](#installing-webpay), [tested](#testing) installation, you can u
 
 You can then initialise the client with the following:
 
-    ```php
-    <?php
+```php
+<?php
 
-    use Carbon\Carbon;
-    use StGeorgeIPG\Client;
-    use StGeorgeIPG\Webpay;
-    use StGeorgeIPG\Exceptions\ResponseCodes\Exception;
+use Carbon\Carbon;
+use StGeorgeIPG\Client;
+use StGeorgeIPG\Webpay;
+use StGeorgeIPG\Exceptions\ResponseCodes\Exception;
 
-    $webpay = new Webpay();
-    $client = new Client(getenv('IPGCLIENTID'), getenv('IPGCERTIFICATEPASSWORD'), $webpay);
-    ```
+$webpay = new Webpay();
+$client = new Client(getenv('IPGCLIENTID'), getenv('IPGCERTIFICATEPASSWORD'), $webpay);
+```
 
 The client provides helper methods to construct a valid request. More options are available for each request type than shown below, so check the [Client](https://github.com/mitchdav/st-george-ipg/blob/master/src/Client.php) to see how to optionally set the CVC2 (for example), or the merchant description.
 
@@ -53,137 +53,137 @@ After a request has been created, you need to call ```$client->execute($request)
 
 With an initialised client you can charge the customer, like so:
 
-    ```php
-    $oneYearAhead = (new Carbon())->addYear();
+```php
+$oneYearAhead = (new Carbon())->addYear();
 
-    $amount     = 10.00; // In dollars
-    $cardNumber = '4111111111111111';
-    $month      = $oneYearAhead->month;
-    $year       = $oneYearAhead->year;
+$amount     = 10.00; // In dollars
+$cardNumber = '4111111111111111';
+$month      = $oneYearAhead->month;
+$year       = $oneYearAhead->year;
 
-    $purchaseRequest = $client->purchase($amount, $cardNumber, $month, $year);
+$purchaseRequest = $client->purchase($amount, $cardNumber, $month, $year);
 
-    try {
-        $purchaseResponse = $client->execute($purchaseRequest);
+try {
+    $purchaseResponse = $client->execute($purchaseRequest);
 
-        echo 'The charge was successful.' . "\n";
-    } catch (Exception $ex) {
-        echo 'The charge was unsuccessful.' . "\n";
-        echo $ex->getMessage() . "\n";
+    echo 'The charge was successful.' . "\n";
+} catch (Exception $ex) {
+    echo 'The charge was unsuccessful.' . "\n";
+    echo $ex->getMessage() . "\n";
 
-        var_dump($purchaseRequest);
-        var_dump($ex->getResponse());
-    }
-    ```
+    var_dump($purchaseRequest);
+    var_dump($ex->getResponse());
+}
+```
 
 ### Refunding a Charge
 
 You can refund the customer after charging them, like so:
 
-    ```php
-    $oneYearAhead = (new Carbon())->addYear();
+```php
+$oneYearAhead = (new Carbon())->addYear();
 
-    $amount     = 10.00; // In dollars
-    $cardNumber = '4111111111111111';
-    $month      = $oneYearAhead->month;
-    $year       = $oneYearAhead->year;
+$amount     = 10.00; // In dollars
+$cardNumber = '4111111111111111';
+$month      = $oneYearAhead->month;
+$year       = $oneYearAhead->year;
 
-    $purchaseRequest = $client->purchase($amount, $cardNumber, $month, $year);
+$purchaseRequest = $client->purchase($amount, $cardNumber, $month, $year);
+
+try {
+    $purchaseResponse = $client->execute($purchaseRequest);
+
+    echo 'The charge was successful.' . "\n";
+
+    $refundRequest = $client->refund(5.00, $purchaseResponse->getTransactionReference()); // In dollars
 
     try {
-        $purchaseResponse = $client->execute($purchaseRequest);
+        $refundResponse = $client->execute($refundRequest);
 
-        echo 'The charge was successful.' . "\n";
-
-        $refundRequest = $client->refund(5.00, $purchaseResponse->getTransactionReference()); // In dollars
-
-        try {
-            $refundResponse = $client->execute($refundRequest);
-
-            echo 'The refund was successful.' . "\n";
-        } catch (Exception $ex) {
-            echo 'The refund was unsuccessful.' . "\n";
-            echo $ex->getMessage() . "\n";
-
-            var_dump($refundRequest);
-            var_dump($ex->getResponse());
-        }
+        echo 'The refund was successful.' . "\n";
     } catch (Exception $ex) {
-        echo 'The charge was unsuccessful.' . "\n";
+        echo 'The refund was unsuccessful.' . "\n";
         echo $ex->getMessage() . "\n";
 
-        var_dump($purchaseRequest);
+        var_dump($refundRequest);
         var_dump($ex->getResponse());
     }
-    ```
+} catch (Exception $ex) {
+    echo 'The charge was unsuccessful.' . "\n";
+    echo $ex->getMessage() . "\n";
+
+    var_dump($purchaseRequest);
+    var_dump($ex->getResponse());
+}
+```
 
 ### Pre Auth
 
 You can also pre authorise a charge (if enabled for your account), effectively putting a hold on a customer's card, like so:
 
-    ```php
-    $oneYearAhead = (new Carbon())->addYear();
+```php
+$oneYearAhead = (new Carbon())->addYear();
 
-    $amount     = 10.00; // In dollars
-    $cardNumber = '4111111111111111';
-    $month      = $oneYearAhead->month;
-    $year       = $oneYearAhead->year;
+$amount     = 10.00; // In dollars
+$cardNumber = '4111111111111111';
+$month      = $oneYearAhead->month;
+$year       = $oneYearAhead->year;
 
-    $preAuthRequest = $client->preAuth($amount, $cardNumber, $month, $year);
+$preAuthRequest = $client->preAuth($amount, $cardNumber, $month, $year);
 
-    try {
-        $preAuthResponse = $client->execute($preAuthRequest);
+try {
+    $preAuthResponse = $client->execute($preAuthRequest);
 
-        echo 'The pre auth was successful.' . "\n";
-    } catch (Exception $ex) {
-        echo 'The pre auth was unsuccessful.' . "\n";
-        echo $ex->getMessage() . "\n";
+    echo 'The pre auth was successful.' . "\n";
+} catch (Exception $ex) {
+    echo 'The pre auth was unsuccessful.' . "\n";
+    echo $ex->getMessage() . "\n";
 
-        var_dump($preAuthRequest);
-        var_dump($ex->getResponse());
-    }
-    ```
+    var_dump($preAuthRequest);
+    var_dump($ex->getResponse());
+}
+```
 
 ### Completion
 
 After a successful pre auth, you can complete the transaction, like so:
 
-    ```php
-    $oneYearAhead = (new Carbon())->addYear();
+```php
+$oneYearAhead = (new Carbon())->addYear();
 
-    $amount     = 10.00; // In dollars
-    $cardNumber = '4111111111111111';
-    $month      = $oneYearAhead->month;
-    $year       = $oneYearAhead->year;
+$amount     = 10.00; // In dollars
+$cardNumber = '4111111111111111';
+$month      = $oneYearAhead->month;
+$year       = $oneYearAhead->year;
 
-    $preAuthRequest = $client->preAuth($amount, $cardNumber, $month, $year);
+$preAuthRequest = $client->preAuth($amount, $cardNumber, $month, $year);
+
+try {
+    $preAuthResponse = $client->execute($preAuthRequest);
+
+    echo 'The pre auth was successful.' . "\n";
+
+    $completionRequest = $client->completion($amount, $preAuthResponse->getTransactionReference(), $preAuthResponse->getAuthorisationNumber()); // In dollars
 
     try {
-        $preAuthResponse = $client->execute($preAuthRequest);
+        $completionResponse = $client->execute($completionRequest);
 
-        echo 'The pre auth was successful.' . "\n";
-
-        $completionRequest = $client->completion($amount, $preAuthResponse->getTransactionReference(), $preAuthResponse->getAuthorisationNumber()); // In dollars
-
-        try {
-            $completionResponse = $client->execute($completionRequest);
-
-            echo 'The completion was successful.' . "\n";
-        } catch (Exception $ex) {
-            echo 'The completion was unsuccessful.' . "\n";
-            echo $ex->getMessage() . "\n";
-
-            var_dump($completionRequest);
-            var_dump($ex->getResponse());
-        }
+        echo 'The completion was successful.' . "\n";
     } catch (Exception $ex) {
-        echo 'The pre auth was unsuccessful.' . "\n";
+        echo 'The completion was unsuccessful.' . "\n";
         echo $ex->getMessage() . "\n";
 
-        var_dump($preAuthRequest);
+        var_dump($completionRequest);
         var_dump($ex->getResponse());
     }
-    ```
+} catch (Exception $ex) {
+    echo 'The pre auth was unsuccessful.' . "\n";
+    echo $ex->getMessage() . "\n";
+
+    var_dump($preAuthRequest);
+    var_dump($ex->getResponse());
+}
+```
 
 ### Handling Errors
 
