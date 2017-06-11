@@ -33,6 +33,7 @@ With a [working](#installing-webpay), [tested](#testing) installation, you can u
 
 You can then initialise the client with the following:
 
+    ```php
     <?php
 
     use Carbon\Carbon;
@@ -42,6 +43,7 @@ You can then initialise the client with the following:
 
     $webpay = new Webpay();
     $client = new Client(getenv('IPGCLIENTID'), getenv('IPGCERTIFICATEPASSWORD'), $webpay);
+    ```
 
 The client provides helper methods to construct a valid request. More options are available for each request type than shown below, so check the [Client](https://github.com/mitchdav/st-george-ipg/blob/master/src/Client.php) to see how to optionally set the CVC2 (for example), or the merchant description.
 
@@ -51,6 +53,7 @@ After a request has been created, you need to call ```$client->execute($request)
 
 With an initialised client you can charge the customer, like so:
 
+    ```php
     $oneYearAhead = (new Carbon())->addYear();
 
     $amount     = 10.00; // In dollars
@@ -71,11 +74,13 @@ With an initialised client you can charge the customer, like so:
         var_dump($purchaseRequest);
         var_dump($ex->getResponse());
     }
+    ```
 
 ### Refunding a Charge
 
 You can refund the customer after charging them, like so:
 
+    ```php
     $oneYearAhead = (new Carbon())->addYear();
 
     $amount     = 10.00; // In dollars
@@ -110,11 +115,13 @@ You can refund the customer after charging them, like so:
         var_dump($purchaseRequest);
         var_dump($ex->getResponse());
     }
+    ```
 
 ### Pre Auth
 
 You can also pre authorise a charge (if enabled for your account), effectively putting a hold on a customer's card, like so:
 
+    ```php
     $oneYearAhead = (new Carbon())->addYear();
 
     $amount     = 10.00; // In dollars
@@ -135,11 +142,13 @@ You can also pre authorise a charge (if enabled for your account), effectively p
         var_dump($preAuthRequest);
         var_dump($ex->getResponse());
     }
+    ```
 
 ### Completion
 
 After a successful pre auth, you can complete the transaction, like so:
 
+    ```php
     $oneYearAhead = (new Carbon())->addYear();
 
     $amount     = 10.00; // In dollars
@@ -174,7 +183,8 @@ After a successful pre auth, you can complete the transaction, like so:
         var_dump($preAuthRequest);
         var_dump($ex->getResponse());
     }
-    
+    ```
+
 ### Handling Errors
 
 The library will throw an exception if the request was not successful, which makes it easy to determine the outcome when calling the library.
