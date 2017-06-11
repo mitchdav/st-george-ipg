@@ -9,19 +9,16 @@ language: php
 
 php:
   - 5.6
-  - 7.0
-  - 7.1
-  - hhvm
 
 before_install:
   - docker build -t mitchdav/st-george-ipg .
-  - docker run -d -e IPGCLIENTID=$IPGCLIENTID -e IPGCERTIFICATEPASSWORD=$IPGCERTIFICATEPASSWORD --name st-george-ipg -t mitchdav/st-george-ipg
+  - docker run -d -e IPGCLIENTID=$IPGCLIENTID -e IPGCERTIFICATEPASSWORD=$IPGCERTIFICATEPASSWORD -e TRAVIS=$TRAVIS -e TRAVIS_JOB_ID=$TRAVIS_JOB_ID --name st-george-ipg -t mitchdav/st-george-ipg
 
 script:
-  - docker exec -it st-george-ipg /bin/bash -c "php vendor/bin/phpunit"
+  - docker exec -i st-george-ipg /bin/bash -c "php vendor/bin/phpunit"
 
 after_script:
-  - docker exec -it st-george-ipg /bin/bash -c "php vendor/bin/coveralls -v"
+  - docker exec -i st-george-ipg /bin/bash -c "php vendor/bin/coveralls -v"
 
 # after_success:
 #   - if [ "$TRAVIS_BRANCH" == "master" ]; then
