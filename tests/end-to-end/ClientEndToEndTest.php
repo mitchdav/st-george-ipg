@@ -200,10 +200,10 @@ class ClientEndToEndTest extends TestCase
 	}
 
 	/**
-	 * @covers       \StGeorgeIPG\Client::purchase
-	 * @covers       \StGeorgeIPG\Client::getResponse
-	 * @covers       \StGeorgeIPG\Client::execute
-	 * @covers       \StGeorgeIPG\Client::validateResponse
+	 * @covers \StGeorgeIPG\Client::purchase
+	 * @covers \StGeorgeIPG\Client::getResponse
+	 * @covers \StGeorgeIPG\Client::execute
+	 * @covers \StGeorgeIPG\Client::validateResponse
 	 */
 	public function testPurchase_ValidInput_WithBadCredentials_Equals()
 	{
@@ -212,5 +212,36 @@ class ClientEndToEndTest extends TestCase
 		$client = $this->createClientWithBadCredentials();
 
 		$this->createPurchaseWithCode(0, $client);
+	}
+
+	/**
+	 * @covers \StGeorgeIPG\Client::purchase
+	 * @covers \StGeorgeIPG\Client::refund
+	 * @covers \StGeorgeIPG\Client::getResponse
+	 * @covers \StGeorgeIPG\Client::execute
+	 * @covers \StGeorgeIPG\Client::validateResponse
+	 */
+	public function testPurchaseAndRefund_ValidInput_True()
+	{
+		$client = $this->createClient();
+
+		$oneYearAhead = (new Carbon())->addYear();
+
+		$amount     = 10.00;
+		$cardNumber = '4111111111111111';
+		$month      = $oneYearAhead->month;
+		$year       = $oneYearAhead->year;
+
+		$purchaseRequest = $client->purchase($amount, $cardNumber, $month, $year);
+
+		$purchaseResponse = $client->execute($purchaseRequest);
+
+		$this->assertTrue($purchaseResponse->isCodeApproved());
+
+		$refundRequest = $client->refund(5.00, $purchaseResponse->getTransactionReference());
+
+		$refundResponse = $client->execute($refundRequest);
+
+		$this->assertTrue($refundResponse->isCodeApproved());
 	}
 }
