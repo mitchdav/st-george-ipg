@@ -798,8 +798,9 @@ class Request
 	}
 
 	/**
-	 * @return boolean
+	 * Validates the request attributes based on the transaction type, and the rules specified by St.George.
 	 *
+	 * @return boolean
 	 * @throws \StGeorgeIPG\Exceptions\InvalidAttributeValueException
 	 */
 	public function validate()
@@ -1055,6 +1056,8 @@ class Request
 	}
 
 	/**
+	 * Creates the request using information from the client.
+	 *
 	 * @param \StGeorgeIPG\Client $client
 	 * @param boolean             $includeTerminalType
 	 *
@@ -1084,8 +1087,7 @@ class Request
 			->setPort($client->getPort())
 			->setInterface($client->getInterface());
 
-		if($includeTerminalType)
-		{
+		if ($includeTerminalType) {
 			$request
 				->setTerminalType($client->getTerminalType());
 		}
@@ -1124,6 +1126,11 @@ class Request
 		return sprintf('%02d', strval($month)) . substr(strval($year), 2);
 	}
 
+	/**
+	 * @param string $attribute
+	 * @param string $input
+	 * @param array  $validValues
+	 */
 	private static function validateInput($attribute, $input, $validValues)
 	{
 		if (!is_null($input) && !in_array($input, $validValues, TRUE)) {
@@ -1131,6 +1138,10 @@ class Request
 		}
 	}
 
+	/**
+	 * @param string  $attribute
+	 * @param integer $input
+	 */
 	private static function validateInputIsInteger($attribute, $input)
 	{
 		if (!is_null($input) && !is_int($input)) {
@@ -1138,6 +1149,10 @@ class Request
 		}
 	}
 
+	/**
+	 * @param string $attribute
+	 * @param double $input
+	 */
 	private static function validateInputIsDouble($attribute, $input)
 	{
 		if (!is_null($input) && !is_double($input)) {
@@ -1145,6 +1160,9 @@ class Request
 		}
 	}
 
+	/**
+	 * @param string $input
+	 */
 	private static function validateInputIsCardNumber($input)
 	{
 		if (!CreditCard::validCreditCard($input)['valid']) {
@@ -1152,6 +1170,10 @@ class Request
 		}
 	}
 
+	/**
+	 * @param integer $month
+	 * @param integer $year
+	 */
 	private static function validateInputIsCardExpiryDate($month, $year)
 	{
 		if (!CreditCard::validDate($year, $month)) {

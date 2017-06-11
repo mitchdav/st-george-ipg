@@ -463,6 +463,10 @@ class Response
 				return new UnableToProcessException($response);
 			}
 
+			/**
+			 * A blank string is included here as the Webpay library doesn't seem to return the -1 code
+			 * to this library, regardless of what is output in the log file.
+			 */
 			case '':
 			case Response::CODE_LOCAL_ERROR: {
 				switch ($response->getError()) {

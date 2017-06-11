@@ -82,6 +82,8 @@ class Client
 	/**
 	 * Client constructor.
 	 *
+	 * Initialises the client, using some sensible defaults.
+	 *
 	 * @param integer             $clientId
 	 * @param string              $certificatePassword
 	 * @param \StGeorgeIPG\Webpay $webpay
@@ -315,6 +317,8 @@ class Client
 	}
 
 	/**
+	 * Create a purchase request.
+	 *
 	 * @param      $amount
 	 * @param      $cardNumber
 	 * @param      $month
@@ -348,6 +352,8 @@ class Client
 	}
 
 	/**
+	 * Create a refund request.
+	 *
 	 * @param      $amount
 	 * @param      $originalTransactionReference
 	 * @param null $clientReference
@@ -376,6 +382,8 @@ class Client
 	}
 
 	/**
+	 * Create a pre auth request.
+	 *
 	 * @param      $amount
 	 * @param      $cardNumber
 	 * @param      $month
@@ -409,6 +417,8 @@ class Client
 	}
 
 	/**
+	 * Create a completion request.
+	 *
 	 * @param      $amount
 	 * @param      $originalTransactionReference
 	 * @param      $authorisationNumber
@@ -439,6 +449,8 @@ class Client
 	}
 
 	/**
+	 * Create a status request.
+	 *
 	 * @param $transactionReference
 	 *
 	 * @return \StGeorgeIPG\Request
@@ -504,15 +516,12 @@ class Client
 	}
 
 	/**
-	 * Get the response, and then map the response code for any errors to appropriate exceptions.
+	 * Get the response, and then pass it to the validator.
 	 *
 	 * @param \StGeorgeIPG\Request $request
 	 * @param integer              $maxTries
 	 *
 	 * @return \StGeorgeIPG\Response
-	 * @throws \StGeorgeIPG\Exceptions\ResponseCodes\Exception
-	 * @throws \StGeorgeIPG\Exceptions\TransactionFailedException
-	 * @throws \StGeorgeIPG\Exceptions\TransactionInProgressException
 	 */
 	public function execute(Request $request, $maxTries = 3)
 	{
@@ -522,14 +531,12 @@ class Client
 	}
 
 	/**
-	 * Get the response, and then map the response code for any errors to appropriate exceptions.
+	 * Map the response code for any errors to appropriate exceptions.
 	 *
 	 * @param \StGeorgeIPG\Response $response
 	 *
 	 * @return \StGeorgeIPG\Response
 	 * @throws \StGeorgeIPG\Exceptions\ResponseCodes\Exception
-	 * @throws \StGeorgeIPG\Exceptions\TransactionFailedException
-	 * @throws \StGeorgeIPG\Exceptions\TransactionInProgressException
 	 */
 	public function validateResponse(Response $response)
 	{
