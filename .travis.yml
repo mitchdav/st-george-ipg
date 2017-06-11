@@ -11,7 +11,9 @@ php:
   - 5.6
 
 before_install:
-  - docker build -t mitchdav/st-george-ipg .
+  - sudo apt-get install -y jq
+  - export VERSION=`cat composer.json | jq --raw-output '.version'`
+  - docker build -t $DOCKER_REPO:$VERSION -t $DOCKER_REPO:latest .
   - docker run -d -e IPGCLIENTID=$IPGCLIENTID -e IPGCERTIFICATEPASSWORD=$IPGCERTIFICATEPASSWORD -e TRAVIS=$TRAVIS -e TRAVIS_JOB_ID=$TRAVIS_JOB_ID --name st-george-ipg -t mitchdav/st-george-ipg
 
 # This seems to error on Travis (but not when run locally), so echo the exit code to return exit code 0
@@ -25,5 +27,6 @@ after_script:
 after_success:
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
     docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-    docker push $DOCKER_REPO;
+    docker push $DOCKER_REPO:$VERSION;
+    docker push $DOCKER_REPO:latest;
     fi

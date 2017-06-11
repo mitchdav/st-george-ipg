@@ -1,5 +1,6 @@
 {
   "name": "mitchdav/st-george-ipg",
+  "version": "1.0.0",
   "description": "A PHP client implementation of the St.George Internet Payment Gateway using the Webpay library.",
   "type": "library",
   "license": "MIT",
@@ -10,7 +11,10 @@
     }
   ],
   "scripts": {
-    "test": "php vendor/bin/phpunit --testsuite unit"
+    "test": "php vendor/bin/phpunit --testsuite all",
+    "test:end-to-end": "php vendor/bin/phpunit --testsuite end-to-end",
+    "test:integration": "php vendor/bin/phpunit --testsuite integration",
+    "test:unit": "php vendor/bin/phpunit --testsuite unit"
   },
   "autoload": {
     "psr-4": {
