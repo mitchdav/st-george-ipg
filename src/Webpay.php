@@ -122,7 +122,7 @@ class Webpay
 	 */
 	public function getAttribute($reference, $name)
 	{
-		\get($reference, $name);
+		return \get($reference, $name);
 	}
 
 	/**

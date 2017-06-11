@@ -23,7 +23,7 @@ use StGeorgeIPG\Exceptions\ResponseCodes\TimeoutException;
 use StGeorgeIPG\Exceptions\ResponseCodes\UnableToProcessException;
 use StGeorgeIPG\Exceptions\ResponseCodes\ValidationFailureException;
 
-class ResponseTest extends TestCase
+class ResponseUnitTest extends TestCase
 {
 	/**
 	 * @return \StGeorgeIPG\Webpay
@@ -318,11 +318,11 @@ class ResponseTest extends TestCase
 		$this->assertInstanceOf(InProgressException::class, Response::mapResponseCodeToException($response->setCode(Response::CODE_IP)));
 		$this->assertInstanceOf(ValidationFailureException::class, Response::mapResponseCodeToException($response->setCode(Response::CODE_VA)));
 		$this->assertInstanceOf(UnableToProcessException::class, Response::mapResponseCodeToException($response->setCode(Response::CODE_Y3)));
-		$this->assertInstanceOf(InitializeSSLException::class, Response::mapResponseCodeToException($response->setCode(Response::CODE_LOCAL_ERROR)->setText('Unable to initialise SSL')));
-		$this->assertInstanceOf(NegotiateSSLException::class, Response::mapResponseCodeToException($response->setCode(Response::CODE_LOCAL_ERROR)->setText('Unable to negotiate SSL')));
-		$this->assertInstanceOf(ConnectionException::class, Response::mapResponseCodeToException($response->setCode(Response::CODE_LOCAL_ERROR)->setText('Unable to connect to server')));
-		$this->assertInstanceOf(ProcessException::class, Response::mapResponseCodeToException($response->setCode(Response::CODE_LOCAL_ERROR)->setText('Unable to process')));
-		$this->assertInstanceOf(Exceptions\ResponseCodes\LocalErrors\Exception::class, Response::mapResponseCodeToException($response->setCode(Response::CODE_LOCAL_ERROR)->setText('')));
+		$this->assertInstanceOf(InitializeSSLException::class, Response::mapResponseCodeToException($response->setCode(Response::CODE_LOCAL_ERROR)->setError('Unable to initialise SSL')));
+		$this->assertInstanceOf(NegotiateSSLException::class, Response::mapResponseCodeToException($response->setCode(Response::CODE_LOCAL_ERROR)->setError('Unable to negotiate SSL')));
+		$this->assertInstanceOf(ConnectionException::class, Response::mapResponseCodeToException($response->setCode(Response::CODE_LOCAL_ERROR)->setError('Unable to connect to server')));
+		$this->assertInstanceOf(ProcessException::class, Response::mapResponseCodeToException($response->setCode(Response::CODE_LOCAL_ERROR)->setError('Unable to process')));
+		$this->assertInstanceOf(Exceptions\ResponseCodes\LocalErrors\Exception::class, Response::mapResponseCodeToException($response->setCode(Response::CODE_LOCAL_ERROR)->setError('')));
 		$this->assertInstanceOf(Exception::class, Response::mapResponseCodeToException($response->setCode(-100)));
 	}
 }

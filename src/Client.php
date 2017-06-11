@@ -445,7 +445,7 @@ class Client
 	 */
 	public function status($transactionReference)
 	{
-		$request = Request::createFromClient($this);
+		$request = Request::createFromClient($this, FALSE);
 
 		$request
 			->setTransactionType(Request::TRANSACTION_TYPE_STATUS)

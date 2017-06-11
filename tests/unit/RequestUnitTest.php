@@ -7,7 +7,7 @@ use StGeorgeIPG\Exceptions\InvalidAttributeStatusException;
 use StGeorgeIPG\Exceptions\InvalidAttributeValueException;
 use StGeorgeIPG\Exceptions\InvalidCardDataException;
 
-class RequestTest extends TestCase
+class RequestUnitTest extends TestCase
 {
 	/**
 	 * @return \StGeorgeIPG\Webpay

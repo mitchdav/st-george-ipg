@@ -463,8 +463,9 @@ class Response
 				return new UnableToProcessException($response);
 			}
 
+			case '':
 			case Response::CODE_LOCAL_ERROR: {
-				switch ($response->getText()) {
+				switch ($response->getError()) {
 					case 'Unable to initialise SSL': {
 						return new InitializeSSLException($response);
 					}

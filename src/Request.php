@@ -1056,30 +1056,38 @@ class Request
 
 	/**
 	 * @param \StGeorgeIPG\Client $client
+	 * @param boolean             $includeTerminalType
 	 *
 	 * @return \StGeorgeIPG\Request
 	 */
-	public static function createFromClient(Client $client)
+	public static function createFromClient(Client $client, $includeTerminalType = TRUE)
 	{
 		$request = new Request();
 
 		$request
 			->setWebpay($client->getWebpay())
 			->setWebpayReference($request->createWebpayReference())
-			->setClientId($client->getClientId())
-			->setCertificatePath($client->getCertificatePath())
-			->setCertificatePassword($client->getCertificatePassword())
-			->setDebug($client->getDebug())
-			->setServers($client->getServers())
-			->setPort($client->getPort())
-			->setTerminalType($client->getTerminalType())
-			->setInterface($client->getInterface());
+			->setDebug($client->getDebug());
 
 		$logPath = $client->getLogPath();
 
 		if ($logPath) {
 			$request
 				->setLogPath($logPath);
+		}
+
+		$request
+			->setClientId($client->getClientId())
+			->setCertificatePath($client->getCertificatePath())
+			->setCertificatePassword($client->getCertificatePassword())
+			->setServers($client->getServers())
+			->setPort($client->getPort())
+			->setInterface($client->getInterface());
+
+		if($includeTerminalType)
+		{
+			$request
+				->setTerminalType($client->getTerminalType());
 		}
 
 		return $request;
@@ -1118,21 +1126,21 @@ class Request
 
 	private static function validateInput($attribute, $input, $validValues)
 	{
-		if (!in_array($input, $validValues, TRUE)) {
+		if (!is_null($input) && !in_array($input, $validValues, TRUE)) {
 			throw new InvalidAttributeValueException($attribute, $input);
 		}
 	}
 
 	private static function validateInputIsInteger($attribute, $input)
 	{
-		if (!is_int($input)) {
+		if (!is_null($input) && !is_int($input)) {
 			throw new InvalidAttributeValueException($attribute, $input);
 		}
 	}
 
 	private static function validateInputIsDouble($attribute, $input)
 	{
-		if (!is_double($input)) {
+		if (!is_null($input) && !is_double($input)) {
 			throw new InvalidAttributeValueException($attribute, $input);
 		}
 	}

@@ -10,7 +10,7 @@
     }
   ],
   "scripts": {
-    "test": "php vendor/bin/phpunit"
+    "test": "php vendor/bin/phpunit --testsuite unit"
   },
   "autoload": {
     "psr-4": {

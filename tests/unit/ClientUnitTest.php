@@ -5,7 +5,7 @@ namespace StGeorgeIPG;
 use Carbon\Carbon;
 use StGeorgeIPG\Exceptions\ResponseCodes\InsufficientFundsException;
 
-class ClientTest extends TestCase
+class ClientUnitTest extends TestCase
 {
 	/**
 	 * @return \StGeorgeIPG\Webpay

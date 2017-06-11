@@ -1,5 +1,10 @@
 dist: trusty
 
+sudo: required
+
+services:
+  - docker
+
 language: php
 
 php:
@@ -8,8 +13,18 @@ php:
   - 7.1
   - hhvm
 
-install: composer install --dev
+before_install:
+  - docker build -t mitchdav/st-george-ipg .
+  - docker run -d -e IPGCLIENTID=$IPGCLIENTID -e IPGCERTIFICATEPASSWORD=$IPGCERTIFICATEPASSWORD --name st-george-ipg -t mitchdav/st-george-ipg
 
-script: php vendor/bin/phpunit
+script:
+  - docker exec -it st-george-ipg /bin/bash -c "php vendor/bin/phpunit"
 
-after_script: php vendor/bin/coveralls -v
+after_script:
+  - docker exec -it st-george-ipg /bin/bash -c "php vendor/bin/coveralls -v"
+
+# after_success:
+#   - if [ "$TRAVIS_BRANCH" == "master" ]; then
+#     docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+#     docker push USER/REPO;
+#     fi

@@ -5,7 +5,7 @@ use PHPUnit\Framework\TestCase;
 use StGeorgeIPG\Request;
 use StGeorgeIPG\Response;
 
-class ExceptionsTest extends TestCase
+class ExceptionsUnitTest extends TestCase
 {
 	/**
 	 * @covers \StGeorgeIPG\Exceptions\AttributeNotFoundException::__construct
@@ -247,5 +247,24 @@ class ExceptionsTest extends TestCase
 		$exception = new \StGeorgeIPG\Exceptions\ResponseCodes\Exception($response);
 
 		$this->assertEquals($text, $exception->getResponseText());
+	}
+
+	/**
+	 * @covers \StGeorgeIPG\Exceptions\ResponseCodes\LocalErrors\Exception::__construct
+	 */
+	public function testResponseCodesLocalErrorsExceptionConstructor_ValidInput_Equals()
+	{
+		$code = -1;
+		$text = 'ERROR';
+
+		$response = new Response();
+
+		$response
+			->setCode($code)
+			->setError($text);
+
+		$exception = new \StGeorgeIPG\Exceptions\ResponseCodes\LocalErrors\Exception($response);
+
+		$this->assertEquals('Response was ' . $code . ' - ' . $text . '.', $exception->getMessage());
 	}
 }

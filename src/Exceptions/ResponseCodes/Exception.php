@@ -9,17 +9,17 @@ class Exception extends \Exception
 	/**
 	 * @var Response $response
 	 */
-	private $response;
+	protected $response;
 
 	/**
 	 * @var string $responseCode
 	 */
-	private $responseCode;
+	protected $responseCode;
 
 	/**
 	 * @var string $responseText
 	 */
-	private $responseText;
+	protected $responseText;
 
 	/**
 	 * Exception constructor.
@@ -28,11 +28,13 @@ class Exception extends \Exception
 	 */
 	public function __construct(Response $response)
 	{
+		parent::__construct();
+
 		$this->response     = $response;
 		$this->responseCode = $response->getCode();
 		$this->responseText = $response->getText();
 
-		return parent::__construct('Response was ' . $this->responseCode . ' - ' . $this->responseText . '.');
+		$this->message = 'Response was ' . $this->responseCode . ' - ' . $this->responseText . '.';
 	}
 
 	/**

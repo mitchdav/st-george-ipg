@@ -1,0 +1,5 @@
+/vendor/
+/build/
+.idea
+clover.xml
+.DS_Store
