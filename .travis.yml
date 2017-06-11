@@ -15,10 +15,10 @@ before_install:
   - docker run -d -e IPGCLIENTID=$IPGCLIENTID -e IPGCERTIFICATEPASSWORD=$IPGCERTIFICATEPASSWORD -e TRAVIS=$TRAVIS -e TRAVIS_JOB_ID=$TRAVIS_JOB_ID --name st-george-ipg -t mitchdav/st-george-ipg
 
 script:
-  - docker exec -i st-george-ipg sh -c "php vendor/bin/phpunit"
+  - docker exec st-george-ipg php vendor/bin/phpunit; echo $?
 
 after_script:
-  - docker exec -i st-george-ipg sh -c "php vendor/bin/coveralls -v"
+  - docker exec st-george-ipg php vendor/bin/coveralls -v; echo $?
 
 # after_success:
 #   - if [ "$TRAVIS_BRANCH" == "master" ]; then
