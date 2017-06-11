@@ -12,7 +12,7 @@ Using this library, you can provide your St.George-issued client ID and certific
 
 The library supports all features of the gateway, including:
 - Purchases and refunds
-- Preauths and completions
+- Pre-authorisations and completions
 - Status checks on existing transactions
 - Setting a client reference on the transaction
 - Setting a comment on the transaction
@@ -117,9 +117,9 @@ try {
 }
 ```
 
-### Pre Auth
+### Pre-authorisation
 
-You can also pre authorise a charge (if enabled for your account), effectively putting a hold on a customer's card, like so:
+You can also pre-authorise a charge (if enabled for your account), effectively putting a hold on a customer's card, like so:
 
 ```php
 $oneYearAhead = (new Carbon())->addYear();
@@ -134,9 +134,9 @@ $preAuthRequest = $client->preAuth($amount, $cardNumber, $month, $year);
 try {
     $preAuthResponse = $client->execute($preAuthRequest);
 
-    echo 'The pre auth was successful.' . "\n";
+    echo 'The pre-authorisation was successful.' . "\n";
 } catch (Exception $ex) {
-    echo 'The pre auth was unsuccessful.' . "\n";
+    echo 'The pre-authorisation was unsuccessful.' . "\n";
     echo $ex->getMessage() . "\n";
 
     var_dump($preAuthRequest);
@@ -146,7 +146,7 @@ try {
 
 ### Completion
 
-After a successful pre auth, you can complete the transaction, like so:
+After a successful pre-authorisation, you can complete the transaction, like so:
 
 ```php
 $oneYearAhead = (new Carbon())->addYear();
@@ -161,7 +161,7 @@ $preAuthRequest = $client->preAuth($amount, $cardNumber, $month, $year);
 try {
     $preAuthResponse = $client->execute($preAuthRequest);
 
-    echo 'The pre auth was successful.' . "\n";
+    echo 'The pre-authorisation was successful.' . "\n";
 
     $completionRequest = $client->completion($amount, $preAuthResponse->getTransactionReference(), $preAuthResponse->getAuthorisationNumber()); // In dollars
 
@@ -177,7 +177,7 @@ try {
         var_dump($ex->getResponse());
     }
 } catch (Exception $ex) {
-    echo 'The pre auth was unsuccessful.' . "\n";
+    echo 'The pre-authorisation was unsuccessful.' . "\n";
     echo $ex->getMessage() . "\n";
 
     var_dump($preAuthRequest);
