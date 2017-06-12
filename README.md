@@ -254,6 +254,10 @@ Finally, export your own St.George-provided client ID and certificate password l
     export IPGCLIENTID='10000000'
     export IPGCERTIFICATEPASSWORD='password'
 
+Some useful Stack Overflow questions to troubleshoot with are here:
+- [wrap_newBundle not available SWIG & webpay](https://stackoverflow.com/q/5728605/7503569)
+- [can't install webpay extension with php?](https://stackoverflow.com/q/5699492/7503569)
+
 ## Testing
 
 Now that you have a working installation, you can run the below testing commands:
