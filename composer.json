@@ -1,6 +1,5 @@
 {
   "name": "mitchdav/st-george-ipg",
-  "version": "1.0.0",
   "description": "A PHP client implementation of the St.George Internet Payment Gateway using the Webpay library.",
   "type": "library",
   "license": "MIT",
