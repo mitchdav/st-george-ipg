@@ -1035,10 +1035,10 @@ class Request
 	 */
 	private function setLogPath($logFilePath)
 	{
-		$directory = dirname(realpath($logFilePath));
+		$directory = dirname($logFilePath);
 
 		if (!file_exists($directory)) {
-			mkdir($directory, 0755, TRUE);
+			mkdir($directory, 0640, TRUE);
 		}
 
 		$this->getWebpay()->setAttribute($this->getWebpayReference(), 'LOGFILE', $logFilePath);
