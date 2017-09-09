@@ -64,13 +64,30 @@ class Request
 	const TERMINAL_TYPE_RECURRING_PAYMENT = 4;
 	const TERMINAL_TYPE_INSTALMENT        = 5;
 
-	/** @var \StGeorgeIPG\Webpay $webpay */
-	private $webpay;
-
 	/**
-	 * @var mixed $webpayReference
+	 * @var array $attributeMapping
 	 */
-	private $webpayReference;
+	private static $attributeMapping = [
+		Request::ATTRIBUTE_INTERFACE                      => 'interface',
+		Request::ATTRIBUTE_TRANSACTION_TYPE               => 'transactionType',
+		Request::ATTRIBUTE_TOTAL_AMOUNT                   => 'totalAmount',
+		Request::ATTRIBUTE_TAX_AMOUNT                     => 'taxAmount',
+		Request::ATTRIBUTE_CARD_DATA                      => 'cardData',
+		Request::ATTRIBUTE_CARD_EXPIRY_DATE               => 'cardExpiryDate',
+		Request::ATTRIBUTE_TRANSACTION_REFERENCE          => 'transactionReference',
+		Request::ATTRIBUTE_ORIGINAL_TRANSACTION_REFERENCE => 'originalTransactionReference',
+		Request::ATTRIBUTE_PRE_AUTH_NUMBER                => 'preAuthNumber',
+		Request::ATTRIBUTE_AUTH_NUMBER                    => 'authNumber',
+		Request::ATTRIBUTE_AUTHORISATION_NUMBER           => 'authorisationNumber',
+		Request::ATTRIBUTE_AUTH_CODE                      => 'authCode',
+		Request::ATTRIBUTE_AUTHORISATION_CODE             => 'authorisationCode',
+		Request::ATTRIBUTE_CLIENT_REFERENCE               => 'clientReference',
+		Request::ATTRIBUTE_COMMENT                        => 'comment',
+		Request::ATTRIBUTE_MERCHANT_CARD_HOLDER_NAME      => 'merchantCardHolderName',
+		Request::ATTRIBUTE_MERCHANT_DESCRIPTION           => 'merchantDescription',
+		Request::ATTRIBUTE_TERMINAL_TYPE                  => 'terminalType',
+		Request::ATTRIBUTE_CVC2                           => 'cvc2',
+	];
 
 	/**
 	 * @var string $interface
@@ -168,76 +185,110 @@ class Request
 	private $cvc2;
 
 	/**
-	 * @var array $attributeMapping
-	 */
-	private static $attributeMapping = [
-		Request::ATTRIBUTE_INTERFACE                      => 'interface',
-		Request::ATTRIBUTE_TRANSACTION_TYPE               => 'transactionType',
-		Request::ATTRIBUTE_TOTAL_AMOUNT                   => 'totalAmount',
-		Request::ATTRIBUTE_TAX_AMOUNT                     => 'taxAmount',
-		Request::ATTRIBUTE_CARD_DATA                      => 'cardData',
-		Request::ATTRIBUTE_CARD_EXPIRY_DATE               => 'cardExpiryDate',
-		Request::ATTRIBUTE_TRANSACTION_REFERENCE          => 'transactionReference',
-		Request::ATTRIBUTE_ORIGINAL_TRANSACTION_REFERENCE => 'originalTransactionReference',
-		Request::ATTRIBUTE_PRE_AUTH_NUMBER                => 'preAuthNumber',
-		Request::ATTRIBUTE_AUTH_NUMBER                    => 'authNumber',
-		Request::ATTRIBUTE_AUTHORISATION_NUMBER           => 'authorisationNumber',
-		Request::ATTRIBUTE_AUTH_CODE                      => 'authCode',
-		Request::ATTRIBUTE_AUTHORISATION_CODE             => 'authorisationCode',
-		Request::ATTRIBUTE_CLIENT_REFERENCE               => 'clientReference',
-		Request::ATTRIBUTE_COMMENT                        => 'comment',
-		Request::ATTRIBUTE_MERCHANT_CARD_HOLDER_NAME      => 'merchantCardHolderName',
-		Request::ATTRIBUTE_MERCHANT_DESCRIPTION           => 'merchantDescription',
-		Request::ATTRIBUTE_TERMINAL_TYPE                  => 'terminalType',
-		Request::ATTRIBUTE_CVC2                           => 'cvc2',
-	];
-
-	/**
-	 * @return \StGeorgeIPG\Webpay
-	 */
-	public function getWebpay()
-	{
-		return $this->webpay;
-	}
-
-	/**
-	 * @param \StGeorgeIPG\Webpay $webpay
+	 * Creates the request using information from the client.
+	 *
+	 * @param \StGeorgeIPG\Client $client
+	 * @param boolean             $includeTerminalType
 	 *
 	 * @return \StGeorgeIPG\Request
 	 */
-	public function setWebpay(Webpay $webpay)
+	public static function createFromClient(Client $client, $includeTerminalType = TRUE)
 	{
-		$this->webpay = $webpay;
+		$request = new Request();
 
-		return $this;
+		$request->setInterface($client->getInterface());
+
+		if ($includeTerminalType) {
+			$request->setTerminalType($client->getTerminalType());
+		}
+
+		return $request;
 	}
 
 	/**
-	 * @return mixed
-	 */
-	public function getWebpayReference()
-	{
-		return $this->webpayReference;
-	}
-
-	/**
-	 * @param mixed $webpayReference
+	 * @param double $amount
 	 *
-	 * @return \StGeorgeIPG\Request
-	 */
-	public function setWebpayReference($webpayReference)
-	{
-		$this->webpayReference = $webpayReference;
-
-		return $this;
-	}
-
-	/**
 	 * @return string
 	 */
-	public function getInterface()
+	private static function formatCurrency($amount)
 	{
-		return $this->interface;
+		return number_format($amount, 2, '.', '');
+	}
+
+	/**
+	 * @param string $attribute
+	 * @param string $input
+	 * @param array  $validValues
+	 */
+	private static function validateInput($attribute, $input, $validValues)
+	{
+		if (!is_null($input) && !in_array($input, $validValues, TRUE)) {
+			throw new InvalidAttributeValueException($attribute, $input);
+		}
+	}
+
+	/**
+	 * @param string $attribute
+	 * @param double $input
+	 */
+	private static function validateInputIsDouble($attribute, $input)
+	{
+		if (!is_null($input) && !is_double($input)) {
+			throw new InvalidAttributeValueException($attribute, $input);
+		}
+	}
+
+	/**
+	 * @param string $input
+	 */
+	private static function validateInputIsCardNumber($input)
+	{
+		if (!CreditCard::validCreditCard($input)['valid']) {
+			throw new InvalidCardDataException('The card data is invalid.');
+		}
+	}
+
+	/**
+	 * @param string $number
+	 *
+	 * @return string
+	 */
+	private static function formatCardNumber($number)
+	{
+		return preg_replace('~\D~', '', $number);
+	}
+
+	/**
+	 * @param string  $attribute
+	 * @param integer $input
+	 */
+	private static function validateInputIsInteger($attribute, $input)
+	{
+		if (!is_null($input) && !is_int($input)) {
+			throw new InvalidAttributeValueException($attribute, $input);
+		}
+	}
+
+	/**
+	 * @param integer $month
+	 * @param integer $year
+	 */
+	private static function validateInputIsCardExpiryDate($month, $year)
+	{
+		if (!CreditCard::validDate($year, $month)) {
+			throw new \InvalidArgumentException('The card expiry date is invalid.');
+		}
+	}
+
+	/**
+	 * @param integer $month
+	 * @param integer $year
+	 *
+	 * @return string
+	 */
+	private static function formatDate($month, $year)
+	{
+		return sprintf('%02d', strval($month)) . substr(strval($year), 2);
 	}
 
 	/**
@@ -249,11 +300,11 @@ class Request
 	}
 
 	/**
-	 * @return bool
+	 * @return string
 	 */
-	public function isInterfaceTest()
+	public function getInterface()
 	{
-		return $this->getInterface() == Request::INTERFACE_TEST;
+		return $this->interface;
 	}
 
 	/**
@@ -272,9 +323,23 @@ class Request
 
 		$this->interface = $interface;
 
-		$this->setAttribute(Request::ATTRIBUTE_INTERFACE, $interface);
-
 		return $this;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isInterfaceTest()
+	{
+		return $this->getInterface() == Request::INTERFACE_TEST;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isTransactionTypePurchase()
+	{
+		return $this->getTransactionType() == Request::TRANSACTION_TYPE_PURCHASE;
 	}
 
 	/**
@@ -286,11 +351,25 @@ class Request
 	}
 
 	/**
-	 * @return bool
+	 * @param string $transactionType
+	 *
+	 * @return \StGeorgeIPG\Request
 	 */
-	public function isTransactionTypePurchase()
+	public function setTransactionType($transactionType)
 	{
-		return $this->getTransactionType() == Request::TRANSACTION_TYPE_PURCHASE;
+		$validValues = [
+			Request::TRANSACTION_TYPE_PURCHASE,
+			Request::TRANSACTION_TYPE_REFUND,
+			Request::TRANSACTION_TYPE_PRE_AUTH,
+			Request::TRANSACTION_TYPE_COMPLETION,
+			Request::TRANSACTION_TYPE_STATUS,
+		];
+
+		$this->validateInput(Request::ATTRIBUTE_TRANSACTION_TYPE, $transactionType, $validValues);
+
+		$this->transactionType = $transactionType;
+
+		return $this;
 	}
 
 	/**
@@ -326,372 +405,11 @@ class Request
 	}
 
 	/**
-	 * @param string $transactionType
-	 *
-	 * @return \StGeorgeIPG\Request
+	 * @return bool
 	 */
-	public function setTransactionType($transactionType)
+	public function isTerminalTypeInternet()
 	{
-		$validValues = [
-			Request::TRANSACTION_TYPE_PURCHASE,
-			Request::TRANSACTION_TYPE_REFUND,
-			Request::TRANSACTION_TYPE_PRE_AUTH,
-			Request::TRANSACTION_TYPE_COMPLETION,
-			Request::TRANSACTION_TYPE_STATUS,
-		];
-
-		$this->validateInput(Request::ATTRIBUTE_TRANSACTION_TYPE, $transactionType, $validValues);
-
-		$this->transactionType = $transactionType;
-
-		$this->setAttribute(Request::ATTRIBUTE_TRANSACTION_TYPE, $transactionType);
-
-		return $this;
-	}
-
-	/**
-	 * @return double
-	 */
-	public function getTotalAmount()
-	{
-		return $this->totalAmount;
-	}
-
-	/**
-	 * @param double $totalAmount
-	 *
-	 * @return \StGeorgeIPG\Request
-	 */
-	public function setTotalAmount($totalAmount)
-	{
-		$this->validateInputIsDouble(Request::ATTRIBUTE_TOTAL_AMOUNT, $totalAmount);
-
-		$this->totalAmount = $totalAmount;
-
-		$this->setAttribute(Request::ATTRIBUTE_TOTAL_AMOUNT, Request::formatCurrency($totalAmount));
-
-		return $this;
-	}
-
-	/**
-	 * @return double
-	 */
-	public function getTaxAmount()
-	{
-		return $this->taxAmount;
-	}
-
-	/**
-	 * @param double $taxAmount
-	 *
-	 * @return \StGeorgeIPG\Request
-	 */
-	public function setTaxAmount($taxAmount)
-	{
-		$this->validateInputIsDouble(Request::ATTRIBUTE_TAX_AMOUNT, $taxAmount);
-
-		$this->taxAmount = $taxAmount;
-
-		$this->setAttribute(Request::ATTRIBUTE_TAX_AMOUNT, Request::formatCurrency($taxAmount));
-
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getCardData()
-	{
-		return $this->cardData;
-	}
-
-	/**
-	 * @param string $cardData
-	 *
-	 * @return \StGeorgeIPG\Request
-	 */
-	public function setCardData($cardData)
-	{
-		$this->validateInputIsCardNumber($cardData);
-
-		$cardData = Request::formatCardNumber($cardData);
-
-		$this->cardData = $cardData;
-
-		$this->setAttribute(Request::ATTRIBUTE_CARD_DATA, $cardData);
-
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getCardExpiryDate()
-	{
-		return $this->cardExpiryDate;
-	}
-
-	/**
-	 * @param integer $month
-	 * @param integer $year
-	 *
-	 * @return \StGeorgeIPG\Request
-	 */
-	public function setCardExpiryDate($month, $year)
-	{
-		$this->validateInputIsInteger(Request::ATTRIBUTE_CARD_EXPIRY_DATE, $month);
-		$this->validateInputIsInteger(Request::ATTRIBUTE_CARD_EXPIRY_DATE, $year);
-		$this->validateInputIsCardExpiryDate($month, $year);
-
-		$cardExpiryDate = Request::formatDate($month, $year);
-
-		$this->cardExpiryDate = $cardExpiryDate;
-
-		$this->setAttribute(Request::ATTRIBUTE_CARD_EXPIRY_DATE, $cardExpiryDate);
-
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getTransactionReference()
-	{
-		return $this->transactionReference;
-	}
-
-	/**
-	 * @param string $transactionReference
-	 *
-	 * @return \StGeorgeIPG\Request
-	 */
-	public function setTransactionReference($transactionReference)
-	{
-		$this->transactionReference = $transactionReference;
-
-		$this->setAttribute(Request::ATTRIBUTE_TRANSACTION_REFERENCE, $transactionReference);
-
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getOriginalTransactionReference()
-	{
-		return $this->originalTransactionReference;
-	}
-
-	/**
-	 * @param string $originalTransactionReference
-	 *
-	 * @return \StGeorgeIPG\Request
-	 */
-	public function setOriginalTransactionReference($originalTransactionReference)
-	{
-		$this->originalTransactionReference = $originalTransactionReference;
-
-		$this->setAttribute(Request::ATTRIBUTE_ORIGINAL_TRANSACTION_REFERENCE, $originalTransactionReference);
-
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getPreAuthNumber()
-	{
-		return $this->preAuthNumber;
-	}
-
-	/**
-	 * @param string $preAuthNumber
-	 *
-	 * @return \StGeorgeIPG\Request
-	 */
-	public function setPreAuthNumber($preAuthNumber)
-	{
-		$this->preAuthNumber = $preAuthNumber;
-
-		$this->setAttribute(Request::ATTRIBUTE_PRE_AUTH_NUMBER, $preAuthNumber);
-
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getAuthNumber()
-	{
-		return $this->authNumber;
-	}
-
-	/**
-	 * @param string $authNumber
-	 *
-	 * @return \StGeorgeIPG\Request
-	 */
-	public function setAuthNumber($authNumber)
-	{
-		$this->authNumber = $authNumber;
-
-		$this->setAttribute(Request::ATTRIBUTE_AUTH_NUMBER, $authNumber);
-
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getAuthorisationNumber()
-	{
-		return $this->authorisationNumber;
-	}
-
-	/**
-	 * @param string $authorisationNumber
-	 *
-	 * @return \StGeorgeIPG\Request
-	 */
-	public function setAuthorisationNumber($authorisationNumber)
-	{
-		$this->authorisationNumber = $authorisationNumber;
-
-		$this->setAttribute(Request::ATTRIBUTE_AUTHORISATION_NUMBER, $authorisationNumber);
-
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getAuthCode()
-	{
-		return $this->authCode;
-	}
-
-	/**
-	 * @param string $authCode
-	 *
-	 * @return \StGeorgeIPG\Request
-	 */
-	public function setAuthCode($authCode)
-	{
-		$this->authCode = $authCode;
-
-		$this->setAttribute(Request::ATTRIBUTE_AUTH_CODE, $authCode);
-
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getAuthorisationCode()
-	{
-		return $this->authorisationCode;
-	}
-
-	/**
-	 * @param string $authorisationCode
-	 *
-	 * @return \StGeorgeIPG\Request
-	 */
-	public function setAuthorisationCode($authorisationCode)
-	{
-		$this->authorisationCode = $authorisationCode;
-
-		$this->setAttribute(Request::ATTRIBUTE_AUTHORISATION_CODE, $authorisationCode);
-
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getClientReference()
-	{
-		return $this->clientReference;
-	}
-
-	/**
-	 * @param string $clientReference
-	 *
-	 * @return \StGeorgeIPG\Request
-	 */
-	public function setClientReference($clientReference)
-	{
-		$this->clientReference = $clientReference;
-
-		$this->setAttribute(Request::ATTRIBUTE_CLIENT_REFERENCE, $clientReference);
-
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getComment()
-	{
-		return $this->comment;
-	}
-
-	/**
-	 * @param string $comment
-	 *
-	 * @return \StGeorgeIPG\Request
-	 */
-	public function setComment($comment)
-	{
-		$this->comment = $comment;
-
-		$this->setAttribute(Request::ATTRIBUTE_COMMENT, $comment);
-
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getMerchantCardHolderName()
-	{
-		return $this->merchantCardHolderName;
-	}
-
-	/**
-	 * @param string $merchantCardHolderName
-	 *
-	 * @return \StGeorgeIPG\Request
-	 */
-	public function setMerchantCardHolderName($merchantCardHolderName)
-	{
-		$this->merchantCardHolderName = $merchantCardHolderName;
-
-		$this->setAttribute(Request::ATTRIBUTE_MERCHANT_CARD_HOLDER_NAME, $merchantCardHolderName);
-
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getMerchantDescription()
-	{
-		return $this->merchantDescription;
-	}
-
-	/**
-	 * @param string $merchantDescription
-	 *
-	 * @return \StGeorgeIPG\Request
-	 */
-	public function setMerchantDescription($merchantDescription)
-	{
-		$this->merchantDescription = $merchantDescription;
-
-		$this->setAttribute(Request::ATTRIBUTE_MERCHANT_DESCRIPTION, $merchantDescription);
-
-		return $this;
+		return $this->getTerminalType() == Request::TERMINAL_TYPE_INTERNET;
 	}
 
 	/**
@@ -703,11 +421,26 @@ class Request
 	}
 
 	/**
-	 * @return bool
+	 * @param integer $terminalType
+	 *
+	 * @return \StGeorgeIPG\Request
 	 */
-	public function isTerminalTypeInternet()
+	public function setTerminalType($terminalType)
 	{
-		return $this->getTerminalType() == Request::TERMINAL_TYPE_INTERNET;
+		$validValues = [
+			Request::TERMINAL_TYPE_INTERNET,
+			Request::TERMINAL_TYPE_TELEPHONE_ORDER,
+			Request::TERMINAL_TYPE_MAIL_ORDER,
+			Request::TERMINAL_TYPE_CUSTOMER_PRESENT,
+			Request::TERMINAL_TYPE_RECURRING_PAYMENT,
+			Request::TERMINAL_TYPE_INSTALMENT,
+		];
+
+		$this->validateInput(Request::ATTRIBUTE_TERMINAL_TYPE, $terminalType, $validValues);
+
+		$this->terminalType = $terminalType;
+
+		return $this;
 	}
 
 	/**
@@ -748,53 +481,6 @@ class Request
 	public function isTerminalTypeInstalment()
 	{
 		return $this->getTerminalType() == Request::TERMINAL_TYPE_INSTALMENT;
-	}
-
-	/**
-	 * @param integer $terminalType
-	 *
-	 * @return \StGeorgeIPG\Request
-	 */
-	public function setTerminalType($terminalType)
-	{
-		$validValues = [
-			Request::TERMINAL_TYPE_INTERNET,
-			Request::TERMINAL_TYPE_TELEPHONE_ORDER,
-			Request::TERMINAL_TYPE_MAIL_ORDER,
-			Request::TERMINAL_TYPE_CUSTOMER_PRESENT,
-			Request::TERMINAL_TYPE_RECURRING_PAYMENT,
-			Request::TERMINAL_TYPE_INSTALMENT,
-		];
-
-		$this->validateInput(Request::ATTRIBUTE_TERMINAL_TYPE, $terminalType, $validValues);
-
-		$this->terminalType = $terminalType;
-
-		$this->setAttribute(Request::ATTRIBUTE_TERMINAL_TYPE, $terminalType);
-
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getCVC2()
-	{
-		return $this->cvc2;
-	}
-
-	/**
-	 * @param string $cvc2
-	 *
-	 * @return \StGeorgeIPG\Request
-	 */
-	public function setCVC2($cvc2)
-	{
-		$this->cvc2 = $cvc2;
-
-		$this->setAttribute(Request::ATTRIBUTE_CVC2, $cvc2);
-
-		return $this;
 	}
 
 	/**
@@ -850,10 +536,12 @@ class Request
 
 			case Request::TRANSACTION_TYPE_COMPLETION: {
 				$this->validateAttributes([
-					Request::ATTRIBUTE_TOTAL_AMOUNT, [
+					Request::ATTRIBUTE_TOTAL_AMOUNT,
+					[
 						Request::ATTRIBUTE_ORIGINAL_TRANSACTION_REFERENCE,
 						Request::ATTRIBUTE_PRE_AUTH_NUMBER,
-					], [
+					],
+					[
 						Request::ATTRIBUTE_AUTH_CODE,
 						Request::ATTRIBUTE_AUTH_NUMBER,
 						Request::ATTRIBUTE_AUTHORISATION_CODE,
@@ -897,12 +585,389 @@ class Request
 		return TRUE;
 	}
 
-	/**
-	 * @return mixed
-	 */
-	private function createWebpayReference()
+	public function toArray()
 	{
-		return $this->getWebpay()->createBundle();
+		return [
+			'interface'                    => $this->getInterface(),
+			'transactionType'              => $this->getTransactionType(),
+			'totalAmount'                  => ($this->getTotalAmount() !== NULL) ? (Request::formatCurrency($this->getTotalAmount())) : (NULL),
+			'taxAmount'                    => ($this->getTaxAmount() !== NULL) ? (Request::formatCurrency($this->getTaxAmount())) : (NULL),
+			'cardData'                     => $this->getCardData(),
+			'cardExpiryDate'               => $this->getCardExpiryDate(),
+			'transactionReference'         => $this->getTransactionReference(),
+			'originalTransactionReference' => $this->getOriginalTransactionReference(),
+			'preAuthNumber'                => $this->getPreAuthNumber(),
+			'authNumber'                   => $this->getAuthNumber(),
+			'authorisationNumber'          => $this->getAuthorisationNumber(),
+			'authCode'                     => $this->getAuthCode(),
+			'authorisationCode'            => $this->getAuthorisationCode(),
+			'clientReference'              => $this->getClientReference(),
+			'comment'                      => $this->getComment(),
+			'merchantCardHolderName'       => $this->getMerchantCardHolderName(),
+			'merchantDescription'          => $this->getMerchantDescription(),
+			'terminalType'                 => $this->getTerminalType(),
+			'cvc2'                         => $this->getCVC2(),
+		];
+	}
+
+	public function toAttributeArray()
+	{
+		return [
+			Request::ATTRIBUTE_INTERFACE                      => $this->getInterface(),
+			Request::ATTRIBUTE_TRANSACTION_TYPE               => $this->getTransactionType(),
+			Request::ATTRIBUTE_TOTAL_AMOUNT                   => ($this->getTotalAmount() !== NULL) ? (Request::formatCurrency($this->getTotalAmount())) : (NULL),
+			Request::ATTRIBUTE_TAX_AMOUNT                     => ($this->getTaxAmount() !== NULL) ? (Request::formatCurrency($this->getTaxAmount())) : (NULL),
+			Request::ATTRIBUTE_CARD_DATA                      => $this->getCardData(),
+			Request::ATTRIBUTE_CARD_EXPIRY_DATE               => $this->getCardExpiryDate(),
+			Request::ATTRIBUTE_TRANSACTION_REFERENCE          => $this->getTransactionReference(),
+			Request::ATTRIBUTE_ORIGINAL_TRANSACTION_REFERENCE => $this->getOriginalTransactionReference(),
+			Request::ATTRIBUTE_PRE_AUTH_NUMBER                => $this->getPreAuthNumber(),
+			Request::ATTRIBUTE_AUTH_NUMBER                    => $this->getAuthNumber(),
+			Request::ATTRIBUTE_AUTHORISATION_NUMBER           => $this->getAuthorisationNumber(),
+			Request::ATTRIBUTE_AUTH_CODE                      => $this->getAuthCode(),
+			Request::ATTRIBUTE_AUTHORISATION_CODE             => $this->getAuthorisationCode(),
+			Request::ATTRIBUTE_CLIENT_REFERENCE               => $this->getClientReference(),
+			Request::ATTRIBUTE_COMMENT                        => $this->getComment(),
+			Request::ATTRIBUTE_MERCHANT_CARD_HOLDER_NAME      => $this->getMerchantCardHolderName(),
+			Request::ATTRIBUTE_MERCHANT_DESCRIPTION           => $this->getMerchantDescription(),
+			Request::ATTRIBUTE_TERMINAL_TYPE                  => $this->getTerminalType(),
+			Request::ATTRIBUTE_CVC2                           => $this->getCVC2(),
+		];
+	}
+
+	/**
+	 * @return double
+	 */
+	public function getTotalAmount()
+	{
+		return $this->totalAmount;
+	}
+
+	/**
+	 * @param double $totalAmount
+	 *
+	 * @return \StGeorgeIPG\Request
+	 */
+	public function setTotalAmount($totalAmount)
+	{
+		$this->validateInputIsDouble(Request::ATTRIBUTE_TOTAL_AMOUNT, $totalAmount);
+
+		$this->totalAmount = $totalAmount;
+
+		return $this;
+	}
+
+	/**
+	 * @return double
+	 */
+	public function getTaxAmount()
+	{
+		return $this->taxAmount;
+	}
+
+	/**
+	 * @param double $taxAmount
+	 *
+	 * @return \StGeorgeIPG\Request
+	 */
+	public function setTaxAmount($taxAmount)
+	{
+		$this->validateInputIsDouble(Request::ATTRIBUTE_TAX_AMOUNT, $taxAmount);
+
+		$this->taxAmount = $taxAmount;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getCardData()
+	{
+		return $this->cardData;
+	}
+
+	/**
+	 * @param string $cardData
+	 *
+	 * @return \StGeorgeIPG\Request
+	 */
+	public function setCardData($cardData)
+	{
+		$this->validateInputIsCardNumber($cardData);
+
+		$cardData = Request::formatCardNumber($cardData);
+
+		$this->cardData = $cardData;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getCardExpiryDate()
+	{
+		return $this->cardExpiryDate;
+	}
+
+	/**
+	 * @param integer $month
+	 * @param integer $year
+	 *
+	 * @return \StGeorgeIPG\Request
+	 */
+	public function setCardExpiryDate($month, $year)
+	{
+		$this->validateInputIsInteger(Request::ATTRIBUTE_CARD_EXPIRY_DATE, $month);
+		$this->validateInputIsInteger(Request::ATTRIBUTE_CARD_EXPIRY_DATE, $year);
+		$this->validateInputIsCardExpiryDate($month, $year);
+
+		$cardExpiryDate = Request::formatDate($month, $year);
+
+		$this->cardExpiryDate = $cardExpiryDate;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getTransactionReference()
+	{
+		return $this->transactionReference;
+	}
+
+	/**
+	 * @param string $transactionReference
+	 *
+	 * @return \StGeorgeIPG\Request
+	 */
+	public function setTransactionReference($transactionReference)
+	{
+		$this->transactionReference = $transactionReference;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getOriginalTransactionReference()
+	{
+		return $this->originalTransactionReference;
+	}
+
+	/**
+	 * @param string $originalTransactionReference
+	 *
+	 * @return \StGeorgeIPG\Request
+	 */
+	public function setOriginalTransactionReference($originalTransactionReference)
+	{
+		$this->originalTransactionReference = $originalTransactionReference;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getPreAuthNumber()
+	{
+		return $this->preAuthNumber;
+	}
+
+	/**
+	 * @param string $preAuthNumber
+	 *
+	 * @return \StGeorgeIPG\Request
+	 */
+	public function setPreAuthNumber($preAuthNumber)
+	{
+		$this->preAuthNumber = $preAuthNumber;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getAuthNumber()
+	{
+		return $this->authNumber;
+	}
+
+	/**
+	 * @param string $authNumber
+	 *
+	 * @return \StGeorgeIPG\Request
+	 */
+	public function setAuthNumber($authNumber)
+	{
+		$this->authNumber = $authNumber;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getAuthorisationNumber()
+	{
+		return $this->authorisationNumber;
+	}
+
+	/**
+	 * @param string $authorisationNumber
+	 *
+	 * @return \StGeorgeIPG\Request
+	 */
+	public function setAuthorisationNumber($authorisationNumber)
+	{
+		$this->authorisationNumber = $authorisationNumber;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getAuthCode()
+	{
+		return $this->authCode;
+	}
+
+	/**
+	 * @param string $authCode
+	 *
+	 * @return \StGeorgeIPG\Request
+	 */
+	public function setAuthCode($authCode)
+	{
+		$this->authCode = $authCode;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getAuthorisationCode()
+	{
+		return $this->authorisationCode;
+	}
+
+	/**
+	 * @param string $authorisationCode
+	 *
+	 * @return \StGeorgeIPG\Request
+	 */
+	public function setAuthorisationCode($authorisationCode)
+	{
+		$this->authorisationCode = $authorisationCode;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getClientReference()
+	{
+		return $this->clientReference;
+	}
+
+	/**
+	 * @param string $clientReference
+	 *
+	 * @return \StGeorgeIPG\Request
+	 */
+	public function setClientReference($clientReference)
+	{
+		$this->clientReference = $clientReference;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getComment()
+	{
+		return $this->comment;
+	}
+
+	/**
+	 * @param string $comment
+	 *
+	 * @return \StGeorgeIPG\Request
+	 */
+	public function setComment($comment)
+	{
+		$this->comment = $comment;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getMerchantCardHolderName()
+	{
+		return $this->merchantCardHolderName;
+	}
+
+	/**
+	 * @param string $merchantCardHolderName
+	 *
+	 * @return \StGeorgeIPG\Request
+	 */
+	public function setMerchantCardHolderName($merchantCardHolderName)
+	{
+		$this->merchantCardHolderName = $merchantCardHolderName;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getMerchantDescription()
+	{
+		return $this->merchantDescription;
+	}
+
+	/**
+	 * @param string $merchantDescription
+	 *
+	 * @return \StGeorgeIPG\Request
+	 */
+	public function setMerchantDescription($merchantDescription)
+	{
+		$this->merchantDescription = $merchantDescription;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getCVC2()
+	{
+		return $this->cvc2;
+	}
+
+	/**
+	 * @param string $cvc2
+	 *
+	 * @return \StGeorgeIPG\Request
+	 */
+	public function setCVC2($cvc2)
+	{
+		$this->cvc2 = $cvc2;
+
+		return $this;
 	}
 
 	/**
@@ -954,236 +1019,5 @@ class Request
 	private function resolveAttributeFromMapping($name)
 	{
 		return $this->{Request::$attributeMapping[$name]};
-	}
-
-	/**
-	 * @param integer $clientId
-	 *
-	 * @return \StGeorgeIPG\Client
-	 */
-	private function setClientId($clientId)
-	{
-		$this->getWebpay()->setClientId($this->getWebpayReference(), $clientId);
-
-		return $this;
-	}
-
-	/**
-	 * @param string $certificatePath
-	 *
-	 * @return \StGeorgeIPG\Client
-	 */
-	private function setCertificatePath($certificatePath)
-	{
-		$this->getWebpay()->setCertificatePath($this->getWebpayReference(), $certificatePath);
-
-		return $this;
-	}
-
-	/**
-	 * @param string $certificatePassword
-	 *
-	 * @return \StGeorgeIPG\Client
-	 */
-	private function setCertificatePassword($certificatePassword)
-	{
-		$this->getWebpay()->setCertificatePassword($this->getWebpayReference(), $certificatePassword);
-
-		return $this;
-	}
-
-	/**
-	 * @param string[] $servers
-	 *
-	 * @return \StGeorgeIPG\Client
-	 */
-	private function setServers($servers)
-	{
-		$this->getWebpay()->setServers($this->getWebpayReference(), $servers);
-
-		return $this;
-	}
-
-	/**
-	 * @param integer $port
-	 *
-	 * @return \StGeorgeIPG\Client
-	 */
-	private function setPort($port)
-	{
-		$this->getWebpay()->setPort($this->getWebpayReference(), $port);
-
-		return $this;
-	}
-
-	/**
-	 * @param boolean $debug
-	 *
-	 * @return \StGeorgeIPG\Client
-	 */
-	private function setDebug($debug)
-	{
-		$this->getWebpay()->setAttribute($this->getWebpayReference(), 'DEBUG', ($debug) ? ('ON') : ('OFF'));
-
-		return $this;
-	}
-
-	/**
-	 * @param string $logFilePath
-	 *
-	 * @return \StGeorgeIPG\Client
-	 */
-	private function setLogPath($logFilePath)
-	{
-		$directory = dirname($logFilePath);
-
-		if (!file_exists($directory)) {
-			mkdir($directory, 0640, TRUE);
-		}
-
-		$this->getWebpay()->setAttribute($this->getWebpayReference(), 'LOGFILE', $logFilePath);
-
-		return $this;
-	}
-
-	/**
-	 * @param string $name
-	 * @param mixed  $value
-	 *
-	 * @return \StGeorgeIPG\Client
-	 */
-	private function setAttribute($name, $value)
-	{
-		if ($value !== NULL) {
-			$this->getWebpay()->setAttribute($this->getWebpayReference(), $name, $value);
-		}
-
-		return $this;
-	}
-
-	/**
-	 * Creates the request using information from the client.
-	 *
-	 * @param \StGeorgeIPG\Client $client
-	 * @param boolean             $includeTerminalType
-	 *
-	 * @return \StGeorgeIPG\Request
-	 */
-	public static function createFromClient(Client $client, $includeTerminalType = TRUE)
-	{
-		$request = new Request();
-
-		$request
-			->setWebpay($client->getWebpay())
-			->setWebpayReference($request->createWebpayReference())
-			->setDebug($client->getDebug());
-
-		$logPath = $client->getLogPath();
-
-		if ($logPath) {
-			$request
-				->setLogPath($logPath);
-		}
-
-		$request
-			->setClientId($client->getClientId())
-			->setCertificatePath($client->getCertificatePath())
-			->setCertificatePassword($client->getCertificatePassword())
-			->setServers($client->getServers())
-			->setPort($client->getPort())
-			->setInterface($client->getInterface());
-
-		if ($includeTerminalType) {
-			$request
-				->setTerminalType($client->getTerminalType());
-		}
-
-		return $request;
-	}
-
-	/**
-	 * @param double $amount
-	 *
-	 * @return string
-	 */
-	private static function formatCurrency($amount)
-	{
-		return number_format($amount, 2, '.', '');
-	}
-
-	/**
-	 * @param string $number
-	 *
-	 * @return string
-	 */
-	private static function formatCardNumber($number)
-	{
-		return preg_replace('~\D~', '', $number);
-	}
-
-	/**
-	 * @param integer $month
-	 * @param integer $year
-	 *
-	 * @return string
-	 */
-	private static function formatDate($month, $year)
-	{
-		return sprintf('%02d', strval($month)) . substr(strval($year), 2);
-	}
-
-	/**
-	 * @param string $attribute
-	 * @param string $input
-	 * @param array  $validValues
-	 */
-	private static function validateInput($attribute, $input, $validValues)
-	{
-		if (!is_null($input) && !in_array($input, $validValues, TRUE)) {
-			throw new InvalidAttributeValueException($attribute, $input);
-		}
-	}
-
-	/**
-	 * @param string  $attribute
-	 * @param integer $input
-	 */
-	private static function validateInputIsInteger($attribute, $input)
-	{
-		if (!is_null($input) && !is_int($input)) {
-			throw new InvalidAttributeValueException($attribute, $input);
-		}
-	}
-
-	/**
-	 * @param string $attribute
-	 * @param double $input
-	 */
-	private static function validateInputIsDouble($attribute, $input)
-	{
-		if (!is_null($input) && !is_double($input)) {
-			throw new InvalidAttributeValueException($attribute, $input);
-		}
-	}
-
-	/**
-	 * @param string $input
-	 */
-	private static function validateInputIsCardNumber($input)
-	{
-		if (!CreditCard::validCreditCard($input)['valid']) {
-			throw new InvalidCardDataException('The card data is invalid.');
-		}
-	}
-
-	/**
-	 * @param integer $month
-	 * @param integer $year
-	 */
-	private static function validateInputIsCardExpiryDate($month, $year)
-	{
-		if (!CreditCard::validDate($year, $month)) {
-			throw new \InvalidArgumentException('The card expiry date is invalid.');
-		}
 	}
 }

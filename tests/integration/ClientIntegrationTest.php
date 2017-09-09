@@ -4,52 +4,17 @@ namespace StGeorgeIPG;
 
 use Carbon\Carbon;
 use StGeorgeIPG\Exceptions\ResponseCodes\InsufficientFundsException;
+use StGeorgeIPG\Providers\Extension;
+use StGeorgeIPG\Providers\WebService;
 
 class ClientIntegrationTest extends TestCase
 {
-	/**
-	 * @return \StGeorgeIPG\Webpay
-	 */
-	private function createWebpayMock()
-	{
-		$builder = $this->getMockBuilder(Webpay::class);
-
-		/** @var Webpay $webpay */
-		$webpay = $builder
-			->disableOriginalConstructor()
-			->getMock();
-
-		return $webpay;
-	}
-
-	/**
-	 * @return \StGeorgeIPG\Client
-	 */
-	private function createClientWithWebpayMock()
-	{
-		$client = new Client(10000000, 'password', $this->createWebpayMock());
-
-		return $client;
-	}
-
-	/**
-	 * @return \StGeorgeIPG\Response
-	 */
-	private function createResponseWithWebpayMock()
-	{
-		$response = new Response();
-
-		$response->setWebpay($this->createWebpayMock());
-
-		return $response;
-	}
-
 	/**
 	 * @covers \StGeorgeIPG\Client::purchase
 	 */
 	public function testPurchase_ValidInput_Equals()
 	{
-		$client = $this->createClientWithWebpayMock();
+		$client = $this->createClientWithWebServiceMock();
 
 		$oneYearAhead = (new Carbon())->addYear();
 		$output       = $oneYearAhead->format('my');
@@ -84,7 +49,7 @@ class ClientIntegrationTest extends TestCase
 	 */
 	public function testRefund_ValidInput_Equals()
 	{
-		$client = $this->createClientWithWebpayMock();
+		$client = $this->createClientWithWebServiceMock();
 
 		$amount                       = 123.45;
 		$originalTransactionReference = '123456789';
@@ -111,7 +76,7 @@ class ClientIntegrationTest extends TestCase
 	 */
 	public function testPreAuth_ValidInput_Equals()
 	{
-		$client = $this->createClientWithWebpayMock();
+		$client = $this->createClientWithWebServiceMock();
 
 		$oneYearAhead = (new Carbon())->addYear();
 		$output       = $oneYearAhead->format('my');
@@ -146,7 +111,7 @@ class ClientIntegrationTest extends TestCase
 	 */
 	public function testCompletion_ValidInput_Equals()
 	{
-		$client = $this->createClientWithWebpayMock();
+		$client = $this->createClientWithWebServiceMock();
 
 		$amount                       = 123.45;
 		$originalTransactionReference = '123456789';
@@ -175,7 +140,7 @@ class ClientIntegrationTest extends TestCase
 	 */
 	public function testStatus_ValidInput_Equals()
 	{
-		$client = $this->createClientWithWebpayMock();
+		$client = $this->createClientWithWebServiceMock();
 
 		$transactionReference = '123456789';
 
@@ -190,8 +155,8 @@ class ClientIntegrationTest extends TestCase
 	 */
 	public function testValidateResponse_ValidInput_WithApproved_Equals()
 	{
-		$client   = $this->createClientWithWebpayMock();
-		$response = $this->createResponseWithWebpayMock();
+		$client   = $this->createClientWithWebServiceMock();
+		$response = $this->createResponse();
 
 		$response->setCode(Response::CODE_00);
 
@@ -205,11 +170,31 @@ class ClientIntegrationTest extends TestCase
 	{
 		$this->expectException(InsufficientFundsException::class);
 
-		$client   = $this->createClientWithWebpayMock();
-		$response = $this->createResponseWithWebpayMock();
+		$client   = $this->createClientWithWebServiceMock();
+		$response = $this->createResponse();
 
 		$response->setCode(Response::CODE_51);
 
 		$client->validateResponse($response);
+	}
+
+	/**
+	 * @covers \StGeorgeIPG\Client::createWithExtension
+	 */
+	public function testCreate_ValidInput_WithExtension_Equals()
+	{
+		$client = Client::createWithExtension();
+
+		$this->assertInstanceOf(Extension::class, $client->getProvider());
+	}
+
+	/**
+	 * @covers \StGeorgeIPG\Client::createWithWebService
+	 */
+	public function testCreate_ValidInput_WithWebService_Equals()
+	{
+		$client = Client::createWithWebService();
+
+		$this->assertInstanceOf(WebService::class, $client->getProvider());
 	}
 }

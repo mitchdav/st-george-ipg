@@ -9,14 +9,14 @@ use StGeorgeIPG\Exceptions\ResponseCodes\CustomerContactBankException;
 use StGeorgeIPG\Exceptions\ResponseCodes\DeclinedSystemErrorException;
 use StGeorgeIPG\Exceptions\ResponseCodes\Exception;
 use StGeorgeIPG\Exceptions\ResponseCodes\InsufficientFundsException;
-use StGeorgeIPG\Exceptions\ResponseCodes\LocalErrors\Exception as LocalErrorsException;
+use StGeorgeIPG\Exceptions\TransactionInProgressException;
 
-class ClientEndToEndTest extends TestCase
+abstract class ClientEndToEndTest extends TestCase
 {
 	/**
 	 * @var array $approvedCodes
 	 */
-	private static $approvedCodes = [
+	protected static $approvedCodes = [
 		0,
 		8,
 		77,
@@ -25,95 +25,24 @@ class ClientEndToEndTest extends TestCase
 	/**
 	 * @var array $specialCodes
 	 */
-	private static $specialCodes = [
+	protected static $specialCodes = [
 		3  => DeclinedSystemErrorException::class,
 		5  => CustomerContactBankException::class,
 		31 => CardInvalidException::class,
 		33 => CardExpiredException::class,
 		51 => InsufficientFundsException::class,
-		88 => Exception::class, // This should be an InProgressException but the test gateway returns 0A - IN PROGRESS (TEST TRANSACTION ONLY)
+		88 => TransactionInProgressException::class,
+		// Here we are testing against the StGeorgeIPG\Exceptions\TransactionInProgressException instead of the StGeorgeIPG\Exceptions\ResponseCodes\InProgressException because the client continues to retry until it exhausts its maximum number of tries, and is a special case
 	];
-
-	/**
-	 * @return \StGeorgeIPG\Webpay
-	 */
-	private function createWebpay()
-	{
-		return new Webpay();
-	}
-
-	/**
-	 * @return \StGeorgeIPG\Client
-	 */
-	private function createClient()
-	{
-		$clientId            = getenv('IPGCLIENTID');
-		$certificatePassword = getenv('IPGCERTIFICATEPASSWORD');
-
-		$client = new Client($clientId, $certificatePassword, $this->createWebpay());
-
-		$client
-			->setDebug(TRUE)
-			->setPort(Client::PORT_TEST);
-
-		return $client;
-	}
-
-	/**
-	 * @return \StGeorgeIPG\Client
-	 */
-	private function createClientWithBadCredentials()
-	{
-		$clientId            = 1;
-		$certificatePassword = strval(rand(1, 100));
-
-		$client = new Client($clientId, $certificatePassword, $this->createWebpay());
-
-		$client
-			->setDebug(TRUE)
-			->setPort(Client::PORT_TEST);
-
-		return $client;
-	}
-
-	/**
-	 * @param integer             $code
-	 * @param \StGeorgeIPG\Client $client
-	 *
-	 * @return \StGeorgeIPG\Response
-	 */
-	private function createPurchaseWithCode($code, $client = NULL)
-	{
-		if ($client == NULL) {
-			$client = $this->createClient();
-		}
-
-		$oneYearAhead = (new Carbon())->addYear();
-
-		$amount          = 10.00 + ($code / 100);
-		$cardNumber      = '4111111111111111';
-		$month           = $oneYearAhead->month;
-		$year            = $oneYearAhead->year;
-		$cvc2            = NULL;
-		$clientReference = NULL;
-		$comment         = 'testPurchase_ValidInput_With' . sprintf('%02d', $code);
-
-		$request = $client->purchase($amount, $cardNumber, $month, $year, $cvc2, $clientReference, $comment);
-
-		return $client->execute($request);
-	}
 
 	/**
 	 * @return array
 	 */
 	public static function approvedCodesProvider()
 	{
-		return array_map(
-			function ($code) {
-				return [$code];
-			},
-			ClientEndToEndTest::$approvedCodes
-		);
+		return array_map(function ($code) {
+			return [$code];
+		}, ClientEndToEndTest::$approvedCodes);
 	}
 
 	/**
@@ -123,14 +52,11 @@ class ClientEndToEndTest extends TestCase
 	{
 		$range = range(1, 99);
 
-		return array_map(
-			function ($code) {
-				return [$code];
-			},
-			array_filter($range, function ($code) {
-				return !in_array($code, ClientEndToEndTest::$approvedCodes) && !in_array($code, array_keys(ClientEndToEndTest::$specialCodes));
-			})
-		);
+		return array_map(function ($code) {
+			return [$code];
+		}, array_filter($range, function ($code) {
+			return !in_array($code, ClientEndToEndTest::$approvedCodes) && !in_array($code, array_keys(ClientEndToEndTest::$specialCodes));
+		}));
 	}
 
 	/**
@@ -141,7 +67,10 @@ class ClientEndToEndTest extends TestCase
 		$codes = [];
 
 		foreach (ClientEndToEndTest::$specialCodes as $code => $exception) {
-			$codes[] = [$code, $exception];
+			$codes[] = [
+				$code,
+				$exception,
+			];
 		}
 
 		return $codes;
@@ -201,21 +130,6 @@ class ClientEndToEndTest extends TestCase
 
 	/**
 	 * @covers \StGeorgeIPG\Client::purchase
-	 * @covers \StGeorgeIPG\Client::getResponse
-	 * @covers \StGeorgeIPG\Client::execute
-	 * @covers \StGeorgeIPG\Client::validateResponse
-	 */
-	public function testPurchase_ValidInput_WithBadCredentials_Equals()
-	{
-		$this->expectException(LocalErrorsException::class);
-
-		$client = $this->createClientWithBadCredentials();
-
-		$this->createPurchaseWithCode(0, $client);
-	}
-
-	/**
-	 * @covers \StGeorgeIPG\Client::purchase
 	 * @covers \StGeorgeIPG\Client::refund
 	 * @covers \StGeorgeIPG\Client::getResponse
 	 * @covers \StGeorgeIPG\Client::execute
@@ -243,5 +157,42 @@ class ClientEndToEndTest extends TestCase
 		$refundResponse = $client->execute($refundRequest);
 
 		$this->assertTrue($refundResponse->isCodeApproved());
+	}
+
+	/**
+	 * @return \StGeorgeIPG\Client
+	 */
+	abstract function createClient();
+
+	/**
+	 * @return \StGeorgeIPG\Client
+	 */
+	abstract function createClientWithBadCredentials();
+
+	/**
+	 * @param integer             $code
+	 * @param \StGeorgeIPG\Client $client
+	 *
+	 * @return \StGeorgeIPG\Response
+	 */
+	protected function createPurchaseWithCode($code, $client = NULL)
+	{
+		if ($client == NULL) {
+			$client = $this->createClient();
+		}
+
+		$oneYearAhead = (new Carbon())->addYear();
+
+		$amount          = 10.00 + ($code / 100);
+		$cardNumber      = '4111111111111111';
+		$month           = $oneYearAhead->month;
+		$year            = $oneYearAhead->year;
+		$cvc2            = NULL;
+		$clientReference = NULL;
+		$comment         = 'testPurchase_ValidInput_With' . sprintf('%02d', $code);
+
+		$request = $client->purchase($amount, $cardNumber, $month, $year, $cvc2, $clientReference, $comment);
+
+		return $client->execute($request);
 	}
 }

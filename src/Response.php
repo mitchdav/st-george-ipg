@@ -68,13 +68,28 @@ class Response
 	const CODE_Y3          = 'Y3';
 	const CODE_LOCAL_ERROR = '-1';
 
-	/** @var \StGeorgeIPG\Webpay $webpay */
-	private $webpay;
+	/**
+	 * @var array $attributeMapping
+	 */
+	private static $attributeMapping = [
+		Response::ATTRIBUTE_RESPONSE_CODE         => 'code',
+		Response::ATTRIBUTE_RESPONSE_TEXT         => 'text',
+		Response::ATTRIBUTE_ERROR                 => 'error',
+		Response::ATTRIBUTE_ERROR_DETAIL          => 'errorDetail',
+		Response::ATTRIBUTE_TRANSACTION_REFERENCE => 'transactionReference',
+		Response::ATTRIBUTE_AUTH_CODE             => 'authorisationNumber',
+		Response::ATTRIBUTE_STAN                  => 'stan',
+		Response::ATTRIBUTE_SETTLEMENT_DATE       => 'settlementDate',
+	];
 
 	/**
-	 * @var mixed $webpayReference
+	 * @var array $approvedCodes
 	 */
-	private $webpayReference;
+	private static $approvedCodes = [
+		Response::CODE_00,
+		Response::CODE_08,
+		Response::CODE_77,
+	];
 
 	/**
 	 * @var string $code
@@ -117,66 +132,132 @@ class Response
 	private $settlementDate;
 
 	/**
-	 * @var array $attributeMapping
-	 */
-	private static $attributeMapping = [
-		Response::ATTRIBUTE_RESPONSE_CODE         => 'code',
-		Response::ATTRIBUTE_RESPONSE_TEXT         => 'text',
-		Response::ATTRIBUTE_ERROR                 => 'error',
-		Response::ATTRIBUTE_ERROR_DETAIL          => 'errorDetail',
-		Response::ATTRIBUTE_TRANSACTION_REFERENCE => 'transactionReference',
-		Response::ATTRIBUTE_AUTH_CODE             => 'authorisationNumber',
-		Response::ATTRIBUTE_STAN                  => 'stan',
-		Response::ATTRIBUTE_SETTLEMENT_DATE       => 'settlementDate',
-	];
-
-	/**
-	 * @var array $approvedCodes
-	 */
-	private static $approvedCodes = [
-		Response::CODE_00,
-		Response::CODE_08,
-		Response::CODE_77,
-	];
-
-	/**
-	 * @return \StGeorgeIPG\Webpay
-	 */
-	public function getWebpay()
-	{
-		return $this->webpay;
-	}
-
-	/**
-	 * @param \StGeorgeIPG\Webpay $webpay
+	 * @param \StGeorgeIPG\Response $response
 	 *
-	 * @return \StGeorgeIPG\Response
+	 * @return \StGeorgeIPG\Exceptions\ResponseCodes\Exception
 	 */
-	public function setWebpay($webpay)
+	public static function mapResponseCodeToException(Response $response)
 	{
-		$this->webpay = $webpay;
+		switch ($response->getCode()) {
+			case Response::CODE_03: {
+				return new DeclinedSystemErrorException($response);
+			}
 
-		return $this;
+			case Response::CODE_05: {
+				return new CustomerContactBankException($response);
+			}
+
+			case Response::CODE_31: {
+				return new CardInvalidException($response);
+			}
+
+			case Response::CODE_33:
+			case Response::CODE_AC: {
+				return new CardExpiredException($response);
+			}
+
+			case Response::CODE_51: {
+				return new InsufficientFundsException($response);
+			}
+
+			case Response::CODE_91: {
+				return new BankNotAvailableException($response);
+			}
+
+			case Response::CODE_0C: {
+				return new InvalidDecimalPlacementException($response);
+			}
+
+			case Response::CODE_0M: {
+				return new InvalidClientIdException($response);
+			}
+
+			case Response::CODE_A6: {
+				return new ServerBusyException($response);
+			}
+
+			case Response::CODE_A8: {
+				return new InvalidRefundException($response);
+			}
+
+			case Response::CODE_AE: {
+				return new TimeoutException($response);
+			}
+
+			case Response::CODE_IN: {
+				return new InitializedException($response);
+			}
+
+			case Response::CODE_IP: {
+				return new InProgressException($response);
+			}
+
+			case Response::CODE_VA: {
+				return new ValidationFailureException($response);
+			}
+
+			case Response::CODE_Y3: {
+				return new UnableToProcessException($response);
+			}
+
+			/**
+			 * A blank string is included here as the Webpay library doesn't seem to return the -1 code
+			 * to this library, regardless of what is output in the log file.
+			 */
+			case '':
+			case Response::CODE_LOCAL_ERROR: {
+				switch ($response->getError()) {
+					case 'Unable to initialise SSL': {
+						return new InitializeSSLException($response);
+					}
+
+					case 'Unable to negotiate SSL': {
+						return new NegotiateSSLException($response);
+					}
+
+					case 'Unable to connect to server': {
+						return new ConnectionException($response);
+					}
+
+					case 'Unable to process': {
+						return new ProcessException($response);
+					}
+
+					default: {
+						return new Exceptions\ResponseCodes\LocalErrors\Exception($response);
+					}
+				}
+			}
+
+			default: {
+				return new Exception($response);
+			}
+		}
+	}
+
+	public static function createFromAttributeArray(array $array)
+	{
+		$input = array_change_key_case($array, CASE_LOWER);
+
+		$response = new Response();
+
+		foreach (Response::$attributeMapping as $attribute => $localVariable) {
+			$loweredAttribute = strtolower($attribute);
+
+			if (array_key_exists($loweredAttribute, $input)) {
+				$response->{$localVariable} = $input[$loweredAttribute];
+			}
+		}
+
+		return $response;
 	}
 
 	/**
-	 * @return mixed
+	 * @return array
 	 */
-	public function getWebpayReference()
+	public static function getAttributeMapping()
 	{
-		return $this->webpayReference;
-	}
-
-	/**
-	 * @param mixed $webpayReference
-	 *
-	 * @return \StGeorgeIPG\Response
-	 */
-	public function setWebpayReference($webpayReference)
-	{
-		$this->webpayReference = $webpayReference;
-
-		return $this;
+		return self::$attributeMapping;
 	}
 
 	/**
@@ -185,6 +266,18 @@ class Response
 	public function getCode()
 	{
 		return $this->code;
+	}
+
+	/**
+	 * @param string $code
+	 *
+	 * @return \StGeorgeIPG\Response
+	 */
+	public function setCode($code)
+	{
+		$this->code = $code;
+
+		return $this;
 	}
 
 	/**
@@ -209,18 +302,6 @@ class Response
 	public function isCodeLocalError()
 	{
 		return $this->getCode() == Response::CODE_LOCAL_ERROR;
-	}
-
-	/**
-	 * @param string $code
-	 *
-	 * @return \StGeorgeIPG\Response
-	 */
-	public function setCode($code)
-	{
-		$this->code = $code;
-
-		return $this;
 	}
 
 	/**
@@ -361,140 +442,5 @@ class Response
 		$this->settlementDate = $settlementDate;
 
 		return $this;
-	}
-
-	/**
-	 * @param string $name
-	 *
-	 * @return string
-	 */
-	private function getAttribute($name)
-	{
-		return $this->getWebpay()->getAttribute($this->getWebpayReference(), $name);
-	}
-
-	/**
-	 * @param \StGeorgeIPG\Webpay $webpay
-	 * @param mixed               $webpayReference
-	 *
-	 * @return \StGeorgeIPG\Response
-	 */
-	public static function createFromWebpayReference(Webpay $webpay, $webpayReference)
-	{
-		$response = new Response();
-
-		$response
-			->setWebpay($webpay)
-			->setWebpayReference($webpayReference);
-
-		foreach (Response::$attributeMapping as $attribute => $property) {
-			$response->{$property} = $response->getAttribute($attribute);
-		}
-
-		return $response;
-	}
-
-	/**
-	 * @param \StGeorgeIPG\Response $response
-	 *
-	 * @return \StGeorgeIPG\Exceptions\ResponseCodes\Exception
-	 */
-	public static function mapResponseCodeToException(Response $response)
-	{
-		switch ($response->getCode()) {
-			case Response::CODE_03: {
-				return new DeclinedSystemErrorException($response);
-			}
-
-			case Response::CODE_05: {
-				return new CustomerContactBankException($response);
-			}
-
-			case Response::CODE_31: {
-				return new CardInvalidException($response);
-			}
-
-			case Response::CODE_33:
-			case Response::CODE_AC: {
-				return new CardExpiredException($response);
-			}
-
-			case Response::CODE_51: {
-				return new InsufficientFundsException($response);
-			}
-
-			case Response::CODE_91: {
-				return new BankNotAvailableException($response);
-			}
-
-			case Response::CODE_0C: {
-				return new InvalidDecimalPlacementException($response);
-			}
-
-			case Response::CODE_0M: {
-				return new InvalidClientIdException($response);
-			}
-
-			case Response::CODE_A6: {
-				return new ServerBusyException($response);
-			}
-
-			case Response::CODE_A8: {
-				return new InvalidRefundException($response);
-			}
-
-			case Response::CODE_AE: {
-				return new TimeoutException($response);
-			}
-
-			case Response::CODE_IN: {
-				return new InitializedException($response);
-			}
-
-			case Response::CODE_IP: {
-				return new InProgressException($response);
-			}
-
-			case Response::CODE_VA: {
-				return new ValidationFailureException($response);
-			}
-
-			case Response::CODE_Y3: {
-				return new UnableToProcessException($response);
-			}
-
-			/**
-			 * A blank string is included here as the Webpay library doesn't seem to return the -1 code
-			 * to this library, regardless of what is output in the log file.
-			 */
-			case '':
-			case Response::CODE_LOCAL_ERROR: {
-				switch ($response->getError()) {
-					case 'Unable to initialise SSL': {
-						return new InitializeSSLException($response);
-					}
-
-					case 'Unable to negotiate SSL': {
-						return new NegotiateSSLException($response);
-					}
-
-					case 'Unable to connect to server': {
-						return new ConnectionException($response);
-					}
-
-					case 'Unable to process': {
-						return new ProcessException($response);
-					}
-
-					default: {
-						return new Exceptions\ResponseCodes\LocalErrors\Exception($response);
-					}
-				}
-			}
-
-			default: {
-				return new Exception($response);
-			}
-		}
 	}
 }

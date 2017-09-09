@@ -26,69 +26,12 @@ use StGeorgeIPG\Exceptions\ResponseCodes\ValidationFailureException;
 class ResponseUnitTest extends TestCase
 {
 	/**
-	 * @return \StGeorgeIPG\Webpay
-	 */
-	private function createWebpayMock()
-	{
-		$builder = $this->getMockBuilder(Webpay::class);
-
-		/** @var Webpay $webpay */
-		$webpay = $builder
-			->disableOriginalConstructor()
-			->getMock();
-
-		return $webpay;
-	}
-
-	/**
-	 * @return \StGeorgeIPG\Response
-	 */
-	private function createResponseWithWebpayMock()
-	{
-		$response = new Response();
-
-		$response->setWebpay($this->createWebpayMock());
-
-		return $response;
-	}
-
-	/**
-	 * @covers \StGeorgeIPG\Response::getWebpay
-	 * @covers \StGeorgeIPG\Response::setWebpay
-	 */
-	public function testGetSetWebpay_ValidInput_Equals()
-	{
-		$response = new Response();
-
-		$value = $this->createWebpayMock();
-
-		$response->setWebpay($value);
-
-		$this->assertEquals($value, $response->getWebpay());
-	}
-
-	/**
-	 * @covers \StGeorgeIPG\Response::getWebpayReference
-	 * @covers \StGeorgeIPG\Response::setWebpayReference
-	 */
-	public function testGetSetWebpayReference_ValidInput_Equals()
-	{
-		$response = $this->createResponseWithWebpayMock();
-
-		$value = rand(0, 1000);
-
-		$response->setWebpayReference($value);
-
-		$this->assertEquals($value, $response->getWebpayReference());
-	}
-
-	/**
 	 * @covers \StGeorgeIPG\Response::getCode
 	 * @covers \StGeorgeIPG\Response::setCode
 	 */
 	public function testGetSetCode_ValidInput_Equals()
 	{
-		$response = $this->createResponseWithWebpayMock();
+		$response = $this->createResponse();
 
 		$value = rand(0, 1000);
 
@@ -102,7 +45,7 @@ class ResponseUnitTest extends TestCase
 	 */
 	public function testIsCodeApproved_ValidInput_True()
 	{
-		$response = $this->createResponseWithWebpayMock();
+		$response = $this->createResponse();
 
 		$response->setCode(Response::CODE_00);
 
@@ -122,7 +65,7 @@ class ResponseUnitTest extends TestCase
 	 */
 	public function testIsCodeApproved_InvalidInput_False()
 	{
-		$response = $this->createResponseWithWebpayMock();
+		$response = $this->createResponse();
 
 		$response->setCode(Response::CODE_LOCAL_ERROR);
 
@@ -134,7 +77,7 @@ class ResponseUnitTest extends TestCase
 	 */
 	public function testIsCodeInProgress_ValidInput_True()
 	{
-		$response = $this->createResponseWithWebpayMock();
+		$response = $this->createResponse();
 
 		$response->setCode(Response::CODE_IP);
 
@@ -146,7 +89,7 @@ class ResponseUnitTest extends TestCase
 	 */
 	public function testIsCodeInProgress_InvalidInput_False()
 	{
-		$response = $this->createResponseWithWebpayMock();
+		$response = $this->createResponse();
 
 		$response->setCode(Response::CODE_LOCAL_ERROR);
 
@@ -158,7 +101,7 @@ class ResponseUnitTest extends TestCase
 	 */
 	public function testIsCodeLocalError_ValidInput_True()
 	{
-		$response = $this->createResponseWithWebpayMock();
+		$response = $this->createResponse();
 
 		$response->setCode(Response::CODE_LOCAL_ERROR);
 
@@ -170,7 +113,7 @@ class ResponseUnitTest extends TestCase
 	 */
 	public function testIsCodeLocalError_InvalidInput_False()
 	{
-		$response = $this->createResponseWithWebpayMock();
+		$response = $this->createResponse();
 
 		$response->setCode(Response::CODE_00);
 
@@ -183,7 +126,7 @@ class ResponseUnitTest extends TestCase
 	 */
 	public function testGetSetText_ValidInput_Equals()
 	{
-		$response = $this->createResponseWithWebpayMock();
+		$response = $this->createResponse();
 
 		$value = rand(0, 1000);
 
@@ -198,7 +141,7 @@ class ResponseUnitTest extends TestCase
 	 */
 	public function testGetSetError_ValidInput_Equals()
 	{
-		$response = $this->createResponseWithWebpayMock();
+		$response = $this->createResponse();
 
 		$value = rand(0, 1000);
 
@@ -213,7 +156,7 @@ class ResponseUnitTest extends TestCase
 	 */
 	public function testGetSetErrorDetail_ValidInput_Equals()
 	{
-		$response = $this->createResponseWithWebpayMock();
+		$response = $this->createResponse();
 
 		$value = rand(0, 1000);
 
@@ -228,7 +171,7 @@ class ResponseUnitTest extends TestCase
 	 */
 	public function testGetSetTransactionReference_ValidInput_Equals()
 	{
-		$response = $this->createResponseWithWebpayMock();
+		$response = $this->createResponse();
 
 		$value = rand(0, 1000);
 
@@ -243,7 +186,7 @@ class ResponseUnitTest extends TestCase
 	 */
 	public function testGetSetAuthorisationNumber_ValidInput_Equals()
 	{
-		$response = $this->createResponseWithWebpayMock();
+		$response = $this->createResponse();
 
 		$value = rand(0, 1000);
 
@@ -258,7 +201,7 @@ class ResponseUnitTest extends TestCase
 	 */
 	public function testGetSetStan_ValidInput_Equals()
 	{
-		$response = $this->createResponseWithWebpayMock();
+		$response = $this->createResponse();
 
 		$value = rand(0, 1000);
 
@@ -273,7 +216,7 @@ class ResponseUnitTest extends TestCase
 	 */
 	public function testGetSetSettlementDate_ValidInput_Equals()
 	{
-		$response = $this->createResponseWithWebpayMock();
+		$response = $this->createResponse();
 
 		$value = rand(0, 1000);
 
@@ -283,24 +226,11 @@ class ResponseUnitTest extends TestCase
 	}
 
 	/**
-	 * @covers \StGeorgeIPG\Response::createFromWebpayReference
-	 * @covers \StGeorgeIPG\Response::getAttribute
-	 */
-	public function testCreateFromWebpayReference_ValidInput_InstanceOf()
-	{
-		$webpay = $this->createWebpayMock();
-
-		$response = Response::createFromWebpayReference($webpay, rand(0, 1000));
-
-		$this->assertInstanceOf(Response::class, $response);
-	}
-
-	/**
 	 * @covers \StGeorgeIPG\Response::mapResponseCodeToException
 	 */
 	public function testMapResponseCodeToException_ValidInput_InstanceOf()
 	{
-		$response = $this->createResponseWithWebpayMock();
+		$response = $this->createResponse();
 
 		$this->assertInstanceOf(DeclinedSystemErrorException::class, Response::mapResponseCodeToException($response->setCode(Response::CODE_03)));
 		$this->assertInstanceOf(CustomerContactBankException::class, Response::mapResponseCodeToException($response->setCode(Response::CODE_05)));
@@ -318,11 +248,16 @@ class ResponseUnitTest extends TestCase
 		$this->assertInstanceOf(InProgressException::class, Response::mapResponseCodeToException($response->setCode(Response::CODE_IP)));
 		$this->assertInstanceOf(ValidationFailureException::class, Response::mapResponseCodeToException($response->setCode(Response::CODE_VA)));
 		$this->assertInstanceOf(UnableToProcessException::class, Response::mapResponseCodeToException($response->setCode(Response::CODE_Y3)));
-		$this->assertInstanceOf(InitializeSSLException::class, Response::mapResponseCodeToException($response->setCode(Response::CODE_LOCAL_ERROR)->setError('Unable to initialise SSL')));
-		$this->assertInstanceOf(NegotiateSSLException::class, Response::mapResponseCodeToException($response->setCode(Response::CODE_LOCAL_ERROR)->setError('Unable to negotiate SSL')));
-		$this->assertInstanceOf(ConnectionException::class, Response::mapResponseCodeToException($response->setCode(Response::CODE_LOCAL_ERROR)->setError('Unable to connect to server')));
-		$this->assertInstanceOf(ProcessException::class, Response::mapResponseCodeToException($response->setCode(Response::CODE_LOCAL_ERROR)->setError('Unable to process')));
-		$this->assertInstanceOf(Exceptions\ResponseCodes\LocalErrors\Exception::class, Response::mapResponseCodeToException($response->setCode(Response::CODE_LOCAL_ERROR)->setError('')));
+		$this->assertInstanceOf(InitializeSSLException::class, Response::mapResponseCodeToException($response->setCode(Response::CODE_LOCAL_ERROR)
+		                                                                                                     ->setError('Unable to initialise SSL')));
+		$this->assertInstanceOf(NegotiateSSLException::class, Response::mapResponseCodeToException($response->setCode(Response::CODE_LOCAL_ERROR)
+		                                                                                                    ->setError('Unable to negotiate SSL')));
+		$this->assertInstanceOf(ConnectionException::class, Response::mapResponseCodeToException($response->setCode(Response::CODE_LOCAL_ERROR)
+		                                                                                                  ->setError('Unable to connect to server')));
+		$this->assertInstanceOf(ProcessException::class, Response::mapResponseCodeToException($response->setCode(Response::CODE_LOCAL_ERROR)
+		                                                                                               ->setError('Unable to process')));
+		$this->assertInstanceOf(Exceptions\ResponseCodes\LocalErrors\Exception::class, Response::mapResponseCodeToException($response->setCode(Response::CODE_LOCAL_ERROR)
+		                                                                                                                             ->setError('')));
 		$this->assertInstanceOf(Exception::class, Response::mapResponseCodeToException($response->setCode(-100)));
 	}
 }

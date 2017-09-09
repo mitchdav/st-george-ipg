@@ -9,97 +9,6 @@ use StGeorgeIPG\Exceptions\InvalidCardDataException;
 
 class RequestUnitTest extends TestCase
 {
-	/**
-	 * @return \StGeorgeIPG\Webpay
-	 */
-	private function createWebpayMock()
-	{
-		$builder = $this->getMockBuilder(Webpay::class);
-
-		/** @var Webpay $webpay */
-		$webpay = $builder
-			->disableOriginalConstructor()
-			->getMock();
-
-		return $webpay;
-	}
-
-	/**
-	 * @return \StGeorgeIPG\Client
-	 */
-	private function createClientWithWebpayMock()
-	{
-		$builder = $this->getMockBuilder(Client::class);
-
-		/** @var Client $client */
-		$client = $builder
-			->disableOriginalConstructor()
-			->getMock();
-
-		$client
-			->expects($this->any())
-			->method('getWebpay')
-			->will($this->returnValue($this->createWebpayMock()));
-
-		$client
-			->expects($this->any())
-			->method('getTerminalType')
-			->will($this->returnValue(Request::TERMINAL_TYPE_INTERNET));
-
-		$client
-			->expects($this->any())
-			->method('getInterface')
-			->will($this->returnValue(Request::INTERFACE_CREDIT_CARD));
-
-		$client
-			->expects($this->any())
-			->method('getLogPath')
-			->will($this->returnValue('webpay.log'));
-
-		return $client;
-	}
-
-	/**
-	 * @return \StGeorgeIPG\Request
-	 */
-	private function createRequestWithWebpayMock()
-	{
-		$request = new Request();
-
-		$request->setWebpay($this->createWebpayMock());
-
-		return $request;
-	}
-
-	/**
-	 * @covers \StGeorgeIPG\Request::getWebpay
-	 * @covers \StGeorgeIPG\Request::setWebpay
-	 */
-	public function testGetSetWebpay_ValidInput_Equals()
-	{
-		$request = new Request();
-
-		$value = $this->createWebpayMock();
-
-		$request->setWebpay($value);
-
-		$this->assertEquals($value, $request->getWebpay());
-	}
-
-	/**
-	 * @covers \StGeorgeIPG\Request::getWebpayReference
-	 * @covers \StGeorgeIPG\Request::setWebpayReference
-	 */
-	public function testGetSetWebpayReference_ValidInput_Equals()
-	{
-		$request = $this->createRequestWithWebpayMock();
-
-		$value = rand(0, 1000);
-
-		$request->setWebpayReference($value);
-
-		$this->assertEquals($value, $request->getWebpayReference());
-	}
 
 	/**
 	 * @covers \StGeorgeIPG\Request::getInterface
@@ -108,7 +17,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testGetSetInterface_ValidInput_Equals()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$value = Request::INTERFACE_CREDIT_CARD;
 
@@ -125,7 +34,7 @@ class RequestUnitTest extends TestCase
 	{
 		$this->expectException(InvalidAttributeValueException::class);
 
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$value = 'INVALIDINTERFACE';
 
@@ -138,7 +47,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testIsInterfaceCreditCard_ValidInput_True()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$request->setInterface(Request::INTERFACE_CREDIT_CARD);
 
@@ -151,7 +60,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testIsInterfaceCreditCard_InvalidInput_False()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$request->setInterface(Request::INTERFACE_TEST);
 
@@ -164,7 +73,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testIsInterfaceTest_ValidInput_True()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$request->setInterface(Request::INTERFACE_TEST);
 
@@ -177,7 +86,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testIsInterfaceTest_InvalidInput_False()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$request->setInterface(Request::INTERFACE_CREDIT_CARD);
 
@@ -191,7 +100,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testGetSetTransactionType_ValidInput_Equals()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$value = Request::TRANSACTION_TYPE_PURCHASE;
 
@@ -208,7 +117,7 @@ class RequestUnitTest extends TestCase
 	{
 		$this->expectException(InvalidAttributeValueException::class);
 
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$value = 'INVALIDTRANSACTIONTYPE';
 
@@ -221,7 +130,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testIsTransactionTypePurchase_ValidInput_True()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$request->setTransactionType(Request::TRANSACTION_TYPE_PURCHASE);
 
@@ -234,7 +143,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testIsTransactionTypePurchase_InvalidInput_False()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$request->setTransactionType(Request::TRANSACTION_TYPE_REFUND);
 
@@ -247,7 +156,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testIsTransactionTypeRefund_ValidInput_True()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$request->setTransactionType(Request::TRANSACTION_TYPE_REFUND);
 
@@ -260,7 +169,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testIsTransactionTypeRefund_InvalidInput_False()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$request->setTransactionType(Request::TRANSACTION_TYPE_PRE_AUTH);
 
@@ -273,7 +182,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testIsTransactionTypePreAuth_ValidInput_True()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$request->setTransactionType(Request::TRANSACTION_TYPE_PRE_AUTH);
 
@@ -286,7 +195,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testIsTransactionTypePreAuth_InvalidInput_False()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$request->setTransactionType(Request::TRANSACTION_TYPE_COMPLETION);
 
@@ -299,7 +208,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testIsTransactionTypeCompletion_ValidInput_True()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$request->setTransactionType(Request::TRANSACTION_TYPE_COMPLETION);
 
@@ -312,7 +221,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testIsTransactionTypeCompletion_InvalidInput_False()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$request->setTransactionType(Request::TRANSACTION_TYPE_STATUS);
 
@@ -325,7 +234,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testIsTransactionTypeStatus_ValidInput_True()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$request->setTransactionType(Request::TRANSACTION_TYPE_STATUS);
 
@@ -338,7 +247,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testIsTransactionTypeStatus_InvalidInput_False()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$request->setTransactionType(Request::TRANSACTION_TYPE_PURCHASE);
 
@@ -353,7 +262,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testGetSetTotalAmount_ValidInput_Equals()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$value = 123.00;
 
@@ -371,7 +280,7 @@ class RequestUnitTest extends TestCase
 	{
 		$this->expectException(InvalidAttributeValueException::class);
 
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$value = 'INVALIDTOTALAMOUNT';
 
@@ -386,7 +295,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testGetSetTaxAmount_ValidInput_Equals()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$value = 123.00;
 
@@ -404,7 +313,7 @@ class RequestUnitTest extends TestCase
 	{
 		$this->expectException(InvalidAttributeValueException::class);
 
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$value = 'INVALIDTAXAMOUNT';
 
@@ -419,7 +328,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testGetSetCardData_ValidInput_Equals()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$value = '4242424242424242';
 
@@ -436,7 +345,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testGetSetCardData_ValidInput_WithDashes_Equals()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$value  = '4242-4242-4242-4242';
 		$output = '4242424242424242';
@@ -454,7 +363,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testGetSetCardData_ValidInput_WithSpaces_Equals()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$value  = '4242 4242 4242 4242';
 		$output = '4242424242424242';
@@ -473,7 +382,7 @@ class RequestUnitTest extends TestCase
 	{
 		$this->expectException(InvalidCardDataException::class);
 
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$value = 'INVALIDCARDNUMBER';
 
@@ -489,7 +398,7 @@ class RequestUnitTest extends TestCase
 	{
 		$this->expectException(InvalidCardDataException::class);
 
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$value = '1234567891234567';
 
@@ -505,7 +414,7 @@ class RequestUnitTest extends TestCase
 	{
 		$this->expectException(InvalidCardDataException::class);
 
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$value = '424242424242424';
 
@@ -521,7 +430,7 @@ class RequestUnitTest extends TestCase
 	{
 		$this->expectException(InvalidCardDataException::class);
 
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$value = '1111111111111111';
 
@@ -537,7 +446,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testGetSetCardExpiryDate_ValidInput_Equals()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$oneYearAhead = (new Carbon())->addYear();
 
@@ -560,7 +469,7 @@ class RequestUnitTest extends TestCase
 	{
 		$this->expectException(InvalidAttributeValueException::class);
 
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$month = 'December';
 		$year  = 'Two Thousand';
@@ -578,7 +487,7 @@ class RequestUnitTest extends TestCase
 	{
 		$this->expectException(\InvalidArgumentException::class);
 
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$oneYearBehind = (new Carbon())->subYear();
 
@@ -594,7 +503,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testGetSetTransactionReference_ValidInput_Equals()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$value = 'VALIDREFERENCE';
 
@@ -609,7 +518,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testGetSetOriginalTransactionReference_ValidInput_Equals()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$value = 'VALIDREFERENCE';
 
@@ -624,7 +533,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testGetSetPreAuthNumber_ValidInput_Equals()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$value = 'VALIDPREAUTHNUMBER';
 
@@ -639,7 +548,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testGetSetAuthNumber_ValidInput_Equals()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$value = 'VALIDAUTHNUMBER';
 
@@ -654,7 +563,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testGetSetAuthorisationNumber_ValidInput_Equals()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$value = 'VALIDAUTHORISATIONNUMBER';
 
@@ -669,7 +578,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testGetSetAuthCode_ValidInput_Equals()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$value = 'VALIDAUTHCODE';
 
@@ -684,7 +593,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testGetSetAuthorisationCode_ValidInput_Equals()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$value = 'VALIDAUTHORISATIONCODE';
 
@@ -699,7 +608,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testGetSetClientReference_ValidInput_Equals()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$value = 'VALIDREFERENCE';
 
@@ -714,7 +623,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testGetSetComment_ValidInput_Equals()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$value = 'VALIDCOMMENT';
 
@@ -729,7 +638,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testGetSetMerchantCardHolderName_ValidInput_Equals()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$value = 'VALIDMERCHANTCARDHOLDERNAME';
 
@@ -744,7 +653,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testGetSetMerchantDescription_ValidInput_Equals()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$value = 'VALIDMERCHANTDESCRIPTION';
 
@@ -760,7 +669,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testGetSetTerminalType_ValidInput_Equals()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$value = Request::TERMINAL_TYPE_INTERNET;
 
@@ -777,7 +686,7 @@ class RequestUnitTest extends TestCase
 	{
 		$this->expectException(InvalidAttributeValueException::class);
 
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$value = 'INVALIDTERMINALTYPE';
 
@@ -790,7 +699,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testIsTerminalTypeInternet_ValidInput_True()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$request->setTerminalType(Request::TERMINAL_TYPE_INTERNET);
 
@@ -803,7 +712,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testIsTerminalTypeInternet_InvalidInput_False()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$request->setTerminalType(Request::TERMINAL_TYPE_TELEPHONE_ORDER);
 
@@ -816,7 +725,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testIsTerminalTypeTelephoneOrder_ValidInput_True()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$request->setTerminalType(Request::TERMINAL_TYPE_TELEPHONE_ORDER);
 
@@ -829,7 +738,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testIsTerminalTypeTelephoneOrder_InvalidInput_False()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$request->setTerminalType(Request::TERMINAL_TYPE_MAIL_ORDER);
 
@@ -842,7 +751,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testIsTerminalTypeMailOrder_ValidInput_True()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$request->setTerminalType(Request::TERMINAL_TYPE_MAIL_ORDER);
 
@@ -855,7 +764,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testIsTerminalTypeMailOrder_InvalidInput_False()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$request->setTerminalType(Request::TERMINAL_TYPE_CUSTOMER_PRESENT);
 
@@ -868,7 +777,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testIsTerminalTypeCustomerPresent_ValidInput_True()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$request->setTerminalType(Request::TERMINAL_TYPE_CUSTOMER_PRESENT);
 
@@ -881,7 +790,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testIsTerminalTypeCustomerPresent_InvalidInput_False()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$request->setTerminalType(Request::TERMINAL_TYPE_RECURRING_PAYMENT);
 
@@ -894,7 +803,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testIsTerminalTypeRecurringPayment_ValidInput_True()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$request->setTerminalType(Request::TERMINAL_TYPE_RECURRING_PAYMENT);
 
@@ -907,7 +816,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testIsTerminalTypeRecurringPayment_InvalidInput_False()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$request->setTerminalType(Request::TERMINAL_TYPE_INSTALMENT);
 
@@ -920,7 +829,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testIsTerminalTypeInstalment_ValidInput_True()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$request->setTerminalType(Request::TERMINAL_TYPE_INSTALMENT);
 
@@ -933,7 +842,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testIsTerminalTypeInstalment_InvalidInput_False()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$request->setTerminalType(Request::TERMINAL_TYPE_INTERNET);
 
@@ -946,7 +855,7 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testGetSetCVC2_ValidInput_Equals()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$value = 'VALIDCVC2';
 
@@ -970,25 +879,24 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testValidate_ValidInput_WithPurchase_True()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$oneYearAhead = (new Carbon())->addYear();
 
 		$month = $oneYearAhead->month;
 		$year  = $oneYearAhead->year;
 
-		$request
-			->setInterface(Request::INTERFACE_CREDIT_CARD)
-			->setTransactionType(Request::TRANSACTION_TYPE_PURCHASE)
-			->setTotalAmount(123.00)
-			->setCardData('4242424242424242')
-			->setCardExpiryDate($month, $year)
-			->setCVC2('123')
-			->setClientReference('ABC')
-			->setComment('Example Comment')
-			->setMerchantDescription('St George IPG')
-			->setMerchantCardHolderName('John Smith')
-			->setTaxAmount(5.00);
+		$request->setInterface(Request::INTERFACE_CREDIT_CARD)
+		        ->setTransactionType(Request::TRANSACTION_TYPE_PURCHASE)
+		        ->setTotalAmount(123.00)
+		        ->setCardData('4242424242424242')
+		        ->setCardExpiryDate($month, $year)
+		        ->setCVC2('123')
+		        ->setClientReference('ABC')
+		        ->setComment('Example Comment')
+		        ->setMerchantDescription('St George IPG')
+		        ->setMerchantCardHolderName('John Smith')
+		        ->setTaxAmount(5.00);
 
 		$this->assertTrue($request->validate());
 	}
@@ -1008,7 +916,7 @@ class RequestUnitTest extends TestCase
 	{
 		$this->expectException(InvalidAttributeStatusException::class);
 
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$oneYearAhead = (new Carbon())->addYear();
 
@@ -1020,19 +928,17 @@ class RequestUnitTest extends TestCase
 		 * CardData - Required for purchases
 		 */
 
-		$request
-			->setTransactionReference('123456789')
-			->setInterface(Request::INTERFACE_CREDIT_CARD)
-			->setTransactionType(Request::TRANSACTION_TYPE_PURCHASE)
-			->setTotalAmount(123.00)
-			//->setCardData('4242424242424242')
-			->setCardExpiryDate($month, $year)
-			->setCVC2('123')
-			->setClientReference('ABC')
-			->setComment('Example Comment')
-			->setMerchantDescription('St George IPG')
-			->setMerchantCardHolderName('John Smith')
-			->setTaxAmount(5.00);
+		$request->setTransactionReference('123456789')
+		        ->setInterface(Request::INTERFACE_CREDIT_CARD)
+		        ->setTransactionType(Request::TRANSACTION_TYPE_PURCHASE)
+		        ->setTotalAmount(123.00)//->setCardData('4242424242424242')
+		        ->setCardExpiryDate($month, $year)
+		        ->setCVC2('123')
+		        ->setClientReference('ABC')
+		        ->setComment('Example Comment')
+		        ->setMerchantDescription('St George IPG')
+		        ->setMerchantCardHolderName('John Smith')
+		        ->setTaxAmount(5.00);
 
 		$request->validate();
 	}
@@ -1047,18 +953,17 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testValidate_ValidInput_WithRefund_True()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
-		$request
-			->setInterface(Request::INTERFACE_CREDIT_CARD)
-			->setTransactionType(Request::TRANSACTION_TYPE_REFUND)
-			->setTotalAmount(123.00)
-			->setOriginalTransactionReference('123456789')
-			->setClientReference('ABC')
-			->setComment('Example Comment')
-			->setMerchantDescription('St George IPG')
-			->setMerchantCardHolderName('John Smith')
-			->setTaxAmount(5.00);
+		$request->setInterface(Request::INTERFACE_CREDIT_CARD)
+		        ->setTransactionType(Request::TRANSACTION_TYPE_REFUND)
+		        ->setTotalAmount(123.00)
+		        ->setOriginalTransactionReference('123456789')
+		        ->setClientReference('ABC')
+		        ->setComment('Example Comment')
+		        ->setMerchantDescription('St George IPG')
+		        ->setMerchantCardHolderName('John Smith')
+		        ->setTaxAmount(5.00);
 
 		$this->assertTrue($request->validate());
 	}
@@ -1077,25 +982,24 @@ class RequestUnitTest extends TestCase
 	{
 		$this->expectException(InvalidAttributeStatusException::class);
 
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		/*
 		 * TransactionReference - Not permitted for purchases
 		 * CardData - Not permitted for purchases
 		 */
 
-		$request
-			->setTransactionReference('123456789')
-			->setCardData('4242424242424242')
-			->setInterface(Request::INTERFACE_CREDIT_CARD)
-			->setTransactionType(Request::TRANSACTION_TYPE_REFUND)
-			->setTotalAmount(123.00)
-			->setOriginalTransactionReference('123456789')
-			->setClientReference('ABC')
-			->setComment('Example Comment')
-			->setMerchantDescription('St George IPG')
-			->setMerchantCardHolderName('John Smith')
-			->setTaxAmount(5.00);
+		$request->setTransactionReference('123456789')
+		        ->setCardData('4242424242424242')
+		        ->setInterface(Request::INTERFACE_CREDIT_CARD)
+		        ->setTransactionType(Request::TRANSACTION_TYPE_REFUND)
+		        ->setTotalAmount(123.00)
+		        ->setOriginalTransactionReference('123456789')
+		        ->setClientReference('ABC')
+		        ->setComment('Example Comment')
+		        ->setMerchantDescription('St George IPG')
+		        ->setMerchantCardHolderName('John Smith')
+		        ->setTaxAmount(5.00);
 
 		$request->validate();
 	}
@@ -1115,25 +1019,24 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testValidate_ValidInput_WithPreAuth_True()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$oneYearAhead = (new Carbon())->addYear();
 
 		$month = $oneYearAhead->month;
 		$year  = $oneYearAhead->year;
 
-		$request
-			->setInterface(Request::INTERFACE_CREDIT_CARD)
-			->setTransactionType(Request::TRANSACTION_TYPE_PRE_AUTH)
-			->setTotalAmount(123.00)
-			->setCardData('4242424242424242')
-			->setCardExpiryDate($month, $year)
-			->setCVC2('123')
-			->setClientReference('ABC')
-			->setComment('Example Comment')
-			->setMerchantDescription('St George IPG')
-			->setMerchantCardHolderName('John Smith')
-			->setTaxAmount(5.00);
+		$request->setInterface(Request::INTERFACE_CREDIT_CARD)
+		        ->setTransactionType(Request::TRANSACTION_TYPE_PRE_AUTH)
+		        ->setTotalAmount(123.00)
+		        ->setCardData('4242424242424242')
+		        ->setCardExpiryDate($month, $year)
+		        ->setCVC2('123')
+		        ->setClientReference('ABC')
+		        ->setComment('Example Comment')
+		        ->setMerchantDescription('St George IPG')
+		        ->setMerchantCardHolderName('John Smith')
+		        ->setTaxAmount(5.00);
 
 		$this->assertTrue($request->validate());
 	}
@@ -1155,7 +1058,7 @@ class RequestUnitTest extends TestCase
 	{
 		$this->expectException(InvalidAttributeStatusException::class);
 
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		$oneYearAhead = (new Carbon())->addYear();
 
@@ -1167,20 +1070,18 @@ class RequestUnitTest extends TestCase
 		 * CardData - Required for pre auths
 		 */
 
-		$request
-			->setTransactionReference('123456789')
-			->setCardData('4242424242424242')
-			->setInterface(Request::INTERFACE_CREDIT_CARD)
-			->setTransactionType(Request::TRANSACTION_TYPE_PRE_AUTH)
-			->setTotalAmount(123.00)
-			//->setCardData('4242424242424242')
-			->setCardExpiryDate($month, $year)
-			->setCVC2('123')
-			->setClientReference('ABC')
-			->setComment('Example Comment')
-			->setMerchantDescription('St George IPG')
-			->setMerchantCardHolderName('John Smith')
-			->setTaxAmount(5.00);
+		$request->setTransactionReference('123456789')
+		        ->setCardData('4242424242424242')
+		        ->setInterface(Request::INTERFACE_CREDIT_CARD)
+		        ->setTransactionType(Request::TRANSACTION_TYPE_PRE_AUTH)
+		        ->setTotalAmount(123.00)//->setCardData('4242424242424242')
+		        ->setCardExpiryDate($month, $year)
+		        ->setCVC2('123')
+		        ->setClientReference('ABC')
+		        ->setComment('Example Comment')
+		        ->setMerchantDescription('St George IPG')
+		        ->setMerchantCardHolderName('John Smith')
+		        ->setTaxAmount(5.00);
 
 		$request->validate();
 	}
@@ -1195,19 +1096,18 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testValidate_ValidInput_WithCompletion_True()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
-		$request
-			->setInterface(Request::INTERFACE_CREDIT_CARD)
-			->setTransactionType(Request::TRANSACTION_TYPE_COMPLETION)
-			->setTotalAmount(123.00)
-			->setOriginalTransactionReference('123456789')
-			->setAuthCode('123456789')
-			->setClientReference('ABC')
-			->setComment('Example Comment')
-			->setMerchantDescription('St George IPG')
-			->setMerchantCardHolderName('John Smith')
-			->setTaxAmount(5.00);
+		$request->setInterface(Request::INTERFACE_CREDIT_CARD)
+		        ->setTransactionType(Request::TRANSACTION_TYPE_COMPLETION)
+		        ->setTotalAmount(123.00)
+		        ->setOriginalTransactionReference('123456789')
+		        ->setAuthCode('123456789')
+		        ->setClientReference('ABC')
+		        ->setComment('Example Comment')
+		        ->setMerchantDescription('St George IPG')
+		        ->setMerchantCardHolderName('John Smith')
+		        ->setTaxAmount(5.00);
 
 		$this->assertTrue($request->validate());
 	}
@@ -1226,24 +1126,22 @@ class RequestUnitTest extends TestCase
 	{
 		$this->expectException(InvalidAttributeStatusException::class);
 
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		/*
 		 * CardData - Not permitted for completions
 		 * OriginalTransactionReference - Required for completions
 		 */
 
-		$request
-			->setCardData('4242424242424242')
-			->setInterface(Request::INTERFACE_CREDIT_CARD)
-			->setTransactionType(Request::TRANSACTION_TYPE_COMPLETION)
-			->setTotalAmount(123.00)
-			//->setOriginalTransactionReference('123456789')
-			->setClientReference('ABC')
-			->setComment('Example Comment')
-			->setMerchantDescription('St George IPG')
-			->setMerchantCardHolderName('John Smith')
-			->setTaxAmount(5.00);
+		$request->setCardData('4242424242424242')
+		        ->setInterface(Request::INTERFACE_CREDIT_CARD)
+		        ->setTransactionType(Request::TRANSACTION_TYPE_COMPLETION)
+		        ->setTotalAmount(123.00)//->setOriginalTransactionReference('123456789')
+		        ->setClientReference('ABC')
+		        ->setComment('Example Comment')
+		        ->setMerchantDescription('St George IPG')
+		        ->setMerchantCardHolderName('John Smith')
+		        ->setTaxAmount(5.00);
 
 		$request->validate();
 	}
@@ -1256,12 +1154,11 @@ class RequestUnitTest extends TestCase
 	 */
 	public function testValidate_ValidInput_WithStatus_True()
 	{
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
-		$request
-			->setInterface(Request::INTERFACE_CREDIT_CARD)
-			->setTransactionType(Request::TRANSACTION_TYPE_STATUS)
-			->setTransactionReference('123456789');
+		$request->setInterface(Request::INTERFACE_CREDIT_CARD)
+		        ->setTransactionType(Request::TRANSACTION_TYPE_STATUS)
+		        ->setTransactionReference('123456789');
 
 		$this->assertTrue($request->validate());
 	}
@@ -1280,43 +1177,33 @@ class RequestUnitTest extends TestCase
 	{
 		$this->expectException(InvalidAttributeStatusException::class);
 
-		$request = $this->createRequestWithWebpayMock();
+		$request = $this->createRequest();
 
 		/*
 		 * TransactionReference - Required for statuses
 		 * All fields - Not permitted for statuses
 		 */
 
-		$request
-			->setCardData('4242424242424242')
-			->setInterface(Request::INTERFACE_CREDIT_CARD)
-			->setTransactionType(Request::TRANSACTION_TYPE_STATUS)
-			->setTotalAmount(123.00)
-			->setOriginalTransactionReference('123456789')
-			->setClientReference('ABC')
-			->setComment('Example Comment')
-			->setMerchantDescription('St George IPG')
-			->setMerchantCardHolderName('John Smith')
-			->setTaxAmount(5.00);
+		$request->setCardData('4242424242424242')
+		        ->setInterface(Request::INTERFACE_CREDIT_CARD)
+		        ->setTransactionType(Request::TRANSACTION_TYPE_STATUS)
+		        ->setTotalAmount(123.00)
+		        ->setOriginalTransactionReference('123456789')
+		        ->setClientReference('ABC')
+		        ->setComment('Example Comment')
+		        ->setMerchantDescription('St George IPG')
+		        ->setMerchantCardHolderName('John Smith')
+		        ->setTaxAmount(5.00);
 
 		$request->validate();
 	}
 
 	/**
 	 * @covers \StGeorgeIPG\Request::createFromClient
-	 * @covers \StGeorgeIPG\Request::createWebpayReference
-	 * @covers \StGeorgeIPG\Request::setClientId
-	 * @covers \StGeorgeIPG\Request::setCertificatePath
-	 * @covers \StGeorgeIPG\Request::setCertificatePassword
-	 * @covers \StGeorgeIPG\Request::setDebug
-	 * @covers \StGeorgeIPG\Request::setServers
-	 * @covers \StGeorgeIPG\Request::setPort
-	 * @covers \StGeorgeIPG\Request::setLogPath
-	 * @covers \StGeorgeIPG\Request::setAttribute
 	 */
 	public function testCreateFromClient_ValidInput_InstanceOf()
 	{
-		$client = $this->createClientWithWebpayMock();
+		$client = $this->createClientWithWebServiceMock();
 
 		$request = Request::createFromClient($client);
 

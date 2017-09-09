@@ -2,8 +2,11 @@
 
 namespace StGeorgeIPG;
 
+use StGeorgeIPG\Contracts\Provider;
 use StGeorgeIPG\Exceptions\TransactionFailedException;
 use StGeorgeIPG\Exceptions\TransactionInProgressException;
+use StGeorgeIPG\Providers\Extension;
+use StGeorgeIPG\Providers\WebService;
 
 /**
  * Class Client
@@ -15,59 +18,9 @@ use StGeorgeIPG\Exceptions\TransactionInProgressException;
 class Client
 {
 	/**
-	 * The default server URL.
+	 * @var \StGeorgeIPG\Contracts\Provider
 	 */
-	const SERVER = 'www.gwipg.stgeorge.com.au';
-
-	/**
-	 * The port for live transactions.
-	 */
-	const PORT_LIVE = 3016;
-
-	/**
-	 * The port for test transactions.
-	 */
-	const PORT_TEST = 3017;
-
-	/**
-	 * @var \StGeorgeIPG\Webpay $webpay
-	 */
-	private $webpay;
-
-	/**
-	 * @var integer $clientId
-	 */
-	private $clientId;
-
-	/**
-	 * @var string $certificatePath
-	 */
-	private $certificatePath;
-
-	/**
-	 * @var string $certificatePassword
-	 */
-	private $certificatePassword;
-
-	/**
-	 * @var boolean $debug
-	 */
-	private $debug;
-
-	/**
-	 * @var string $logPath
-	 */
-	private $logPath;
-
-	/**
-	 * @var string[] $servers
-	 */
-	private $servers;
-
-	/**
-	 * @var integer $port
-	 */
-	private $port;
+	private $provider;
 
 	/**
 	 * @var integer $terminalType
@@ -84,194 +37,63 @@ class Client
 	 *
 	 * Initialises the client, using some sensible defaults.
 	 *
-	 * @param integer             $clientId
-	 * @param string              $certificatePassword
-	 * @param \StGeorgeIPG\Webpay $webpay
-	 * @param string              $certificatePath
-	 * @param string              $logPath
-	 * @param boolean             $debug
-	 * @param integer             $port
-	 * @param string[]            $servers
-	 * @param integer             $terminalType
-	 * @param string              $interface
+	 * @param \StGeorgeIPG\Contracts\Provider $provider
+	 * @param integer                         $terminalType
+	 * @param string                          $interface
 	 */
-	public function __construct($clientId, $certificatePassword, Webpay $webpay, $certificatePath = 'cert.cert', $debug = FALSE, $logPath = 'webpay.log', $port = Client::PORT_LIVE, array $servers = [
-		Client::SERVER,
-	], $terminalType = Request::TERMINAL_TYPE_INTERNET, $interface = Request::INTERFACE_CREDIT_CARD)
+	public function __construct(Provider $provider, $terminalType = Request::TERMINAL_TYPE_INTERNET, $interface = Request::INTERFACE_CREDIT_CARD)
 	{
-		$this
-			->setClientId($clientId)
-			->setCertificatePath($certificatePath)
-			->setCertificatePassword($certificatePassword)
-			->setLogPath($logPath)
-			->setDebug($debug)
-			->setWebpay($webpay)
-			->setPort($port)
-			->setServers($servers)
-			->setTerminalType($terminalType)
-			->setInterface($interface);
+		$this->setProvider($provider)
+		     ->setTerminalType($terminalType)
+		     ->setInterface($interface);
 	}
 
 	/**
-	 * @return \StGeorgeIPG\Webpay
-	 */
-	public function getWebpay()
-	{
-		return $this->webpay;
-	}
-
-	/**
-	 * @param \StGeorgeIPG\Webpay $webpay
+	 * @param int    $terminalType
+	 * @param string $interface
 	 *
 	 * @return \StGeorgeIPG\Client
 	 */
-	public function setWebpay($webpay)
+	public static function createWithExtension($terminalType = Request::TERMINAL_TYPE_INTERNET, $interface = Request::INTERFACE_CREDIT_CARD)
 	{
-		$this->webpay = $webpay;
+		$provider = new Extension();
 
-		return $this;
+		$client = new Client($provider, $terminalType, $interface);
+
+		return $client;
 	}
 
 	/**
-	 * @return integer
-	 */
-	public function getClientId()
-	{
-		return $this->clientId;
-	}
-
-	/**
-	 * @param integer $clientId
+	 * @param int    $terminalType
+	 * @param string $interface
 	 *
 	 * @return \StGeorgeIPG\Client
 	 */
-	public function setClientId($clientId)
+	public static function createWithWebService($terminalType = Request::TERMINAL_TYPE_INTERNET, $interface = Request::INTERFACE_CREDIT_CARD)
 	{
-		$this->clientId = $clientId;
+		$provider = new WebService();
 
-		return $this;
+		$client = new Client($provider, $terminalType, $interface);
+
+		return $client;
 	}
 
 	/**
-	 * @return string
+	 * @return \StGeorgeIPG\Contracts\Provider
 	 */
-	public function getCertificatePath()
+	public function getProvider()
 	{
-		return $this->certificatePath;
+		return $this->provider;
 	}
 
 	/**
-	 * @param string $certificatePath
+	 * @param \StGeorgeIPG\Contracts\Provider $provider
 	 *
-	 * @return \StGeorgeIPG\Client
+	 * @return Client
 	 */
-	public function setCertificatePath($certificatePath)
+	public function setProvider($provider)
 	{
-		$this->certificatePath = $certificatePath;
-
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getCertificatePassword()
-	{
-		return $this->certificatePassword;
-	}
-
-	/**
-	 * @param string $certificatePassword
-	 *
-	 * @return \StGeorgeIPG\Client
-	 */
-	public function setCertificatePassword($certificatePassword)
-	{
-		$this->certificatePassword = $certificatePassword;
-
-		return $this;
-	}
-
-	/**
-	 * @return boolean
-	 */
-	public function getDebug()
-	{
-		return $this->debug;
-	}
-
-	/**
-	 * @param boolean $debug
-	 *
-	 * @return \StGeorgeIPG\Client
-	 */
-	public function setDebug($debug)
-	{
-		$this->debug = $debug;
-
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getLogPath()
-	{
-		return $this->logPath;
-	}
-
-	/**
-	 * @param string $logPath
-	 *
-	 * @return \StGeorgeIPG\Client
-	 */
-	public function setLogPath($logPath)
-	{
-		$this->logPath = $logPath;
-
-		return $this;
-	}
-
-	/**
-	 * @return string[]
-	 */
-	public function getServers()
-	{
-		return $this->servers;
-	}
-
-	/**
-	 * @param string[] $servers
-	 *
-	 * @return \StGeorgeIPG\Client
-	 */
-	public function setServers($servers)
-	{
-		if (!is_array($servers)) {
-			$servers = [$servers];
-		}
-
-		$this->servers = $servers;
-
-		return $this;
-	}
-
-	/**
-	 * @return integer
-	 */
-	public function getPort()
-	{
-		return $this->port;
-	}
-
-	/**
-	 * @param integer $port
-	 *
-	 * @return \StGeorgeIPG\Client
-	 */
-	public function setPort($port)
-	{
-		$this->port = $port;
+		$this->provider = $provider;
 
 		return $this;
 	}
@@ -336,17 +158,16 @@ class Client
 	{
 		$request = Request::createFromClient($this);
 
-		$request
-			->setTransactionType(Request::TRANSACTION_TYPE_PURCHASE)
-			->setTotalAmount($amount)
-			->setCardData($cardNumber)
-			->setCardExpiryDate($month, $year)
-			->setCVC2($cvc)
-			->setClientReference($clientReference)
-			->setComment($comment)
-			->setMerchantDescription($description)
-			->setMerchantCardHolderName($cardHolderName)
-			->setTaxAmount($taxAmount);
+		$request->setTransactionType(Request::TRANSACTION_TYPE_PURCHASE)
+		        ->setTotalAmount($amount)
+		        ->setCardData($cardNumber)
+		        ->setCardExpiryDate($month, $year)
+		        ->setCVC2($cvc)
+		        ->setClientReference($clientReference)
+		        ->setComment($comment)
+		        ->setMerchantDescription($description)
+		        ->setMerchantCardHolderName($cardHolderName)
+		        ->setTaxAmount($taxAmount);
 
 		return $request;
 	}
@@ -368,15 +189,14 @@ class Client
 	{
 		$request = Request::createFromClient($this);
 
-		$request
-			->setTransactionType(Request::TRANSACTION_TYPE_REFUND)
-			->setTotalAmount($amount)
-			->setOriginalTransactionReference($originalTransactionReference)
-			->setClientReference($clientReference)
-			->setComment($comment)
-			->setMerchantDescription($description)
-			->setMerchantCardHolderName($cardHolderName)
-			->setTaxAmount($taxAmount);
+		$request->setTransactionType(Request::TRANSACTION_TYPE_REFUND)
+		        ->setTotalAmount($amount)
+		        ->setOriginalTransactionReference($originalTransactionReference)
+		        ->setClientReference($clientReference)
+		        ->setComment($comment)
+		        ->setMerchantDescription($description)
+		        ->setMerchantCardHolderName($cardHolderName)
+		        ->setTaxAmount($taxAmount);
 
 		return $request;
 	}
@@ -401,17 +221,16 @@ class Client
 	{
 		$request = Request::createFromClient($this);
 
-		$request
-			->setTransactionType(Request::TRANSACTION_TYPE_PRE_AUTH)
-			->setTotalAmount($amount)
-			->setCardData($cardNumber)
-			->setCardExpiryDate($month, $year)
-			->setCVC2($cvc)
-			->setClientReference($clientReference)
-			->setComment($comment)
-			->setMerchantDescription($description)
-			->setMerchantCardHolderName($cardHolderName)
-			->setTaxAmount($taxAmount);
+		$request->setTransactionType(Request::TRANSACTION_TYPE_PRE_AUTH)
+		        ->setTotalAmount($amount)
+		        ->setCardData($cardNumber)
+		        ->setCardExpiryDate($month, $year)
+		        ->setCVC2($cvc)
+		        ->setClientReference($clientReference)
+		        ->setComment($comment)
+		        ->setMerchantDescription($description)
+		        ->setMerchantCardHolderName($cardHolderName)
+		        ->setTaxAmount($taxAmount);
 
 		return $request;
 	}
@@ -434,16 +253,15 @@ class Client
 	{
 		$request = Request::createFromClient($this);
 
-		$request
-			->setTransactionType(Request::TRANSACTION_TYPE_COMPLETION)
-			->setTotalAmount($amount)
-			->setOriginalTransactionReference($originalTransactionReference)
-			->setAuthorisationNumber($authorisationNumber)
-			->setClientReference($clientReference)
-			->setComment($comment)
-			->setMerchantDescription($description)
-			->setMerchantCardHolderName($cardHolderName)
-			->setTaxAmount($taxAmount);
+		$request->setTransactionType(Request::TRANSACTION_TYPE_COMPLETION)
+		        ->setTotalAmount($amount)
+		        ->setOriginalTransactionReference($originalTransactionReference)
+		        ->setAuthorisationNumber($authorisationNumber)
+		        ->setClientReference($clientReference)
+		        ->setComment($comment)
+		        ->setMerchantDescription($description)
+		        ->setMerchantCardHolderName($cardHolderName)
+		        ->setTaxAmount($taxAmount);
 
 		return $request;
 	}
@@ -459,9 +277,8 @@ class Client
 	{
 		$request = Request::createFromClient($this, FALSE);
 
-		$request
-			->setTransactionType(Request::TRANSACTION_TYPE_STATUS)
-			->setTransactionReference($transactionReference);
+		$request->setTransactionType(Request::TRANSACTION_TYPE_STATUS)
+		        ->setTransactionReference($transactionReference);
 
 		return $request;
 	}
@@ -480,23 +297,10 @@ class Client
 	{
 		$request->validate();
 
-		$result = $this->getWebpay()->executeTransaction($request->getWebpayReference());
+		$response = $this->getProvider()
+		                 ->getResponse($request, $canSafelyTryAgain);
 
-		$response = Response::createFromWebpayReference($this->getWebpay(), $request->getWebpayReference());
-
-		if ($result) {
-			if ($response->isCodeInProgress()) {
-				if ($maxTries > 0) {
-					if ($request->isTransactionTypeStatus()) {
-						$response = $this->getResponse($request, $maxTries - 1);
-					} else {
-						$response = $this->getResponse($this->status($response->getTransactionReference()), $maxTries - 1);
-					}
-				} else {
-					throw new TransactionInProgressException($request, $response, $maxTries);
-				}
-			}
-		} else {
+		if ($canSafelyTryAgain) {
 			if ($response->getTransactionReference() !== NULL) {
 				if ($maxTries > 0) {
 					$response = $this->getResponse($this->status($response->getTransactionReference()), $maxTries - 1);
@@ -508,6 +312,18 @@ class Client
 					return $this->getResponse($request, $maxTries - 1);
 				} else {
 					throw new TransactionFailedException($request, $response, $maxTries);
+				}
+			}
+		} else {
+			if ($response->isCodeInProgress()) {
+				if ($maxTries > 0) {
+					if ($request->isTransactionTypeStatus()) {
+						$response = $this->getResponse($request, $maxTries - 1);
+					} else {
+						$response = $this->getResponse($this->status($response->getTransactionReference()), $maxTries - 1);
+					}
+				} else {
+					throw new TransactionInProgressException($request, $response, $maxTries);
 				}
 			}
 		}
@@ -522,12 +338,18 @@ class Client
 	 * @param integer              $maxTries
 	 *
 	 * @return \StGeorgeIPG\Response
+	 *
+	 * @throws \StGeorgeIPG\Exceptions\TransactionInProgressException
 	 */
 	public function execute(Request $request, $maxTries = 3)
 	{
-		$response = $this->getResponse($request, $maxTries);
+		try {
+			$response = $this->getResponse($request, $maxTries);
 
-		return $this->validateResponse($response);
+			return $this->validateResponse($response);
+		} catch (TransactionInProgressException $ex) {
+			throw new TransactionInProgressException($ex->getRequest(), $ex->getResponse(), $maxTries); // Throw a new exception with the correct maximum tries.
+		}
 	}
 
 	/**
