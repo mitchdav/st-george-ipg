@@ -14,7 +14,7 @@ php:
   - hhvm
 
 before_install:
-  - sudo apt-get install libcurl-openssl curl php-curl
+  - php -i
   - composer install
 
 # This seems to error on Travis (but not when run locally), so echo the exit code to return exit code 0
