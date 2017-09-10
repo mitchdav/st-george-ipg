@@ -17,9 +17,9 @@ before_install:
   - sudo add-apt-repository ppa:ondrej/php -y
   - sudo apt-get update -y
   - php -i
-  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "5.6" ]]; then sudo apt-get install php5.6-curl; fi
-  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.0" ]]; then sudo apt-get install php-curl; fi
-  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.1" ]]; then sudo apt-get install php-curl; fi
+  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "5.6" ]]; then sudo apt-get install php5.6-curl -y; fi
+  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.0" ]]; then sudo apt-get install php-curl -y; fi
+  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.1" ]]; then sudo apt-get install php-curl -y; fi
   - php -i
   - composer install
 
