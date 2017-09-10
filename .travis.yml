@@ -15,12 +15,11 @@ php:
 
 before_install:
   - php -i
+  - sudo apt-get install php${TRAVIS_PHP_VERSION}-curl
   - composer install
 
-# This seems to error on Travis (but not when run locally), so echo the exit code to return exit code 0
 script:
-  - php vendor/bin/phpunit; echo $?
+  - php vendor/bin/phpunit
 
-# This seems to error on Travis (but not when run locally), so echo the exit code to return exit code 0
 after_script:
-  - php vendor/bin/coveralls -v; echo $?
+  - php vendor/bin/coveralls -v
