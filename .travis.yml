@@ -14,10 +14,12 @@ php:
   - hhvm
 
 before_install:
+  - sudo add-apt-repository ppa:ondrej/php
+  - sudo apt-get update
   - php -i
   - if [[ ${TRAVIS_PHP_VERSION:0:3} == "5.6" ]]; then sudo apt-get install php5.6-curl; fi
-  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.0" ]]; then sudo apt-get install php7.0-curl; fi
-  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.1" ]]; then sudo apt-get install php7.1-curl; fi
+  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.0" ]]; then sudo apt-get install php-curl; fi
+  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.1" ]]; then sudo apt-get install php-curl; fi
   - php -i
   - composer install
 
