@@ -1,6 +1,6 @@
 {
   "name": "mitchdav/st-george-ipg",
-  "description": "A PHP client implementation of the St.George Internet Payment Gateway using the Webpay library.",
+  "description": "A PHP client implementation of the St.George Internet Payment Gateway using the WebService or Webpay extension.",
   "type": "library",
   "license": "MIT",
   "authors": [
@@ -8,6 +8,16 @@
       "name": "Mitchell Davis",
       "email": "mitch@wingmanwebdesign.com.au"
     }
+  ],
+  "keywords": [
+    "st.george",
+    "st george",
+    "ipg",
+    "payment",
+    "payments",
+    "credit card",
+    "credit cards",
+    "merchant"
   ],
   "scripts": {
     "test": "php vendor/bin/phpunit --testsuite all",
