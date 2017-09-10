@@ -6,7 +6,7 @@
 [![License](https://poser.pugx.org/mitchdav/st-george-ipg/license.svg)](https://packagist.org/packages/mitchdav/st-george-ipg)
 [![Coverage Status](https://coveralls.io/repos/github/mitchdav/st-george-ipg/badge.svg?branch=master)](https://coveralls.io/github/mitchdav/st-george-ipg?branch=master)
 
-A PHP client implementation of the St.George Internet Payment Gateway using the Webpay library.
+A PHP client implementation of the St.George Internet Payment Gateway using the WebService or Webpay extension.
 
 Using this library, you can provide your St.George-issued credentials and begin charging cards instantly.
 
