@@ -16,6 +16,7 @@ php:
 before_install:
   - php -i
   - sudo apt-get install php${TRAVIS_PHP_VERSION}-curl
+  - php -i
   - composer install
 
 script:
