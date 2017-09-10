@@ -64,4 +64,18 @@ class ClientUnitTest extends TestCase
 
 		$this->assertEquals($value, $client->getInterface());
 	}
+
+	/**
+	 * @covers \StGeorgeIPG\Client::getResponse
+	 */
+	public function testGetResponse_ValidInput_Equals()
+	{
+		$client = $this->createClientWithWebServiceMock();
+
+		$value = rand(0, 1000);
+
+		$client->setInterface($value);
+
+		$this->assertEquals($value, $client->getInterface());
+	}
 }

@@ -77,7 +77,7 @@ class Response
 		Response::ATTRIBUTE_ERROR                 => 'error',
 		Response::ATTRIBUTE_ERROR_DETAIL          => 'errorDetail',
 		Response::ATTRIBUTE_TRANSACTION_REFERENCE => 'transactionReference',
-		Response::ATTRIBUTE_AUTH_CODE             => 'authorisationNumber',
+		Response::ATTRIBUTE_AUTH_CODE             => 'authCode',
 		Response::ATTRIBUTE_STAN                  => 'stan',
 		Response::ATTRIBUTE_SETTLEMENT_DATE       => 'settlementDate',
 	];
@@ -117,9 +117,9 @@ class Response
 	private $transactionReference;
 
 	/**
-	 * @var string $authorisationNumber
+	 * @var string $authCode
 	 */
-	private $authorisationNumber;
+	private $authCode;
 
 	/**
 	 * @var string $stan
@@ -130,6 +130,11 @@ class Response
 	 * @var string $settlementDate
 	 */
 	private $settlementDate;
+
+	/**
+	 * @var boolean $live
+	 */
+	private $live;
 
 	/**
 	 * @param \StGeorgeIPG\Response $response
@@ -235,6 +240,11 @@ class Response
 		}
 	}
 
+	/**
+	 * @param array $array
+	 *
+	 * @return \StGeorgeIPG\Response
+	 */
 	public static function createFromAttributeArray(array $array)
 	{
 		$input = array_change_key_case($array, CASE_LOWER);
@@ -281,7 +291,7 @@ class Response
 	}
 
 	/**
-	 * @return bool
+	 * @return boolean
 	 */
 	public function isCodeApproved()
 	{
@@ -289,7 +299,7 @@ class Response
 	}
 
 	/**
-	 * @return bool
+	 * @return boolean
 	 */
 	public function isCodeInProgress()
 	{
@@ -297,7 +307,7 @@ class Response
 	}
 
 	/**
-	 * @return bool
+	 * @return boolean
 	 */
 	public function isCodeLocalError()
 	{
@@ -387,19 +397,19 @@ class Response
 	/**
 	 * @return string
 	 */
-	public function getAuthorisationNumber()
+	public function getAuthCode()
 	{
-		return $this->authorisationNumber;
+		return $this->authCode;
 	}
 
 	/**
-	 * @param string $authorisationNumber
+	 * @param string $authCode
 	 *
 	 * @return \StGeorgeIPG\Response
 	 */
-	public function setAuthorisationNumber($authorisationNumber)
+	public function setAuthCode($authCode)
 	{
-		$this->authorisationNumber = $authorisationNumber;
+		$this->authCode = $authCode;
 
 		return $this;
 	}
@@ -442,5 +452,81 @@ class Response
 		$this->settlementDate = $settlementDate;
 
 		return $this;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function isLive()
+	{
+		return $this->live === TRUE;
+	}
+
+	/**
+	 * @param boolean $live
+	 *
+	 * @return \StGeorgeIPG\Response
+	 */
+	public function setLive($live = TRUE)
+	{
+		$this->live = $live;
+
+		return $this;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function isTest()
+	{
+		return !$this->isLive();
+	}
+
+	/**
+	 * @param boolean $test
+	 *
+	 * @return \StGeorgeIPG\Response
+	 */
+	public function setTest($test = TRUE)
+	{
+		$this->setLive(!$test);
+
+		return $this;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function toArray()
+	{
+		return [
+			Response::$attributeMapping[Response::ATTRIBUTE_RESPONSE_CODE]         => $this->getCode(),
+			Response::$attributeMapping[Response::ATTRIBUTE_RESPONSE_TEXT]         => $this->getText(),
+			Response::$attributeMapping[Response::ATTRIBUTE_ERROR]                 => $this->getError(),
+			Response::$attributeMapping[Response::ATTRIBUTE_ERROR_DETAIL]          => $this->getErrorDetail(),
+			Response::$attributeMapping[Response::ATTRIBUTE_TRANSACTION_REFERENCE] => $this->getTransactionReference(),
+			Response::$attributeMapping[Response::ATTRIBUTE_AUTH_CODE]             => $this->getAuthCode(),
+			Response::$attributeMapping[Response::ATTRIBUTE_STAN]                  => $this->getStan(),
+			Response::$attributeMapping[Response::ATTRIBUTE_SETTLEMENT_DATE]       => $this->getSettlementDate(),
+			'live'                                                                 => $this->isLive(),
+			'test'                                                                 => $this->isTest(),
+		];
+	}
+
+	/**
+	 * @return array
+	 */
+	public function toAttributeArray()
+	{
+		return [
+			Response::ATTRIBUTE_RESPONSE_CODE         => $this->getCode(),
+			Response::ATTRIBUTE_RESPONSE_TEXT         => $this->getText(),
+			Response::ATTRIBUTE_ERROR                 => $this->getError(),
+			Response::ATTRIBUTE_ERROR_DETAIL          => $this->getErrorDetail(),
+			Response::ATTRIBUTE_TRANSACTION_REFERENCE => $this->getTransactionReference(),
+			Response::ATTRIBUTE_AUTH_CODE             => $this->getAuthCode(),
+			Response::ATTRIBUTE_STAN                  => $this->getStan(),
+			Response::ATTRIBUTE_SETTLEMENT_DATE       => $this->getSettlementDate(),
+		];
 	}
 }

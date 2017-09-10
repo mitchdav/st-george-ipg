@@ -206,9 +206,19 @@ class Request
 	}
 
 	/**
+	 * @return array
+	 */
+	public static function getAttributeMapping()
+	{
+		return self::$attributeMapping;
+	}
+
+	/**
 	 * @param double $amount
 	 *
 	 * @return string
+	 *
+	 * @codeCoverageIgnore
 	 */
 	private static function formatCurrency($amount)
 	{
@@ -292,7 +302,7 @@ class Request
 	}
 
 	/**
-	 * @return bool
+	 * @return boolean
 	 */
 	public function isInterfaceCreditCard()
 	{
@@ -327,7 +337,7 @@ class Request
 	}
 
 	/**
-	 * @return bool
+	 * @return boolean
 	 */
 	public function isInterfaceTest()
 	{
@@ -335,7 +345,7 @@ class Request
 	}
 
 	/**
-	 * @return bool
+	 * @return boolean
 	 */
 	public function isTransactionTypePurchase()
 	{
@@ -373,7 +383,7 @@ class Request
 	}
 
 	/**
-	 * @return bool
+	 * @return boolean
 	 */
 	public function isTransactionTypeRefund()
 	{
@@ -381,7 +391,7 @@ class Request
 	}
 
 	/**
-	 * @return bool
+	 * @return boolean
 	 */
 	public function isTransactionTypePreAuth()
 	{
@@ -389,7 +399,7 @@ class Request
 	}
 
 	/**
-	 * @return bool
+	 * @return boolean
 	 */
 	public function isTransactionTypeCompletion()
 	{
@@ -397,7 +407,7 @@ class Request
 	}
 
 	/**
-	 * @return bool
+	 * @return boolean
 	 */
 	public function isTransactionTypeStatus()
 	{
@@ -405,7 +415,7 @@ class Request
 	}
 
 	/**
-	 * @return bool
+	 * @return boolean
 	 */
 	public function isTerminalTypeInternet()
 	{
@@ -444,7 +454,7 @@ class Request
 	}
 
 	/**
-	 * @return bool
+	 * @return boolean
 	 */
 	public function isTerminalTypeTelephoneOrder()
 	{
@@ -452,7 +462,7 @@ class Request
 	}
 
 	/**
-	 * @return bool
+	 * @return boolean
 	 */
 	public function isTerminalTypeMailOrder()
 	{
@@ -460,7 +470,7 @@ class Request
 	}
 
 	/**
-	 * @return bool
+	 * @return boolean
 	 */
 	public function isTerminalTypeCustomerPresent()
 	{
@@ -468,7 +478,7 @@ class Request
 	}
 
 	/**
-	 * @return bool
+	 * @return boolean
 	 */
 	public function isTerminalTypeRecurringPayment()
 	{
@@ -476,7 +486,7 @@ class Request
 	}
 
 	/**
-	 * @return bool
+	 * @return boolean
 	 */
 	public function isTerminalTypeInstalment()
 	{
@@ -585,31 +595,37 @@ class Request
 		return TRUE;
 	}
 
+	/**
+	 * @return array
+	 */
 	public function toArray()
 	{
 		return [
-			'interface'                    => $this->getInterface(),
-			'transactionType'              => $this->getTransactionType(),
-			'totalAmount'                  => ($this->getTotalAmount() !== NULL) ? (Request::formatCurrency($this->getTotalAmount())) : (NULL),
-			'taxAmount'                    => ($this->getTaxAmount() !== NULL) ? (Request::formatCurrency($this->getTaxAmount())) : (NULL),
-			'cardData'                     => $this->getCardData(),
-			'cardExpiryDate'               => $this->getCardExpiryDate(),
-			'transactionReference'         => $this->getTransactionReference(),
-			'originalTransactionReference' => $this->getOriginalTransactionReference(),
-			'preAuthNumber'                => $this->getPreAuthNumber(),
-			'authNumber'                   => $this->getAuthNumber(),
-			'authorisationNumber'          => $this->getAuthorisationNumber(),
-			'authCode'                     => $this->getAuthCode(),
-			'authorisationCode'            => $this->getAuthorisationCode(),
-			'clientReference'              => $this->getClientReference(),
-			'comment'                      => $this->getComment(),
-			'merchantCardHolderName'       => $this->getMerchantCardHolderName(),
-			'merchantDescription'          => $this->getMerchantDescription(),
-			'terminalType'                 => $this->getTerminalType(),
-			'cvc2'                         => $this->getCVC2(),
+			Request::$attributeMapping[Request::ATTRIBUTE_INTERFACE]                      => $this->getInterface(),
+			Request::$attributeMapping[Request::ATTRIBUTE_TRANSACTION_TYPE]               => $this->getTransactionType(),
+			Request::$attributeMapping[Request::ATTRIBUTE_TOTAL_AMOUNT]                   => ($this->getTotalAmount() !== NULL) ? (Request::formatCurrency($this->getTotalAmount())) : (NULL),
+			Request::$attributeMapping[Request::ATTRIBUTE_TAX_AMOUNT]                     => ($this->getTaxAmount() !== NULL) ? (Request::formatCurrency($this->getTaxAmount())) : (NULL),
+			Request::$attributeMapping[Request::ATTRIBUTE_CARD_DATA]                      => $this->getCardData(),
+			Request::$attributeMapping[Request::ATTRIBUTE_CARD_EXPIRY_DATE]               => $this->getCardExpiryDate(),
+			Request::$attributeMapping[Request::ATTRIBUTE_TRANSACTION_REFERENCE]          => $this->getTransactionReference(),
+			Request::$attributeMapping[Request::ATTRIBUTE_ORIGINAL_TRANSACTION_REFERENCE] => $this->getOriginalTransactionReference(),
+			Request::$attributeMapping[Request::ATTRIBUTE_PRE_AUTH_NUMBER]                => $this->getPreAuthNumber(),
+			Request::$attributeMapping[Request::ATTRIBUTE_AUTH_NUMBER]                    => $this->getAuthNumber(),
+			Request::$attributeMapping[Request::ATTRIBUTE_AUTHORISATION_NUMBER]           => $this->getAuthorisationNumber(),
+			Request::$attributeMapping[Request::ATTRIBUTE_AUTH_CODE]                      => $this->getAuthCode(),
+			Request::$attributeMapping[Request::ATTRIBUTE_AUTHORISATION_CODE]             => $this->getAuthorisationCode(),
+			Request::$attributeMapping[Request::ATTRIBUTE_CLIENT_REFERENCE]               => $this->getClientReference(),
+			Request::$attributeMapping[Request::ATTRIBUTE_COMMENT]                        => $this->getComment(),
+			Request::$attributeMapping[Request::ATTRIBUTE_MERCHANT_CARD_HOLDER_NAME]      => $this->getMerchantCardHolderName(),
+			Request::$attributeMapping[Request::ATTRIBUTE_MERCHANT_DESCRIPTION]           => $this->getMerchantDescription(),
+			Request::$attributeMapping[Request::ATTRIBUTE_TERMINAL_TYPE]                  => $this->getTerminalType(),
+			Request::$attributeMapping[Request::ATTRIBUTE_CVC2]                           => $this->getCVC2(),
 		];
 	}
 
+	/**
+	 * @return array
+	 */
 	public function toAttributeArray()
 	{
 		return [

@@ -181,18 +181,18 @@ class ResponseUnitTest extends TestCase
 	}
 
 	/**
-	 * @covers \StGeorgeIPG\Response::getAuthorisationNumber
-	 * @covers \StGeorgeIPG\Response::setAuthorisationNumber
+	 * @covers \StGeorgeIPG\Response::getAuthCode
+	 * @covers \StGeorgeIPG\Response::setAuthCode
 	 */
-	public function testGetSetAuthorisationNumber_ValidInput_Equals()
+	public function testGetSetAuthCode_ValidInput_Equals()
 	{
 		$response = $this->createResponse();
 
 		$value = rand(0, 1000);
 
-		$response->setAuthorisationNumber($value);
+		$response->setAuthCode($value);
 
-		$this->assertEquals($value, $response->getAuthorisationNumber());
+		$this->assertEquals($value, $response->getAuthCode());
 	}
 
 	/**
@@ -223,6 +223,47 @@ class ResponseUnitTest extends TestCase
 		$response->setSettlementDate($value);
 
 		$this->assertEquals($value, $response->getSettlementDate());
+	}
+
+	/**
+	 * @covers \StGeorgeIPG\Response::isLive
+	 * @covers \StGeorgeIPG\Response::setLive
+	 * @covers \StGeorgeIPG\Response::isTest
+	 * @covers \StGeorgeIPG\Response::setTest
+	 */
+	public function testIsSetLive_ValidInput_Equals()
+	{
+		$response = $this->createResponse();
+
+		$response->setLive();
+
+		$this->assertTrue($response->isLive());
+		$this->assertFalse($response->isTest());
+
+		$response->setLive(TRUE);
+
+		$this->assertTrue($response->isLive());
+		$this->assertFalse($response->isTest());
+
+		$response->setLive(FALSE);
+
+		$this->assertFalse($response->isLive());
+		$this->assertTrue($response->isTest());
+
+		$response->setTest();
+
+		$this->assertFalse($response->isLive());
+		$this->assertTrue($response->isTest());
+
+		$response->setTest(TRUE);
+
+		$this->assertFalse($response->isLive());
+		$this->assertTrue($response->isTest());
+
+		$response->setTest(FALSE);
+
+		$this->assertTrue($response->isLive());
+		$this->assertFalse($response->isTest());
 	}
 
 	/**
@@ -259,5 +300,98 @@ class ResponseUnitTest extends TestCase
 		$this->assertInstanceOf(Exceptions\ResponseCodes\LocalErrors\Exception::class, Response::mapResponseCodeToException($response->setCode(Response::CODE_LOCAL_ERROR)
 		                                                                                                                             ->setError('')));
 		$this->assertInstanceOf(Exception::class, Response::mapResponseCodeToException($response->setCode(-100)));
+	}
+
+	/**
+	 * @covers \StGeorgeIPG\Response::toArray
+	 * @covers \StGeorgeIPG\Response::getAttributeMapping
+	 */
+	public function testToArray_ValidInput_Equals()
+	{
+		$response = $this->createResponse();
+
+		$response->setCode(Response::CODE_00)
+		         ->setText('Test')
+		         ->setError('Error')
+		         ->setErrorDetail('Detail')
+		         ->setTransactionReference('123')
+		         ->setAuthCode('123')
+		         ->setStan('Stan')
+		         ->setSettlementDate('Date')
+		         ->setLive();
+
+		$attributeMapping = Response::getAttributeMapping();
+
+		$this->assertArraySubset([
+			$attributeMapping[Response::ATTRIBUTE_RESPONSE_CODE]         => $response->getCode(),
+			$attributeMapping[Response::ATTRIBUTE_RESPONSE_TEXT]         => $response->getText(),
+			$attributeMapping[Response::ATTRIBUTE_ERROR]                 => $response->getError(),
+			$attributeMapping[Response::ATTRIBUTE_ERROR_DETAIL]          => $response->getErrorDetail(),
+			$attributeMapping[Response::ATTRIBUTE_TRANSACTION_REFERENCE] => $response->getTransactionReference(),
+			$attributeMapping[Response::ATTRIBUTE_AUTH_CODE]             => $response->getAuthCode(),
+			$attributeMapping[Response::ATTRIBUTE_STAN]                  => $response->getStan(),
+			$attributeMapping[Response::ATTRIBUTE_SETTLEMENT_DATE]       => $response->getSettlementDate(),
+			'live'                                                       => $response->isLive(),
+			'test'                                                       => $response->isTest(),
+		], $response->toArray());
+	}
+
+	/**
+	 * @covers \StGeorgeIPG\Response::toAttributeArray
+	 */
+	public function testToAttributeArray_ValidInput_Equals()
+	{
+		$response = $this->createResponse();
+
+		$response->setCode(Response::CODE_00)
+		         ->setText('Test')
+		         ->setError('Error')
+		         ->setErrorDetail('Detail')
+		         ->setTransactionReference('123')
+		         ->setAuthCode('123')
+		         ->setStan('Stan')
+		         ->setSettlementDate('Date')
+		         ->setLive();
+
+		$this->assertArraySubset([
+			Response::ATTRIBUTE_RESPONSE_CODE         => $response->getCode(),
+			Response::ATTRIBUTE_RESPONSE_TEXT         => $response->getText(),
+			Response::ATTRIBUTE_ERROR                 => $response->getError(),
+			Response::ATTRIBUTE_ERROR_DETAIL          => $response->getErrorDetail(),
+			Response::ATTRIBUTE_TRANSACTION_REFERENCE => $response->getTransactionReference(),
+			Response::ATTRIBUTE_AUTH_CODE             => $response->getAuthCode(),
+			Response::ATTRIBUTE_STAN                  => $response->getStan(),
+			Response::ATTRIBUTE_SETTLEMENT_DATE       => $response->getSettlementDate(),
+		], $response->toAttributeArray());
+	}
+
+	/**
+	 * @covers \StGeorgeIPG\Response::toAttributeArray
+	 * @covers \StGeorgeIPG\Response::createFromAttributeArray
+	 */
+	public function testCreateFromAttributeArray_ValidInput_Equals()
+	{
+		$response1 = $this->createResponse();
+
+		$response1->setCode(Response::CODE_00)
+		          ->setText('Test')
+		          ->setError('Error')
+		          ->setErrorDetail('Detail')
+		          ->setTransactionReference('123')
+		          ->setAuthCode('123')
+		          ->setStan('Stan')
+		          ->setSettlementDate('Date')
+		          ->setLive();
+
+		$response2 = Response::createFromAttributeArray($response1->toAttributeArray());
+
+		$this->assertEquals($response1->getCode(), $response2->getCode());
+		$this->assertEquals($response1->getText(), $response2->getText());
+		$this->assertEquals($response1->getError(), $response2->getError());
+		$this->assertEquals($response1->getErrorDetail(), $response2->getErrorDetail());
+		$this->assertEquals($response1->getTransactionReference(), $response2->getTransactionReference());
+		$this->assertEquals($response1->getAuthCode(), $response2->getAuthCode());
+		$this->assertEquals($response1->getStan(), $response2->getStan());
+		$this->assertEquals($response1->getSettlementDate(), $response2->getSettlementDate());
 	}
 }

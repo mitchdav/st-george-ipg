@@ -46,7 +46,7 @@ class WebService implements Provider
 	private $authenticationToken;
 
 	/**
-	 * @var bool $live
+	 * @var boolean $live
 	 */
 	private $live = TRUE;
 

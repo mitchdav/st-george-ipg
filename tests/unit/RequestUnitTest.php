@@ -1209,4 +1209,65 @@ class RequestUnitTest extends TestCase
 
 		$this->assertInstanceOf(Request::class, $request);
 	}
+
+	/**
+	 * @covers \StGeorgeIPG\Request::toArray
+	 * @covers \StGeorgeIPG\Request::getAttributeMapping
+	 */
+	public function testToArray_ValidInput_Equals()
+	{
+		$request = $this->createRequest();
+
+		$request->setInterface(Request::INTERFACE_CREDIT_CARD)
+		        ->setTransactionType(Request::TRANSACTION_TYPE_PURCHASE)
+		        ->setCardData('4242424242424242')
+		        ->setCVC2('123')
+		        ->setClientReference('ABC')
+		        ->setComment('Example Comment')
+		        ->setMerchantDescription('St George IPG')
+		        ->setMerchantCardHolderName('John Smith')
+		        ->setTaxAmount(5.00);
+
+		$attributeMapping = Request::getAttributeMapping();
+
+		$this->assertArraySubset([
+			$attributeMapping[Request::ATTRIBUTE_INTERFACE]                 => $request->getInterface(),
+			$attributeMapping[Request::ATTRIBUTE_TRANSACTION_TYPE]          => $request->getTransactionType(),
+			$attributeMapping[Request::ATTRIBUTE_CARD_DATA]                 => $request->getCardData(),
+			$attributeMapping[Request::ATTRIBUTE_CVC2]                      => $request->getCVC2(),
+			$attributeMapping[Request::ATTRIBUTE_CLIENT_REFERENCE]          => $request->getClientReference(),
+			$attributeMapping[Request::ATTRIBUTE_COMMENT]                   => $request->getComment(),
+			$attributeMapping[Request::ATTRIBUTE_MERCHANT_DESCRIPTION]      => $request->getMerchantDescription(),
+			$attributeMapping[Request::ATTRIBUTE_MERCHANT_CARD_HOLDER_NAME] => $request->getMerchantCardHolderName(),
+		], $request->toArray());
+	}
+
+	/**
+	 * @covers \StGeorgeIPG\Request::toAttributeArray
+	 */
+	public function testToAttributeArray_ValidInput_Equals()
+	{
+		$request = $this->createRequest();
+
+		$request->setInterface(Request::INTERFACE_CREDIT_CARD)
+		        ->setTransactionType(Request::TRANSACTION_TYPE_PURCHASE)
+		        ->setCardData('4242424242424242')
+		        ->setCVC2('123')
+		        ->setClientReference('ABC')
+		        ->setComment('Example Comment')
+		        ->setMerchantDescription('St George IPG')
+		        ->setMerchantCardHolderName('John Smith')
+		        ->setTaxAmount(5.00);
+
+		$this->assertArraySubset([
+			Request::ATTRIBUTE_INTERFACE                 => $request->getInterface(),
+			Request::ATTRIBUTE_TRANSACTION_TYPE          => $request->getTransactionType(),
+			Request::ATTRIBUTE_CARD_DATA                 => $request->getCardData(),
+			Request::ATTRIBUTE_CVC2                      => $request->getCVC2(),
+			Request::ATTRIBUTE_CLIENT_REFERENCE          => $request->getClientReference(),
+			Request::ATTRIBUTE_COMMENT                   => $request->getComment(),
+			Request::ATTRIBUTE_MERCHANT_DESCRIPTION      => $request->getMerchantDescription(),
+			Request::ATTRIBUTE_MERCHANT_CARD_HOLDER_NAME => $request->getMerchantCardHolderName(),
+		], $request->toAttributeArray());
+	}
 }

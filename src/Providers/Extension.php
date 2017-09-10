@@ -72,7 +72,7 @@ class Extension implements Provider
 	];
 
 	/**
-	 * @var bool $live
+	 * @var boolean $live
 	 */
 	private $live = TRUE;
 
