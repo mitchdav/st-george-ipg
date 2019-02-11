@@ -29,6 +29,7 @@ The WebService is **by far** the easiest to integrate with, and just uses a simp
 ### Requirements
 
 - PHP >= 5.6
+- PHP curl module for php
 - [Composer](https://getcomposer.org/)
 
 If you run into SSL connection issues using the WebService provider on OS X, please check this [support thread](https://stackoverflow.com/a/26538127/7503569).
